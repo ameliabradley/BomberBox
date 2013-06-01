@@ -117,6 +117,7 @@ window.Client = function () {
       m_ctx.canvas.width = window.innerWidth;
       m_ctx.canvas.height = window.innerHeight;
       self.worldInterface.setCameraSize(window.innerWidth, window.innerHeight);
+      self.worldInterface.renderDebug(m_ctx);
    };
 
    self.interpretCommand = function (iCommandId, o) {

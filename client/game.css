@@ -1,14 +1,14 @@
 html, body, canvas {
    margin: 0;
    padding: 0;
-   height: 100%;
-   width: 100%;
    position: relative;
    overflow: hidden;
-/*
-   font-family: Helvetica;
-*/
    font-family: 'Strait', sans-serif;
+}
+
+html, body {
+   height: 100%;
+   width: 100%;
 }
 
 #world {
