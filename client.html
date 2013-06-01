@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>BomberBox</title>
+
+   <script src="lib/jquery-1.8.2.js"></script>
+   <link href='http://fonts.googleapis.com/css?family=Strait' rel='stylesheet' type='text/css'>
+
+   <link rel="stylesheet" href="lib/jquery-ui/jquery-ui.css" />
+   <script src="lib/jquery-ui/jquery-ui.js"></script>
+   <script src="lib/msgpack.js"></script>
+   <script src="lib/dijkstra.js"></script>
+
+   <script src="js/util.js"></script>
+   <script src="js/Blaster.js"></script>
+   <script src="js/Bomb.js"></script>
+   <script src="js/BombBase.js"></script>
+   <script src="js/BombDeployer.js"></script>
+   <script src="js/BombFragment.js"></script>
+   <script src="js/CameraCursor.js"></script>
+   <script src="js/CarpetBomb.js"></script>
+   <script src="js/CarpetBombDeployer.js"></script>
+   <script src="js/Charger.js"></script>
+   <script src="js/Client.js"></script>
+   <script src="js/ClientObjectManager.js"></script>
+   <script src="js/ContextCache.js"></script>
+   <script src="js/CountDown.js"></script>
+   <script src="js/Ghost.js"></script>
+   <script src="js/ItemCooldown.js"></script>
+   <script src="js/MoneyBlock.js"></script>
+   <script src="js/Player.js"></script>
+   <script src="js/Portal.js"></script>
+   <script src="js/RectDimensions.js"></script>
+   <script src="js/Sentry.js"></script>
+   <script src="js/ServerObjectManager.js"></script>
+   <script src="js/ServerTest.js"></script>
+   <script src="js/Tile.js"></script>
+   <script src="js/WanderingEntity.js"></script>
+   <script src="js/Weapon.js"></script>
+   <script src="js/WeaponSlotControl.js"></script>
+   <script src="js/World.js"></script>
+   <script src="js/WorldInterface.js"></script>
+   <script src="js/const.js"></script>
+
+   <link rel="stylesheet" href="game.css" />
+</head>
+<body>
+   <div id="controls" class="hud">
+      <div class="infoboxTitle">How to Play</div>
+      <div class="infoboxClose">X</div>
+      <div class="infoboxBody" style="font-size: 14px">
+         <div id="instructionsKeyboard">
+            <span class="dark">Arrow Keys / WASD:</span> Move<br />
+            <span class="dark">Space:</span> Drop Bomb<br />
+            <span class="dark">Escape:</span> New World<br />
+            <span class="dark">Q / E:</span> Zoom Out / Zoom In<br />
+            <span class="dark">Tab:</span> Switch Weapon<br />
+            <span class="dark">P:</span> Pause<br />
+         </div>
+         <div id="instructionsTouch">
+            <span class="dark">Drag Anywhere:</span> Move Player<br />
+            <span class="dark">Tap:</span> Drop Bomb<br />
+            <span class="dark">Pinch:</span> Zoom<br />
+         </div>
+      </div>
+   </div>
+   <div id="displayTextCenter">
+      <span id="displayText" class="hud">Test</span>
+   </div>
+
+   <div id="storeContainer" class="sidebar">
+      <div class="sidebarTitle">UPGRADE PATHS</div>
+      <div class="sidebarClose">X</div>
+      <div id="storeItemList" class="sidebarContent">
+         <div class="storeItem storeItemTemplate notPurchased">
+            <div class="lineage"></div>
+            <div class="storeItemPrice"></div>
+            <div class="indent">
+               <div class="storeItemTitle"></div>
+               <div class="storeItemFor"></div>
+               <div class="storeItemBonus"></div>
+               <div class="storeItemRequires"></div>
+               <div class="storeItemDescription"></div>
+            </div>
+            <div class="subItems"></div>
+         </div>
+         <div id="storeSectionCharacter" class="storeSection">
+            <div class="storeSectionTitle">Character</div>
+            <div class="container"></div>
+         </div>
+         <div id="storeSectionWeapons" class="storeSection">
+            <div class="storeSectionTitle">Weapons</div>
+            <div class="container"></div>
+         </div>
+         <div id="storeSectionMisc" class="storeSection">
+            <div class="storeSectionTitle">Misc</div>
+            <div class="container"></div>
+         </div>
+      </div>
+      <div class="sidebarBottom">
+         <div id="storeTotalGoldLabel">Your Experience:</div>
+         <div id="storeTotalGold">24</div>
+      </div>
+   </div>
+
+   <div id="storeSelectorContainer" class="hud">
+      <div id="storeSelector">24</div>
+   </div>
+
+   <div id="pauseContainer" class="hud">
+      <div id="pauseButton">
+         <img src="images/btn_pause.png" height="100%" />
+      </div>
+   </div>
+
+   <div id="weaponSelectionContainer" class="hud">
+      <div class="weaponSlot disabled selected"><div class="slotCooldown"></div></div>
+      <div class="weaponSlot disabled"><div class="slotCooldown"></div></div>
+      <div class="weaponSlot disabled"><div class="slotCooldown"></div></div>
+      <div class="weaponSlot disabled"><div class="slotCooldown"></div></div>
+      <div class="weaponSlot disabled"><div class="slotCooldown"></div></div>
+   </div>
+
+   <div id="progressBarContainer" class="hud">
+      <div id="progressBarNumber">20 / 100</div>
+      <div id="progressBar">
+         <div id="progressBarProgress">
+         </div>
+      </div>
+   </div>
+
+   <canvas id="canvas"></canvas>
+
+   <script type="text/javascript">
+      //window.game = new Game();
+      //game.start();
+   </script>
+</body>
+</html>
