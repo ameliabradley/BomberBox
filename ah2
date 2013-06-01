@@ -1,0 +1,35 @@
+#!/bin/bash
+java -jar compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --js \
+lib/dijkstra.js \
+lib/msgpack.js \
+js/util.js \
+js/Blaster.js \
+js/Bomb.js \
+js/BombBase.js \
+js/BombDeployer.js \
+js/BombFragment.js \
+js/CameraCursor.js \
+js/CarpetBomb.js \
+js/CarpetBombDeployer.js \
+js/Charger.js \
+js/Client.js \
+js/ClientObjectManager.js \
+js/ContextCache.js \
+js/CountDown.js \
+js/Ghost.js \
+js/ItemCooldown.js \
+js/MoneyBlock.js \
+js/Player.js \
+js/Portal.js \
+js/RectDimensions.js \
+js/Sentry.js \
+js/ServerObjectManager.js \
+js/ServerTest.js \
+js/Tile.js \
+js/WanderingEntity.js \
+js/Weapon.js \
+js/WeaponSlotControl.js \
+js/World.js \
+js/WorldInterface.js \
+js/const.js \
+--js_output_file game-compiled.js

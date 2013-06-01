@@ -1,0 +1,464 @@
+html, body, canvas {
+   margin: 0;
+   padding: 0;
+   height: 100%;
+   width: 100%;
+   position: relative;
+   overflow: hidden;
+/*
+   font-family: Helvetica;
+*/
+   font-family: 'Strait', sans-serif;
+}
+
+#world {
+   background-color: black;
+   width: 300px;
+   height: 300px;
+   position: absolute;
+   border: 5px solid #999;
+}
+
+#displayText {
+   display: none;
+   font-weight: bold;
+   color: red;
+   font-size: 30px;
+}
+
+#displayTextCenter {
+   margin: 10px;
+   text-align: center;
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   z-index: 1;
+}
+
+.hud {
+   background-color: rgba(0,0,0,0.15);
+   color: #EEE;
+   padding: 5px 10px;
+   border-radius: 5px;
+   z-index: 1;
+}
+
+.hud .infoboxClose {
+   position: absolute;
+   top: 0;
+   right: 0;
+   padding: 15px;
+   cursor: pointer;
+   color: rgba(255,255,255,0.5);
+   font-weight: bold;
+   padding: 10px;
+   font-size: 15px;
+}
+
+#displayHud {
+   position: absolute;
+   font-weight: bold;
+   margin: 10px;
+   font-size: 20px;
+   right: 0;
+   text-align: right;
+}
+
+#controls {
+   font-weight: bold;
+   margin: 10px;
+   position: absolute;
+   right: 0;
+}
+
+#controls .infoboxTitle {
+   font-size: 20px;
+   cursor: pointer;
+   padding: 5px 0px;
+}
+
+.dark {
+   color: #999;
+}
+
+/* SIDEBAR */
+.sidebar {
+   background-color: #373741;
+   position: absolute;
+   left: -250px;
+   top: 0;
+   bottom: 0;
+   width: 275px;
+   z-index: 3;
+   color: white;
+   border-right: 1px solid rgba(0,0,0,0.2);
+   box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+   display: none;
+}
+
+.sidebar .sidebarClose {
+   position: absolute;
+   top: 0;
+   right: 0;
+   padding: 15px;
+   cursor: pointer;
+   color: rgba(255,255,255,0.5);
+   font-weight: bold;
+}
+
+.sidebar .sidebarClose:hover {
+   color: #fff;
+}
+
+.sidebar .sidebarBottom {
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   height: 50px;
+   background-color: #585869;
+   line-height: 50px;
+   border-top: 1px solid #2c2c34;
+}
+
+.sidebar .sidebarContent {
+   position: absolute;
+   left: 0;
+   right: 0;
+   bottom: 50px;
+   top: 50px;
+}
+
+.sidebar .sidebarTitle {
+   position: absolute;
+   top: 0;
+   left: 10px;
+   font-size: 20px;
+   line-height: 50px;
+   font-weight: bold;
+   color: #FFF;
+   text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.3);
+}
+
+/* STORE */
+#storeTotalGoldLabel {
+   position: absolute;
+   left: 15px;
+   bottom: 0;
+   text-transform: uppercase;
+   font-weight: bold;
+   font-size: 15px;
+   color: rgba(0, 0, 0, 0.7);
+   text-shadow: 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+#storeTotalGold {
+   position: absolute;
+   right: 15px;
+   bottom: -3px;
+   line-height: 20px;
+   margin: 10px 0px;
+   padding: 0px 10px;
+   background-color: #FFBF1F;
+   color: black;
+
+   background-color: #FFBF1F;
+   color: rgba(0, 0, 0, 0.75);
+   padding: 6px;
+   cursor: pointer;
+   border: 2px solid #FFF146;
+   border-radius: 2px;
+   font-weight: bold;
+   text-shadow: 1px 1px 0px white;
+   font-size: 17px;
+   min-width: 22px;
+   text-align: center;
+}
+
+#storeItemList {
+   padding-top: 10px;
+   padding-left: 10px;
+   padding-right: 10px;
+   overflow-y: auto;
+}
+
+#storeItemList .storeItem {
+   font-size: 13px;
+   padding-top: 15px;
+   clear: both;
+   position: relative;
+}
+
+#storeItemList .storeItemPrice {
+   float: left;
+   font-size: 15px;
+   margin-left: 5px;
+   position: relative;
+   top: 1px;
+}
+
+#storeItemList .storeItemBonus {
+   /** color: #709570; **/
+   font-size: 14px;
+}
+
+#storeItemList .storeItemDescription {
+   color: #fff;
+   font-size: 14px;
+   padding-top: 3px;
+}
+
+#storeSelector,
+#storeItemList .storeItemPrice {
+   background-color: #9a7a2f;
+   border: 2px solid #9a9343;
+   color: rgba(0,0,0,0.75);
+   padding: 3px;
+   cursor: pointer;
+   border-radius: 2px;
+   font-weight: bold;
+   text-shadow: 1px 1px 0px rgba(255,255,255,0.3);
+   box-shadow: 0px 0px 3px #000;
+}
+
+#storeSelector:hover,
+#storeItemList .storeItemPrice:hover {
+   background-color: #FFBF1F;
+   border: 2px solid #FFF146;
+   color: #000;
+}
+
+#storeItemList .storeItemTemplate {
+   display: none;
+}
+
+#storeItemList .storeSection {
+   padding-bottom: 30px;
+}
+
+#storeItemList .storeSectionTitle {
+   font-weight: bold;
+   text-transform: uppercase;
+   text-align: center;
+   padding-bottom: 5px;
+   font-size: 15px;
+   letter-spacing: 3px;
+   color: #aaa;
+   opacity: 0.5;
+}
+
+#storeItemList .storeItemTitle {
+   font-weight: bold;
+   text-transform: uppercase;
+   font-size: 15px;
+}
+
+#storeItemList .storeItemFor {
+   text-transform: uppercase;
+   font-size: 14px;
+   color: #666;
+}
+
+#storeItemList .indent {
+   padding-left: 43px;
+}
+
+#storeItemList .subItems > .storeItem {
+   padding-top: 10px;
+}
+
+#storeItemList .lineage {
+   border-left: 2px dotted rgba(255,255,255,0.1);
+   position: absolute;
+   top: 20px;
+   bottom: 10px;
+   left: 18px;
+   right: 0;
+}
+
+#storeItemList .purchased > .subItems > .storeItem > .storeItemPrice {
+   display: block;
+}
+
+#storeItemList .purchased > .storeItemPrice {
+   background-image: url(images/checkmark.png);
+   background-repeat: no-repeat;
+   background-position: center center;
+   width: 18px;
+   height: 17px;
+}
+
+#storeItemList .notPurchased > .subItems > .storeItem > .storeItemPrice,
+#storeItemList .purchased > .storeItemPrice {
+   cursor: default;
+   box-shadow: none;
+   border-color: #444;
+   background-color: #373741;
+   color: #999;
+   text-shadow: none;
+}
+
+#storeItemList .storeItemDescription b,
+#storeItemList .storeItemBonus b {
+   color: #999;
+   font-weight: normal;
+   text-transform: uppercase;
+   font-size: 12px;
+}
+
+#storeItemList .storeItemFor b {
+   color: #99B;
+   font-weight: normal;
+}
+
+#storeItemList .storeItem i {
+   color: #56BF35;
+   font-style: normal;
+}
+
+/* Progress Bar */
+#progressBarContainer {
+   position: absolute;
+   right: 10px;
+   bottom: 10px;
+   width: 200px;
+   height: 30px;
+}
+
+#progressBar {
+   position: absolute;
+   top: 5px;
+   left: 5px;
+   right: 5px;
+   bottom: 5px;
+   border: 1px solid white;
+   background-color: #666;
+   border-radius: 3px;
+}
+
+#progressBarProgress {
+   position: absolute;
+   left: 0; top: 0;
+   bottom: 0;
+   width: 20%;
+   background-color: #bfd255;
+   border-right: 1px solid white;
+   border-radius: 1px;
+}
+
+#progressBarNumber {
+   z-index: 1;
+   display: none;
+   color: black;
+   font-weight: bold;
+   position: absolute;
+   right: 15px;
+   top: 12px;
+   text-align: center;
+   font-size: 14px;
+   text-shadow: 1px 1px rgba(255,255,255,0.5);
+}
+
+/**
+ * HUD CONTROLS
+ */
+
+/* Store Button */
+#storeSelectorContainer {
+   position: absolute;
+   bottom: 10px;
+   left: 10px;
+   width: 50px;
+   height: 50px;
+   padding: 0;
+}
+
+#storeSelector {
+   position: absolute;
+   top: 5px;
+   left: 5px;
+   bottom: 5px;
+   right: 5px;
+   font-size: 22px;
+   line-height: 30px;
+   text-align: center;
+}
+
+/* Pause Button */
+#pauseContainer {
+   position: absolute;
+   left: 65px;
+   width: 50px;
+   height: 50px;
+   padding: 0;
+   cursor: pointer;
+}
+
+#pauseButton {
+   position: absolute;
+   top: 10px;
+   left: 5px;
+   bottom: 10px;
+   right: 5px;
+   font-size: 22px;
+   line-height: 30px;
+   text-align: center;
+}
+
+/* Weapon Buttons */
+#weaponSelectionContainer {
+   position: absolute;
+   left: 120px;
+   height: 50px;
+   padding: 0px 2px;
+}
+
+#weaponSelectionContainer .weaponSlot {
+   float: left;
+   height: 40px;
+   width: 40px;
+   margin: 5px 4px;
+   position: relative;
+
+   background-color: #444;
+   outline: 1px solid #666;
+}
+
+#weaponSelectionContainer .weaponSlot.selected {
+   /*
+   outline: 3px solid orange;
+   */
+   box-shadow: 0px 0px 7px rgba(0,0,0,0.9);
+   outline: 1px solid #888;
+}
+
+#weaponSelectionContainer .weaponSlot.disabled {
+   background-color: #111;
+   outline: 1px solid #555;
+   background-color: transparent;
+
+   /*
+   -moz-box-shadow: inset 0 0 5px 5px rgba(0,0,0,0.1);
+   -webkit-box-shadow: inset 0 0 5px 5px rgba(0,0,0,0.1);
+   box-shadow: inset 0 0 5px 5px rgba(0,0,0,0.1);
+   */
+}
+
+#weaponSelectionContainer .slotCooldown {
+   background-color: rgba(255,255,255,0.5);
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   right: 0;
+}
+
+/** TOUCH / KEYBOARD DIFFERENCES **/
+#interfaceKeyboard #instructionsTouch { display: none; }
+#interfaceTouch #instructionsKeyboard { display: none; }
+
+#controls { bottom: 0; }
+#storeSelectorContainer { top: 10px; }
+#pauseContainer { top: 10px }
+body #weaponSelectionContainer { bottom: 10px; left: 10px; }
+#progressBarContainer { top: 10px; }
