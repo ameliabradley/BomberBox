@@ -1,4 +1,4 @@
-var BombBase = function(world, x, y, timeout, radius) {
+BombBase = function(world, x, y, timeout, radius) {
    var self = this,
       m_tile,
       m_bExploded = false,

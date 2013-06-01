@@ -1,4 +1,4 @@
-var WeaponSlotControl = function() {
+WeaponSlotControl = function() {
    var self = this,
       m_aWeaponSlots = [],
       m_oWeapons = {},

@@ -1,4 +1,4 @@
-var RectDimensions = function(xStart, yStart, outerWidth, outerHeight) {
+RectDimensions = function(xStart, yStart, outerWidth, outerHeight) {
    var self = this,
       m_xStart = xStart,
       m_yStart = yStart,

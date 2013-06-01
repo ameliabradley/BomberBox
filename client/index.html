@@ -11,7 +11,12 @@
    <script src="lib/msgpack.js"></script>
    <script src="lib/dijkstra.js"></script>
 
+   <script src="lib/swfobject.js"></script>
+   <script src="lib/FABridge.js"></script>
+   <script src="lib/web_socket.js"></script>
+
    <script src="js/util.js"></script>
+   <script src="js/util-client.js"></script>
    <script src="js/Blaster.js"></script>
    <script src="js/Bomb.js"></script>
    <script src="js/BombBase.js"></script>
@@ -41,6 +46,52 @@
    <script src="js/World.js"></script>
    <script src="js/WorldInterface.js"></script>
    <script src="js/const.js"></script>
+
+<script>
+// Set location for the WebSocket SWF library.
+WebSocket.__swfLocation = "lib/WebSocketMain.swf";
+
+function supports_canvas_text() {
+  if (!document.createElement('canvas').getContext) { return false; }
+  var dummy_canvas = document.createElement('canvas');
+  var context = dummy_canvas.getContext('2d');
+  return typeof context.fillText == 'function';
+}
+
+/**
+ *  Is called when the document is loaded and ready. Creates a new client.
+ */
+$(document).ready(function() {
+   if (WebSocket.__initialize && swfobject.getFlashPlayerVersion()['major'] < 1) {
+      return alert('Your browser doesnt support WebSocket or Flash');
+   }
+
+   if (!supports_canvas_text()) {
+      return alert('Your browser doesnt support <canvas> or fillText.');
+   }
+
+var startime = new Date();
+   $.getJSON('/state', function(state) {
+      var ping = ((new Date()) - startime),
+         strUrl = state.game_server_url;
+
+      var client = new Client();
+      client.start();
+      client.join(strUrl);
+console.debug("url", strUrl);
+
+/*
+      $('#splash .notice').css('display', 'none');
+      $('#splash .server-info h2').html(state.server_name + '<span>' + state.game_server_url + '</span>');
+      $('#splash .server-info .ping').html('Response time (http)<span>' + ping + ' ms</span>');
+      $('#splash .server-info .map').html('Map name<span>' + state.map_name + '</span>');
+      $('#splash .server-info .players').html('Connected players<span>' + state.no_players + ' of ' + state.max_players + '</span>');
+      $('#splash .server-info button').data('url', state.game_server_url);
+      $('#splash .server-info').css('display', 'block');
+*/
+   });
+});
+</script>
 
    <link rel="stylesheet" href="game.css" />
 </head>

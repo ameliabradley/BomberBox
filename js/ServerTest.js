@@ -1,77 +1,7 @@
-window.ServerTest = function() {
+ServerTest = function() {
    var self = this,
       m_serverObjectManager,
-      m_cameraCursor,
-      m_ctx,
       m_aClients = [];
-
-   document.onkeyup = function(evt) {
-      evt = (evt) ? evt : ((window.event) ? event : null);
-      if (!evt) return;
-
-      switch (evt.keyCode) {
-         // Escape key
-         case 27:
-            self.reset();
-            break;
-
-         // P key
-         case 80:
-            self.world.togglePause();
-            break;
-      }
-
-      if (self.world.isPaused()) return;
-
-      var cancel = false;
-
-      switch (evt.keyCode) {
-         case 37: // LEFT
-         case 65: // A
-            m_cameraCursor.shift("left");
-            break;   
-
-         case 38: // UP
-         case 87: // W
-            m_cameraCursor.shift("up");
-            break;
-
-         case 39: // RIGHT
-         case 68: // D
-            m_cameraCursor.shift("right");
-            break;
-
-         case 40: // DOWN
-         case 83: // S
-            m_cameraCursor.shift("down");
-            break;
-
-         // Space bar
-         case 32:
-            break;
-
-         // Z key
-         case 90:
-            //self.triggerBombs();
-            break;
-
-         // Q key
-         case 81:
-            self.worldInterface.decreaseZoom();
-            break;
-
-         // E key
-         case 69:
-            self.worldInterface.increaseZoom();
-            break;
-      }
-   };
-
-   self.doResize = function() {
-      m_ctx.canvas.width = window.innerWidth;
-      m_ctx.canvas.height = window.innerHeight;
-      self.worldInterface.setCameraSize(window.innerWidth, window.innerHeight);
-   };
 
    self.sendCommand = function (iCommandId, o) {
       each(m_aClients, function (i, client) {
@@ -116,11 +46,12 @@ window.ServerTest = function() {
       p.setWorld(self.world, 3, 0);
    };
 
-   self.start = function() {
-      var iEntityMoveSize = TILE_SIZE / 2,
-         posLast = null,
-         m_iZoom;
+   self.addPlayer = function (i, strName) {
+   };
 
+   self.start = function(world) {
+      self.world = world;
+      /*
       setTimeout(function () {
          if (parent.frames.client) {
             var clientWindow = parent.frames.client,
@@ -132,12 +63,6 @@ window.ServerTest = function() {
             self.addClient(client);
          }
       }, 1000);
-
-      window.onresize = function() {
-         self.doResize();
-      }
-
-      m_cameraCursor = new CameraCursor();
       self.world = new World();
       self.world.setTileManipulationObserver({
          reset: function () {
@@ -165,33 +90,30 @@ window.ServerTest = function() {
             ]);
          }
       });
+      */
 
-      self.worldInterface = new WorldInterface(self, self.world);
-      var elCanvas = document.getElementById('canvas');
-      m_ctx = elCanvas.getContext('2d');
-      self.doResize();
       self.reset();
 
       // TODO: Add death observer for each player
-
-      ResourceManager.addImage('btn_play.png');
-      ResourceManager.loadImages(function() {
-         self.worldInterface.cacheEntities(m_ctx);
-         self.renderDebugFrame();
-      });
+      //self.renderDebugFrame();
    };
 
+   /*
    self.renderDebugFrame = function() {
       self.worldInterface.renderDebug(m_ctx);
       requestAnimFrame(self.renderDebugFrame);
+   };
+   */
+
+   self.generateWorld = function (world) {
+      self.world = world;
+      self.reset();
    };
 
    self.reset = function() {
       self.world.reset();
 
       self.generateRandomWorld();
-
-      m_cameraCursor.initialize(self.worldInterface, 3, 0);
    };
 
    self.generateEndRoom = function(rectDimensions) {
@@ -324,19 +246,5 @@ window.ServerTest = function() {
                self.world.createEndWall(j, center.y + 2);
             }
       });
-
-      // Set the camera front and center
-      self.worldInterface.moveCamera((xStart) / 2, iTotalHeight / 2, 0.2, {
-         duration: 1500,
-         easing: 'easeInOutQuad'
-      });
-
-      // Hold on a sec before centering on the player
-      self.world.setTimeout(function() {
-         self.worldInterface.moveCamera(3, 0, undefined, {
-            duration: 1500,
-            easing: 'easeInOutQuad'
-         });
-      }, 1500);
    };
 };

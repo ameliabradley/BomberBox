@@ -2,7 +2,7 @@
  * A map of the world. Also a factory for tiles
  * @param game
  */
-var WorldInterface = function(game, world) {
+WorldInterface = function(game, world) {
    var self = this,
       m_world = world,
       xPos, yPos, width, height,
@@ -93,10 +93,10 @@ var WorldInterface = function(game, world) {
             iEndX = pos.x, //Math.round((m_iCameraWidth / 2) + pos.x);
             iEndY = pos.y; //Math.round((m_iCameraHeight / 2) + pos.y);
 
-         self.cameraAnim = game.anim({
-            startVal: 0,
-            endVal: 1,
-            easing: (options.easing) ? options.easing : 'easeOutQuad',
+         self.cameraAnim = Util.anim(world, {
+            start: 0,
+            end: 1,
+            easing: (options.easing) ? options.easing : "easeOutQuad",
             duration: options.duration || 1000,
             step: function(iVal) {
                m_iOffsetLeft = Math.floor(m_iOffsetLeft + ((iEndX - m_iOffsetLeft) * iVal));
@@ -107,7 +107,7 @@ var WorldInterface = function(game, world) {
             complete: function() {
                self.cameraAnim = false;
             }
-         })
+         });
       } else {
          m_iOffsetLeft = pos.x;
          m_iOffsetTop = pos.y;

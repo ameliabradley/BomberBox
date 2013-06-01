@@ -1,4 +1,4 @@
-var World = function () {
+World = function () {
    var self = this,
 
       // Tiles
@@ -36,7 +36,7 @@ var World = function () {
             delete m_oTimeouts[oInfo.origId];
             fn();
          },
-         iTimeoutId = window.setTimeout(fnWrapper, iTimeout);
+         iTimeoutId = setTimeout(fnWrapper, iTimeout);
 
       oInfo.fn = fnWrapper;
       oInfo.id = iTimeoutId;
@@ -64,7 +64,7 @@ var World = function () {
 
       m_dPauseTime = new Date();
       each(m_oTimeouts, function(i, oInfo) {
-         window.clearTimeout(oInfo.id);
+         clearTimeout(oInfo.id);
          oInfo.remaining -= m_dPauseTime - oInfo.start;
       });
 
@@ -79,7 +79,7 @@ var World = function () {
       var dResume = new Date();
       each(m_oTimeouts, function(i, oInfo) {
          oInfo.start = dResume;
-         oInfo.id = window.setTimeout(oInfo.fn, oInfo.remaining);
+         oInfo.id = setTimeout(oInfo.fn, oInfo.remaining);
       });
 
       m_dPauseTime = null;
@@ -103,14 +103,14 @@ var World = function () {
    self.clearTimeout = function(iTimeoutId) {
       var oInfo = m_oTimeouts[iTimeoutId];
       if (oInfo) {
-         window.clearTimeout(oInfo.id);
+         clearTimeout(oInfo.id);
          delete m_oTimeouts[iTimeoutId];
       }
    };
 
    self.clearTimeouts = function() {
       each(m_oTimeouts, function(i, oInfo) {
-         window.clearTimeout(oInfo.id);
+         clearTimeout(oInfo.id);
       });
       m_oTimeouts = {};
    };

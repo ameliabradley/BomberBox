@@ -1,4 +1,4 @@
-var ItemCooldown = function() {
+ItemCooldown = function() {
    var self = this,
       m_iCooldownTime,
       m_observer,

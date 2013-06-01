@@ -1,4 +1,4 @@
-var BombDeployer = function() {
+BombDeployer = function() {
    var self = this,
       m_weapon = new Weapon(),
       m_iTimeout = 3,

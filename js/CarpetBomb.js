@@ -7,7 +7,7 @@
  * @param radius the distance the bomb fragments will travel
  * @param fnCallback function to call after explosion
  */
-var CarpetBomb = function(world, x, y, timeout, radius, fnCallback) {
+CarpetBomb = function(world, x, y, timeout, radius, fnCallback) {
    var self = this,
 
       m_bombBase = new BombBase(world, x, y, timeout, radius, fnCallback),

@@ -1,7 +1,7 @@
 /**
  * Static class containing utility methods
  */
-var Util = {
+Util = {
    randomFromInterval: function(from, to) {
        return Math.floor(Math.random()*(to-from+1)+from);
    },
@@ -288,7 +288,7 @@ var Util = {
            if (t < d/2) return Util.easing.easeInBounce (x, t*2, 0, c, d) * .5 + b;
            return Util.easing.easeOutBounce (x, t*2-d, 0, c, d) * .5 + c*.5 + b;
        },
-       linearEase: function (x, t, b, c, d) {
+       linear: function (x, t, b, c, d) {
          return b + c * x;
        }
    },
@@ -297,9 +297,10 @@ var Util = {
       var iStart = o.start || 0,
          iEnd = o.end,
          fnStep = o.step,
+         fnComplete = o.complete,
          iDuration = o.duration,
          iUpdatesPerSecond = o.ups || 60,
-         fnEasing = o.easing || Util.easing.linearEase,
+         fnEasing = (o.easing) ? Util.easing[o.easing] : Util.easing.linearEase,
 
          iMilliseconds = Math.floor(1000 / iUpdatesPerSecond) || 1,
 
@@ -322,95 +323,38 @@ var Util = {
                if (iPercent >= 1) {
                   iElapsedMilliseconds = iDuration;
                   iPercent = 1;
+                  if (fnComplete) {
+                     fnComplete();
+                  }
                } else {
-                  step();
+                  step(iVal);
                }
 
                iVal = fnEasing(iPercent, iElapsedMilliseconds, iStart, iEnd, iDuration);
                fnStep(iVal);
             }, iMilliseconds);
          };
+      
+      step();
 
       return {
-         start: step,
-         cancel: function () {
+         stop: function () {
             bCancel = true;
          }
       };
    }
 };
 
-// shim layer with setTimeout fallback
-window.requestAnimFrame = (function(){
-   return  window.requestAnimationFrame       || 
-           window.webkitRequestAnimationFrame || 
-           window.mozRequestAnimationFrame    || 
-           window.oRequestAnimationFrame      || 
-           window.msRequestAnimationFrame     || 
-           function( callback ){
-             window.setTimeout(callback, 1000 / 60);
-           };
-})();
-
 /**
  * Loop through each element in an array, calling the specified function
  * @param a the array to loop through
  * @param fn the function to call
  */
-window.each = function(a, fn) {
+each = function(a, fn) {
    for (var key in a) {
       if (a.hasOwnProperty(key)) {
          var bValue = fn(key, a[key]);
          if (bValue === false) break;
       }
    }
-}
-
-window.ResourceManager = (function() {
-   var m_iTotalImages = 0,
-      m_iLoadedImages = 0,
-      m_oImages = {},
-      m_aImages = [],
-      m_fnOnLoadComplete;
-
-   function onImageLoad() {
-      m_iLoadedImages++;
-
-      if (m_iLoadedImages == m_iTotalImages) {
-         m_fnOnLoadComplete();
-      }
-   }
-
-   return {
-      addImage : function(strImagePath) {
-         m_iTotalImages++;
-
-         var img = new Image();
-         img.onload = onImageLoad;
-         img.toLoad = strImagePath;
-
-         m_oImages[strImagePath] = img;
-
-         m_aImages.push(strImagePath);
-      },
-
-      getImage : function(strImagePath) {
-         var img = m_oImages[strImagePath];
-
-         if (img) {
-            return img;
-         } else {
-            throw 'Could not find image "' + strImagePath + '".';
-         }
-      },
-
-      loadImages : function(fnOnLoadComplete) {
-         m_fnOnLoadComplete = fnOnLoadComplete;
-
-         each(m_aImages, function(i, strImagePath) {
-            var img = m_oImages[strImagePath];
-            img.src = 'images/' + img.toLoad;
-         });
-      }
-   }
-}());
+};

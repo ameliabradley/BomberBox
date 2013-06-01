@@ -4,7 +4,7 @@
  * @param x
  * @param y
  */
-var Portal = function(world, x, y) {
+Portal = function(world, x, y) {
    var self = this,
       m_tile = new Tile(world),
       m_sisterPortal,

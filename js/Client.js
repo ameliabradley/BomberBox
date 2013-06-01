@@ -1,7 +1,9 @@
+// blah
 window.Client = function () {
    var self = this,
 
       m_ctx,
+      m_bIsConnected = false,
       
       clientObjectManager = new ClientObjectManager(),
 
@@ -18,8 +20,6 @@ window.Client = function () {
 
       updatePlayerState = function (strPlayerId, iX, iY) {
       };
-
-   self.serverReceive = null;
 
    document.onkeyup = function(evt) {
       evt = (evt) ? evt : ((window.event) ? event : null);
@@ -165,6 +165,9 @@ window.Client = function () {
             duration: 800
          });
          break;
+
+      default:
+         console.debug("unrecognized command", iCommandId, "DATA", o);
       };
    };
 
@@ -202,11 +205,44 @@ window.Client = function () {
       };
    };
 
+   self.join = function (url) {
+      if (!m_bIsConnected) {
+         //self.disconnect_reason = 'Unknown reason';
+         console.debug('Trying to join server at ' + url + '...');
+         self.conn = new WebSocket(url);
+
+         /**
+         *  Override the onopen event of the WebSocket instance.
+         *  @param {WebSocketEvent} event The websocket event object.
+         *  @returns {undefined} Nothing
+         */
+         self.conn.onopen = function(event) {
+            m_bIsConnected = true;
+/*
+            self.set_state(CLIENT_CONNECTING);
+            setTimeout(function() {
+               self.conn.send(JSON.stringify([OP_REQ_SERVER_INFO]));
+            }, 100);
+*/
+         };
+
+         /**
+         *  Override the onmessage event of the WebSocket instance.
+         *  @param {WebSocketEvent} event The websocket event object.
+         *  @returns {undefined} Nothing
+         */
+         self.conn.onmessage = function(event) {
+            self.receiveCommand(event.data);
+         }
+      }
+   };
+
    self.sendRequest = function (iRequestId, oMessage) {
-      var strRequest = msgpack.pack([iRequestId, oMessage], true);
-      console.debug("CLIENT: '" + strRequest + "'");
-      //parent.frames.server.receive(strMessage);
-      self.serverReceive(strRequest);
+      if (self.conn) {
+         var strRequest = msgpack.pack([iRequestId, oMessage], true);
+         //parent.frames.server.receive(strMessage);
+         self.conn.send(strRequest);
+      }
    };
 
    self.receiveCommand = function (strCommand) {
@@ -214,7 +250,6 @@ window.Client = function () {
          iCommandId = aCommand[0],
          oCommandData = aCommand[1];
 
-      console.debug("SERVER: '" + strCommand + "'");
       self.interpretCommand(iCommandId, oCommandData);
    };
 };

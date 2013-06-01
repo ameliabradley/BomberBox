@@ -1,4 +1,4 @@
-var Player = function() {
+Player = function() {
    var self = this,
       m_iX, m_iY,
       m_storeControl,

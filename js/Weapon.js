@@ -1,4 +1,4 @@
-var Weapon = function() {
+Weapon = function() {
    var self = this,
       m_strId,
       m_strName,
