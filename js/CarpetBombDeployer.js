@@ -1,4 +1,4 @@
-var CarpetBombDeployer = function() {
+CarpetBombDeployer = function() {
    var self = this,
       m_weapon = new Weapon(),
       m_iTimeout = 3,

@@ -1,7 +1,7 @@
 /**
  * Dumb AI that walks around
  */
-var Sentry = function(world, x, y) {
+Sentry = function(world, x, y) {
    var self = this,
       m_tile = new Tile(world),
       wanderingEntity = new WanderingEntity(world, m_tile);

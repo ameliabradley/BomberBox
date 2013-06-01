@@ -2,7 +2,7 @@
  * Represents the basic building block of the world. Literally.
  * @param world
  */
-var Tile = function(world) {
+Tile = function(world) {
    var self = this,
       m_oTraits = {},
       m_strText = "",

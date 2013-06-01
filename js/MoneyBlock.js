@@ -3,7 +3,7 @@
  * @param x
  * @param y
  */
-var MoneyBlock = function(world, x, y, iAmount) {
+MoneyBlock = function(world, x, y, iAmount) {
    var self = this,
       m_tile = new Tile(world);
    

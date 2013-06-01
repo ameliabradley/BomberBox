@@ -6,7 +6,7 @@
  * @param iIncrement how much to increment
  * @param iStart the starting point
  */
-function CountDown(fnCallback, setTimeout, iInterval, iEnd, iIncrement) {
+CountDown = function (fnCallback, setTimeout, iInterval, iEnd, iIncrement) {
    var self = this;
    self.cancelled = false;
 

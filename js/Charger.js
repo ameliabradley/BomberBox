@@ -1,7 +1,7 @@
 /**
  * Dumb AI that walks around, but charges if it sees player
  */
-var Charger = function(world, x, y) {
+Charger = function(world, x, y) {
    var self = this,
       m_tile = new Tile(world),
       wanderingEntity = new WanderingEntity(world, m_tile),

@@ -4,7 +4,7 @@
  * @param x
  * @param y
  */
-var BombFragment = function(world, x, y, bSuper) {
+BombFragment = function(world, x, y, bSuper) {
    if (world.locationHasTraits(x, y, [TILE_TRAIT.TRAIT_BOMB_INERT])) return;
 
    var self = this,

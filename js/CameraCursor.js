@@ -1,4 +1,4 @@
-var CameraCursor = function () {
+CameraCursor = function () {
    var self = this,
       m_worldInterface,
       m_iX,

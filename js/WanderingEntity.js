@@ -1,4 +1,4 @@
-var WanderingEntity = function(world, tile) {
+WanderingEntity = function(world, tile) {
    var self = this,
       m_aMovements = [], // Places where the tile has been
       m_iTickSpeed = 1000,

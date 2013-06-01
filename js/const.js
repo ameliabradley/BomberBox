@@ -1,7 +1,7 @@
 /**
  * Config
  */
-var 
+//var 
 
    /* COMMON
     *=======================*/
@@ -12,7 +12,6 @@ var
    INT_SIZE = 32, // While the ints are actually larger, ECMA-262 bitwise operators act as if the int is 32 bits
    INT_HALF_AND = 0xFFFF, // Used to clear out the first half of the bits
 
-   // TODO: Networking
    I = 0,
    OP_WORLD_LOAD = I++,
    OP_WORLD_RESET = I++,
@@ -23,37 +22,46 @@ var
    OP_PLAYER_BLINK = I++,
    OP_PLAYER_MOVE = I++,
 
+   // TODO: Remove old OP codes
+   OP_PLAYER_SPAWN = I++,
+   OP_PLAYER_DIE = I++,
+   OP_PLAYER_STATE = I++,
+   OP_PLAYER_INFO = I++,
+   OP_PLAYER_FIRE = I++,
+   OP_PLAYER_CONNECT = I++,
+   OP_PLAYER_DISCONNECT = I++,
+   OP_POWERUP_SPAWN = I++,
+   OP_POWERUP_DIE = I++,
+   OP_ROUND_STATE = I++,
+   OP_PLAYER_SAY = I++,
+     
+   OP_REQ_SERVER_INFO = I++,
+   OP_SERVER_INFO = I++,
+   OP_SERVER_EXEC_RESP = I++,
+   OP_DISCONNECT_REASON = I++,
+   OP_WORLD_DATA = I++,
+   OP_WORLD_STATE = I++,
+   OP_WORLD_RECONNECT = I++,
+   OP_CLIENT_CONNECT = I++,
+   OP_CLIENT_JOIN = I++,
+   OP_CLIENT_STATE = I++,
+   OP_CLIENT_SET = I++,
+   OP_CLIENT_EXEC = I++,
+   OP_CLIENT_SAY = I++,
+
    I = 0,
    REQ_PLAYER_MOVE = I++,
    REQ_PLAYER_FIRE = I++,
 
-   /*
-   OP_PLAYER_SPAWN = 1,
-   OP_PLAYER_DIE = 2,
-   OP_PLAYER_STATE = 3,
-   OP_PLAYER_INFO = 4,
-   OP_PLAYER_FIRE = 5,
-   OP_PLAYER_CONNECT = 6,
-   OP_PLAYER_DISCONNECT = 7,
-   OP_POWERUP_SPAWN = 8,
-   OP_POWERUP_DIE = 9,
-   OP_ROUND_STATE = 10,
-   OP_PLAYER_SAY = 11,
-     
-   OP_REQ_SERVER_INFO = 10,
-   OP_SERVER_INFO = 11,
-   OP_SERVER_EXEC_RESP = 1,
-   OP_DISCONNECT_REASON = 13,
-   OP_WORLD_DATA = 14,
-   OP_WORLD_STATE = 15,
-   OP_WORLD_RECONNECT = 16,
-   OP_CLIENT_CONNECT = 17,
-   OP_CLIENT_JOIN = 18,
-   OP_CLIENT_STATE = 19,
-   OP_CLIENT_SET = 20,
-   OP_CLIENT_EXEC = 21,
-   OP_CLIENT_SAY = 22,
-   */
+   // Packet types
+   GAME_PACKET     = 2,
+   PING_PACKET     = 1,
+
+   // World round states
+   ROUND_WARMUP  = 1,
+   ROUND_STARTING = 2,
+   ROUND_RUNNING  = 3,
+   ROUND_FINISHED = 4,
 
    I = 0,
    TILE_TRAIT = {
