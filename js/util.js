@@ -300,7 +300,7 @@ Util = {
          fnComplete = o.complete,
          iDuration = o.duration,
          iUpdatesPerSecond = o.ups || 60,
-         fnEasing = (o.easing) ? Util.easing[o.easing] : Util.easing.linearEase,
+         fnEasing = (o.easing) ? Util.easing[o.easing] : Util.easing.linear,
 
          iMilliseconds = Math.floor(1000 / iUpdatesPerSecond) || 1,
 

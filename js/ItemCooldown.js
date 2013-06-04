@@ -45,7 +45,7 @@ ItemCooldown = function() {
       m_world.clearTimeout(m_iTimeoutId);
       m_world.clearTimeout(m_iUpdateTimeoutId);
       m_bActive = true;
-      m_observer.finishCooldown();
+      if (m_observer) m_observer.finishCooldown();
    };
 
    self.setCooldownTime = function(iCooldownTime) {
@@ -62,7 +62,7 @@ ItemCooldown = function() {
       // TODO: Animation on failure
       if (m_bActive) {
          m_bActive = false;
-         m_observer.startCooldown();
+         if (m_observer) m_observer.startCooldown();
          self.updateLoop();
          m_iTimeoutId = m_world.setTimeout(function() {
             self.clearCooldown();

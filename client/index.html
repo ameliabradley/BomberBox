@@ -9,40 +9,43 @@
    <link rel="stylesheet" href="lib/jquery-ui/jquery-ui.css" />
    <script src="lib/jquery-ui/jquery-ui.js"></script>
    <script src="lib/msgpack.js"></script>
-   <script src="lib/dijkstra.js"></script>
 
    <script src="lib/swfobject.js"></script>
    <script src="lib/FABridge.js"></script>
    <script src="lib/web_socket.js"></script>
 
-   <script src="js/util.js"></script>
-   <script src="js/util-client.js"></script>
+<!--
+   <script src="lib/dijkstra.js"></script>
    <script src="js/Blaster.js"></script>
    <script src="js/Bomb.js"></script>
    <script src="js/BombBase.js"></script>
    <script src="js/BombDeployer.js"></script>
    <script src="js/BombFragment.js"></script>
-   <script src="js/CameraCursor.js"></script>
+   <script src="js/Ghost.js"></script>
+   <script src="js/Player.js"></script>
+   <script src="js/Sentry.js"></script>
+   <script src="js/WanderingEntity.js"></script>
+   <script src="js/Charger.js"></script>
+   <script src="js/MoneyBlock.js"></script>
+   <script src="js/Weapon.js"></script>
+   <script src="js/WeaponSlotControl.js"></script>
+   <script src="js/CountDown.js"></script>
+   <script src="js/Portal.js"></script>
+   <script src="js/RectDimensions.js"></script>
    <script src="js/CarpetBomb.js"></script>
    <script src="js/CarpetBombDeployer.js"></script>
-   <script src="js/Charger.js"></script>
+-->
+
+   <script src="js/util.js"></script>
+   <script src="js/util-client.js"></script>
+   <script src="js/CameraCursor.js"></script>
    <script src="js/Client.js"></script>
    <script src="js/ClientObjectManager.js"></script>
    <script src="js/ContextCache.js"></script>
-   <script src="js/CountDown.js"></script>
-   <script src="js/Ghost.js"></script>
    <script src="js/ItemCooldown.js"></script>
-   <script src="js/MoneyBlock.js"></script>
-   <script src="js/Player.js"></script>
-   <script src="js/Portal.js"></script>
-   <script src="js/RectDimensions.js"></script>
-   <script src="js/Sentry.js"></script>
    <script src="js/ServerObjectManager.js"></script>
    <script src="js/ServerTest.js"></script>
    <script src="js/Tile.js"></script>
-   <script src="js/WanderingEntity.js"></script>
-   <script src="js/Weapon.js"></script>
-   <script src="js/WeaponSlotControl.js"></script>
    <script src="js/World.js"></script>
    <script src="js/WorldInterface.js"></script>
    <script src="js/const.js"></script>
@@ -52,10 +55,10 @@
 WebSocket.__swfLocation = "lib/WebSocketMain.swf";
 
 function supports_canvas_text() {
-  if (!document.createElement('canvas').getContext) { return false; }
-  var dummy_canvas = document.createElement('canvas');
-  var context = dummy_canvas.getContext('2d');
-  return typeof context.fillText == 'function';
+   if (!document.createElement('canvas').getContext) { return false; }
+   var dummy_canvas = document.createElement('canvas');
+   var context = dummy_canvas.getContext('2d');
+   return typeof context.fillText == 'function';
 }
 
 /**
@@ -70,7 +73,7 @@ $(document).ready(function() {
       return alert('Your browser doesnt support <canvas> or fillText.');
    }
 
-var startime = new Date();
+   var startime = new Date();
    $.getJSON('/state', function(state) {
       var ping = ((new Date()) - startime),
          strUrl = state.game_server_url;
@@ -78,7 +81,6 @@ var startime = new Date();
       var client = new Client();
       client.start();
       client.join(strUrl);
-console.debug("url", strUrl);
 
 /*
       $('#splash .notice').css('display', 'none');
@@ -108,11 +110,13 @@ console.debug("url", strUrl);
             <span class="dark">Tab:</span> Switch Weapon<br />
             <span class="dark">P:</span> Pause<br />
          </div>
+         <!--
          <div id="instructionsTouch">
             <span class="dark">Drag Anywhere:</span> Move Player<br />
             <span class="dark">Tap:</span> Drop Bomb<br />
             <span class="dark">Pinch:</span> Zoom<br />
          </div>
+         -->
       </div>
    </div>
    <div id="displayTextCenter">
@@ -150,12 +154,12 @@ console.debug("url", strUrl);
       </div>
       <div class="sidebarBottom">
          <div id="storeTotalGoldLabel">Your Experience:</div>
-         <div id="storeTotalGold">24</div>
+         <div id="storeTotalGold">0</div>
       </div>
    </div>
 
    <div id="storeSelectorContainer" class="hud">
-      <div id="storeSelector">24</div>
+      <div id="storeSelector">0</div>
    </div>
 
    <div id="pauseContainer" class="hud">
@@ -172,19 +176,25 @@ console.debug("url", strUrl);
       <div class="weaponSlot disabled"><div class="slotCooldown"></div></div>
    </div>
 
-   <div id="progressBarContainer" class="hud">
-      <div id="progressBarNumber">20 / 100</div>
-      <div id="progressBar">
-         <div id="progressBarProgress">
-         </div>
-      </div>
-   </div>
-
    <canvas id="canvas"></canvas>
 
-   <script type="text/javascript">
-      //window.game = new Game();
-      //game.start();
-   </script>
+<!--
+   <style>
+   #test {
+      color: white;
+   -webkit-text-stroke-width: 1px;
+   -webkit-text-stroke-color: black;
+
+      text-align: center;
+      position: absolute;
+      right: 0px;
+      left: 0px;
+      font-weight: bold;
+      font-size: 30px;
+      top: 100px;
+   }
+   </style>
+   <div id="test">+1</div>
+-->
 </body>
 </html>

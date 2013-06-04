@@ -1,190 +1,202 @@
 #!/usr/bin/env node
 
+// !!! lobby for multi-player to wait for players to join and click "ready"
+// !!! Player position on reset
+// !!! Map generation for multi-player games
+// !!! Different player colors
+// !!! Different player spawn locations
+// !!! Basic graphics for weapons
+// !!! Better UI for store
+// ! Dialog: Start single-player or multi-player game?
+// ! Zoom out to map, then zoom to player on start
+
+// Player mini-game on death (keep them occupied)
+// Winning determined by taking enemy flag and carrying it back to your own base
+
+// FIXME: Add client message when server disconnects
+// TODO: Add switching weapons
+// TODO: Add back pause / play for single-player
+// TODO: Remove animation functions being called from the server
+
 require('./lib/msgpack');
 require('./lib/dijkstra');
 
 require('./js/util');
-require('./js/Blaster');
+require('./js/const');
+
+require('./js/MoneyControl');
+require('./js/StoreControl');
+
+require('./js/Weapon');
+require('./js/ItemCooldown');
+require('./js/WeaponSlotControl');
 require('./js/Bomb');
 require('./js/BombBase');
 require('./js/BombDeployer');
 require('./js/BombFragment');
-require('./js/CameraCursor');
 require('./js/CarpetBomb');
 require('./js/CarpetBombDeployer');
+
+require('./js/WanderingEntity');
 require('./js/Charger');
-require('./js/ContextCache');
-require('./js/CountDown');
 require('./js/Ghost');
-require('./js/ItemCooldown');
+require('./js/Sentry');
+require('./js/Blaster');
 require('./js/MoneyBlock');
+
+require('./js/World');
+require('./js/Tile');
+require('./js/CountDown');
 require('./js/Player');
 require('./js/Portal');
 require('./js/RectDimensions');
-require('./js/Sentry');
+
 require('./js/ServerObjectManager');
-require('./js/ServerTest');
-require('./js/Tile');
-require('./js/WanderingEntity');
-require('./js/Weapon');
-require('./js/WeaponSlotControl');
-require('./js/World');
-require('./js/WorldInterface');
-require('./js/const');
+require('./js/WorldGenerator');
 
 //
-//  wpilots.js
-//  WPilot server
+//  bomberboxserver.js
+//  BomberBox Server
+//  Copyright (c) 2010 Lee Bradley
 //
 //  Read README for instructions and LICENSE license.
 //
+//  Based on WPilot
 //  Copyright (c) 2010 Johan Dahlberg
 //
 var path = require('path'),
    fs = require('fs'),
    fu = require('./lib/fu');
-ws = require('ws'),
-optparse = require('./lib/optparse');
-//match     = require('./lib/match').Match,
-//go        = require('./lib/gameobjects');
+   ws = require('ws'),
+   optparse = require('./lib/optparse'),
 
+   WebSocketServer = ws.Server,
+   inspect = require('util');
 
-var WebSocketServer = ws.Server;
-var inspect = require('util');
+const SERVER_VERSION = '1.0',
 
-// Define aliases
-//var _  = match.incl;
+   // Player Connection states
+   STATE_DISCONNECTED = -1,
+   STATE_IDLE = 0,
+   STATE_CONNECTED = 1,
+   STATE_HANDSHAKING = 3,
+   STATE_JOINED = 4;
 
-const SERVER_VERSION = '1.0';
+   // Command line option parser switches
+   SWITCHES = [
+      ['-d', '--debug', 'Enables debug mode (Default: false)'],
+      ['-H', '--help', 'Shows this help section'],
+      ['--name NAME', 'The name of the server.'],
+      ['--host HOST', 'The host adress (default: 127.0.0.1).'],
+      ['--region REGION', 'Set region of this server. This info is displayed in the global server list (default: n/a).'],
+      ['--admin_password PASSWORD', 'Admin password (default: "none").'],
+      ['--map PATH', 'Path to world map (default: built-in map).'],
+      ['--pub_host HOST', 'Set if the public host differs from the local one'],
+      ['--http_port PORT', 'Port number for the HTTP server. Disable with 0 (default: 8000)'],
+      ['--ws_port PORT', 'Port number for the WebSocket server (default: 6114)'],
+      ['--pub_ws_port PORT', 'Set if the public WebSocket port differs from the local one'],
+      ['--max_rate NUMBER', 'The maximum rate per client and second (default: 1000)'],
+      ['--max_connections NUMBER', 'Max connections, including players (default: 60)'],
+      ['--max_players NUMBER', 'Max connected players allowed in server simultaneously (default: 8)'],
+      ['--r_ready_ratio NUMBER', 'Rule: Player ready ratio before a round start. (Default: 0.6)'],
+      ['--r_respawn_time NUMBER', 'Rule: Player respawn time after death. (Default: 500)'],
+      ['--r_reload_time NUMBER', 'Rule: The reload time after fire. (Default: 15)'],
+      ['--r_shoot_cost NUMBER', 'Rule: Energy cost of shooting a bullet. (Default: 800)'],
+      ['--r_shield_cost NUMBER', 'Rule: Energy cost of using the shield. (Default: 70)'],
+      ['--r_energy_recovery NUMBER', 'Rule: Energy recovery unit (Default: 40)'],
+      ['--r_round_limit NUMBER', 'Rule: Round score limit (Default: 10)'],
+      ['--r_suicide_penelty NUMBER', 'Rule: The cost for suicides (Default: 1)'],
+      ['--r_kill_score NUMBER', 'Rule: The price of a kill (Default: 1)'],
+      ['--r_powerup_max NUMBER', 'Rule: Max no of powerups to spawn (Default: 3)'],
+      ['--r_powerup_respawn NUMBER', 'Rule: Time between powerup respawns (Default: 1200)'],
+      ['--r_powerup_spread_t NUMBER', 'Rule: Time before the spread powerup decline (Default: 700)'],
+      ['--r_powerup_rapid_t NUMBER', 'Rule: Time before the rapid fire powerup decline (Default: 600)'],
+      ['--r_powerup_rico_t NUMBER', 'Rule: Time before the ricoshet powerup decline (Default: 800)']
+   ],
 
-// Message priorities. High priority messages are sent to client no mather
-// what. Low priority messages are sent only if client can afford them.
-const PRIO_PASS = 0,
-PRIO_LOW = 'low',
-PRIO_HIGH = 'high';
+   // Default server options
+   DEFAULT_OPTIONS = {
+      debug: true,
+      name: 'BomberBox Server',
+      host: '127.0.0.1',
+      region: 'n/a',
+      admin_password: null,
+      map: null,
+      pub_host: null,
+      http_port: 8000,
+      ws_port: 6114,
+      pub_ws_port: null,
+      max_connections: 60,
+      max_players: 8,
+      max_rate: 5000,
+      r_ready_ratio: 0.6,
+      r_respawn_time: 400,
+      r_reload_time: 15,
+      r_shoot_cost: 300,
+      r_shield_cost: 30,
+      r_energy_recovery: 30,
+      r_round_limit: 10,
+      r_suicide_penelty: 1,
+      r_kill_score: 1,
+      r_powerup_max: 2,
+      r_powerup_respawn: 600,
+      r_powerup_spread_t: 700,
+      r_powerup_rapid_t: 600,
+      r_powerup_rico_t: 600
+   };
 
-// Player Connection states
-const STATE_DISCONNECTED = -1;
-STATE_IDLE = 0,
-STATE_CONNECTED = 1;
-STATE_HANDSHAKING = 3,
-STATE_JOINED = 4;
+   // Paths to all files that should be server to client.
+   CLIENT_DATA = [
+      'client/index.html', '',
+      'client/game.css', '',
 
-// Command line option parser switches
-const SWITCHES = [
-   ['-d', '--debug', 'Enables debug mode (Default: false)'],
-   ['-H', '--help', 'Shows this help section'],
-   ['--name NAME', 'The name of the server.'],
-   ['--host HOST', 'The host adress (default: 127.0.0.1).'],
-   ['--region REGION', 'Set region of this server. This info is displayed in the global server list (default: n/a).'],
-   ['--admin_password PASSWORD', 'Admin password (default: "none").'],
-   ['--map PATH', 'Path to world map (default: built-in map).'],
-   ['--pub_host HOST', 'Set if the public host differs from the local one'],
-   ['--http_port PORT', 'Port number for the HTTP server. Disable with 0 (default: 8000)'],
-   ['--ws_port PORT', 'Port number for the WebSocket server (default: 6114)'],
-   ['--pub_ws_port PORT', 'Set if the public WebSocket port differs from the local one'],
-   ['--max_rate NUMBER', 'The maximum rate per client and second (default: 1000)'],
-   ['--max_connections NUMBER', 'Max connections, including players (default: 60)'],
-   ['--max_players NUMBER', 'Max connected players allowed in server simultaneously (default: 8)'],
-   ['--r_ready_ratio NUMBER', 'Rule: Player ready ratio before a round start. (Default: 0.6)'],
-   ['--r_respawn_time NUMBER', 'Rule: Player respawn time after death. (Default: 500)'],
-   ['--r_reload_time NUMBER', 'Rule: The reload time after fire. (Default: 15)'],
-   ['--r_shoot_cost NUMBER', 'Rule: Energy cost of shooting a bullet. (Default: 800)'],
-   ['--r_shield_cost NUMBER', 'Rule: Energy cost of using the shield. (Default: 70)'],
-   ['--r_energy_recovery NUMBER', 'Rule: Energy recovery unit (Default: 40)'],
-   ['--r_round_limit NUMBER', 'Rule: Round score limit (Default: 10)'],
-   ['--r_suicide_penelty NUMBER', 'Rule: The cost for suicides (Default: 1)'],
-   ['--r_kill_score NUMBER', 'Rule: The price of a kill (Default: 1)'],
-   ['--r_powerup_max NUMBER', 'Rule: Max no of powerups to spawn (Default: 3)'],
-   ['--r_powerup_respawn NUMBER', 'Rule: Time between powerup respawns (Default: 1200)'],
-   ['--r_powerup_spread_t NUMBER', 'Rule: Time before the spread powerup decline (Default: 700)'],
-   ['--r_powerup_rapid_t NUMBER', 'Rule: Time before the rapid fire powerup decline (Default: 600)'],
-   ['--r_powerup_rico_t NUMBER', 'Rule: Time before the ricoshet powerup decline (Default: 800)']
-];
+      "client/images/btn_play.png", "images/",
+      "client/images/btn_pause.png", "images/",
 
-// Default server options
-const DEFAULT_OPTIONS = {
-   debug: true,
-   name: 'WPilot Server',
-   host: '127.0.0.1',
-   region: 'n/a',
-   admin_password: null,
-   map: null,
-   pub_host: null,
-   http_port: 8000,
-   ws_port: 6114,
-   pub_ws_port: null,
-   max_connections: 60,
-   max_players: 8,
-   max_rate: 5000,
-   r_ready_ratio: 0.6,
-   r_respawn_time: 400,
-   r_reload_time: 15,
-   r_shoot_cost: 300,
-   r_shield_cost: 30,
-   r_energy_recovery: 30,
-   r_round_limit: 10,
-   r_suicide_penelty: 1,
-   r_kill_score: 1,
-   r_powerup_max: 2,
-   r_powerup_respawn: 600,
-   r_powerup_spread_t: 700,
-   r_powerup_rapid_t: 600,
-   r_powerup_rico_t: 600
-};
+      "lib/jquery-1.8.2.js", "lib/",
+      "lib/jquery-ui/jquery-ui.css", "lib/jquery-ui/",
+      "lib/jquery-ui/jquery-ui.js", "lib/jquery-ui/",
+      "lib/msgpack.js", "lib/",
+      "lib/dijkstra.js", "lib/",
 
-// Paths to all files that should be server to client.
-const CLIENT_DATA = [
-   'client/index.html', '',
-   'client/game.css', '',
+      "js/util.js", "js/",
+      "js/util-client.js", "js/",
+      "js/Blaster.js", "js/",
+      "js/Bomb.js", "js/",
+      "js/BombBase.js", "js/",
+      "js/BombDeployer.js", "js/",
+      "js/BombFragment.js", "js/",
+      "js/CameraCursor.js", "js/",
+      "js/CarpetBomb.js", "js/",
+      "js/CarpetBombDeployer.js", "js/",
+      "js/Charger.js", "js/",
+      "js/Client.js", "js/",
+      "js/ClientObjectManager.js", "js/",
+      "js/ContextCache.js", "js/",
+      "js/CountDown.js", "js/",
+      "js/Ghost.js", "js/",
+      "js/ItemCooldown.js", "js/",
+      "js/MoneyBlock.js", "js/",
+      "js/Player.js", "js/",
+      "js/Portal.js", "js/",
+      "js/RectDimensions.js", "js/",
+      "js/Sentry.js", "js/",
+      "js/ServerObjectManager.js", "js/",
+      "js/WorldGenerator.js", "js/",
+      "js/Tile.js", "js/",
+      "js/WanderingEntity.js", "js/",
+      "js/Weapon.js", "js/",
+      "js/WeaponSlotControl.js", "js/",
+      "js/World.js", "js/",
+      "js/WorldInterface.js", "js/",
+      "js/const.js", "js/",
 
-   "client/images/btn_play.png", "images/",
-   "client/images/btn_pause.png", "images/",
-
-   "lib/jquery-1.8.2.js", "lib/",
-   "lib/jquery-ui/jquery-ui.css", "lib/jquery-ui/",
-   "lib/jquery-ui/jquery-ui.js", "lib/jquery-ui/",
-   "lib/msgpack.js", "lib/",
-   "lib/dijkstra.js", "lib/",
-
-   "js/util.js", "js/",
-   "js/util-client.js", "js/",
-   "js/Blaster.js", "js/",
-   "js/Bomb.js", "js/",
-   "js/BombBase.js", "js/",
-   "js/BombDeployer.js", "js/",
-   "js/BombFragment.js", "js/",
-   "js/CameraCursor.js", "js/",
-   "js/CarpetBomb.js", "js/",
-   "js/CarpetBombDeployer.js", "js/",
-   "js/Charger.js", "js/",
-   "js/Client.js", "js/",
-   "js/ClientObjectManager.js", "js/",
-   "js/ContextCache.js", "js/",
-   "js/CountDown.js", "js/",
-   "js/Ghost.js", "js/",
-   "js/ItemCooldown.js", "js/",
-   "js/MoneyBlock.js", "js/",
-   "js/Player.js", "js/",
-   "js/Portal.js", "js/",
-   "js/RectDimensions.js", "js/",
-   "js/Sentry.js", "js/",
-   "js/ServerObjectManager.js", "js/",
-   "js/ServerTest.js", "js/",
-   "js/Tile.js", "js/",
-   "js/WanderingEntity.js", "js/",
-   "js/Weapon.js", "js/",
-   "js/WeaponSlotControl.js", "js/",
-   "js/World.js", "js/",
-   "js/WorldInterface.js", "js/",
-   "js/const.js", "js/",
-
-   "client/FABridge.js", "lib/",
-   'client/swfobject.js', 'lib/',
-   'client/web_socket.js', 'lib/',
-   'client/WebSocketMain.swf', 'lib/',
-   'client/crossdomain.xml', 'lib/'
-];
+      "client/FABridge.js", "lib/",
+      'client/swfobject.js', 'lib/',
+      'client/web_socket.js', 'lib/',
+      'client/WebSocketMain.swf', 'lib/',
+      'client/crossdomain.xml', 'lib/'
+   ];
 
 /**
  *  Entry point for server.
@@ -202,7 +214,7 @@ function main() {
 
    if (!options) return;
 
-   console.log('WPilot server ' + SERVER_VERSION);
+   console.log('BomberBox server ' + SERVER_VERSION);
 
    maps = options.maps;
 
@@ -223,7 +235,6 @@ function main() {
 function start_gameserver(maps, options, shared) {
    var connections = {},
       no_connections = 0,
-      gameloop = null,
       world = null,
       server = null,
       update_tick = 1,
@@ -245,20 +256,6 @@ function start_gameserver(maps, options, shared) {
       }
    }
 
-   /**
-    *  The acutal game loop.
-    *  @param {Number} t Current world time.
-    *  @param {Number} dt Current delta time,
-    *  @return {undefined} Nothing
-    */
-
-   function gameloop_tick(t, dt) {
-      //world.update(t, dt);
-      //check_rules(t, dt);
-      //post_update();
-      //flush_queues();
-   }
-
    function connection_for_player(player) {
       for (var connid in connections) {
          var conn = connections[connid];
@@ -267,246 +264,6 @@ function start_gameserver(maps, options, shared) {
          }
       }
       return null;
-   }
-
-   // Create the world instance
-   world = new World();
-   world.setTileManipulationObserver({
-         reset: function () {
-            broadcast(OP_WORLD_RESET);
-         },
-         createTile: function (tile) {
-            broadcast(OP_WORLD_CREATE_TILE, tile.toJson());
-         },
-         deleteTile: function (tile) {
-            broadcast(OP_WORLD_DELETE_TILE, tile.getId());
-         },
-         moveTile: function (tile, x, y) {
-            broadcast(OP_WORLD_MOVE_TILE, [
-                  tile.getId(),
-                  x,
-                  y
-               ]);
-         },
-         animMoveTile: function (tile, x, y, speed) {
-            broadcast(OP_WORLD_ANIM_MOVE, [
-                  tile.getId(),
-                  x,
-                  y,
-                  speed
-               ]);
-         }
-      });
-
-   /*
-  world = new World(true);
-  world.max_players = options.max_players,
-
-  // Listen for round state changes
-  world.on_round_state_changed = function(state, winners) {
-    broadcast(OP_ROUND_STATE, state, winners);
-  }
-
-  // Listen for events on player
-  world.on_player_join = function(player) {
-    player.name = get_unique_name(world.players, player.id, player.name);
-    broadcast_each(
-      [OP_PLAYER_CONNECT, player.id, player.name],
-      function(msg, conn) {
-        if (conn.player && conn.player.id == player.id) {
-          return PRIO_PASS;
-        }
-        return PRIO_HIGH;
-      }
-    );
-  }
-
-  world.on_player_spawn = function(player, pos) {
-    broadcast(OP_PLAYER_SPAWN, player.id, pos);
-  }
-
-  world.on_player_died = function(player, old_entity, death_cause, killer) {
-    broadcast(OP_PLAYER_DIE, player.id, death_cause, killer ? killer.id : -1);
-  }
-
-  world.on_player_ready = function(player) {
-    broadcast(OP_PLAYER_INFO, player.id, 0, true);
-  }
-
-  world.on_player_name_changed = function(player, new_name, old_name) {
-    player.name = get_unique_name(world.players, player.id, new_name);
-    broadcast(OP_PLAYER_INFO, player.id, 0, 0, player.name);
-  }
-
-  world.on_player_fire = function(player, angle, pos, vel, powerup) {
-   broadcast(OP_PLAYER_FIRE, player.id, angle, pos, vel, powerup);
-  }
-
-  world.on_player_leave = function(player, reason) {
-    broadcast(OP_PLAYER_DISCONNECT, player.id, reason);
-  }
-
-  world.on_powerup_spawn = function(powerup) {
-    broadcast(OP_POWERUP_SPAWN, powerup.powerup_id,
-                               powerup.powerup_type,
-                               powerup.pos);
-  }
-
-  world.on_powerup_die = function(powerup, player) {
-    broadcast(OP_POWERUP_DIE, powerup.powerup_id, player.id);
-  }
-*/
-
-   /**
-    *  Starts the game loop.
-    *  @return {undefined} Nothing
-    */
-
-   function start_gameloop() {
-      // Reset game world
-      //world.build(world.map_data, world.rules);
-
-      gameloop = new GameLoop();
-      gameloop.ontick = gameloop_tick;
-
-      log('Starting game loop...');
-      gameloop.start();
-   }
-
-   /**
-    *  Stops the game loop, disconnects all connections and resets the world.
-    *  @param {String} reason A reason why the game loop stopped. Is sent to all
-    *                         current connections.
-    *  @return {undefined} Nothing
-    */
-
-   function stop_gameloop(reason) {
-      for (var id in connections) {
-         connections[id].kill(reason || 'Server is shutting down');
-      }
-
-      if (gameloop) {
-         gameloop.ontick = null;
-         gameloop.kill();
-         gameloop = null;
-      }
-   }
-
-   function post_update() {
-      return;
-
-      update_tick++;
-      for (var id in connections) {
-         var time = get_time();
-         var connection = connections[id];
-
-         if (connection.state != STATE_JOINED) {
-            continue;
-         }
-
-         if (connection.last_ping + 2000 < time) {
-            connection.last_ping = time;
-            connection.post_command(PING_PACKET);
-         }
-         if (update_tick % connection.update_rate != 0) {
-            continue;
-         }
-         /*
-      for (var id in world.players) {
-        var player = world.players[id];
-        var message = [OP_PLAYER_STATE, player.id];
-        if (player.entity) {
-          message.push(pack_vector(player.entity.pos),
-                       player.entity.angle,
-                       player.entity.action);
-          connection.queue(message);
-        }
-        if (update_tick % 200 == 0) {
-          var player_connection = connection_for_player(player);
-          connection.queue([OP_PLAYER_INFO, player.id, player_connection.ping]);
-        }
-      }
-*/
-      }
-   }
-
-   /**
-    *  Flushes all connection queues.
-    *  @return {undefined} Nothing
-    */
-
-   function flush_queues() {
-      for (var id in connections) {
-         var connection = connections[id];
-
-         if (connection.state != STATE_JOINED) {
-            continue;
-         }
-
-         connection.flush_queue();
-      }
-   }
-
-   /**
-    *  Check game rules
-    *  @param {Number} t Current world time.
-    *  @param {Number} dt Current delta time,
-    *  @return {undefined} Nothing
-    */
-
-   function check_rules(t, dt) {
-      switch (world.r_state) {
-
-         // The world is waiting for players to be "ready". The game starts when
-         // 60% of the players are ready.
-      case ROUND_WARMUP:
-         if (world.no_players > 1 && world.no_ready_players >= (world.no_players * world.rules.ready_ratio)) {
-            world.set_round_state(ROUND_STARTING);
-         }
-         break;
-
-         // Round is starting. Server aborts if a player leaves the game.
-      case ROUND_STARTING:
-         // if (world.no_ready_players < (world.no_players * 0.6)) {
-         //   world.set_round_state(ROUND_WARMUP);
-         //   return;
-         // }
-         if (t >= world.r_timer) {
-            world.set_round_state(ROUND_RUNNING);
-         }
-         break;
-
-         // The round is running. Wait for a winner.
-      case ROUND_RUNNING:
-         var winners = [];
-         world.forEachPlayer(function (player) {
-               if (player.score == world.rules.round_limit) {
-                  winners.push(player.id);
-               }
-            });
-         if (winners.length) {
-            world.set_round_state(ROUND_FINISHED, winners);
-         }
-         break;
-
-         // The round is finished. Wait for restart
-      case ROUND_FINISHED:
-         if (t >= world.r_timer) {
-            gameloop.ontick = null;
-            gameloop.kill();
-            load_map(null, true, function () {
-                  var t = 0;
-                  for (var id in connections) {
-                     var conn = connections[id];
-                     if (conn.state == STATE_JOINED) {
-                        conn.post_command(OP_WORLD_RECONNECT);
-                        conn.set_state(STATE_HANDSHAKING);
-                     }
-                  }
-               });
-         }
-         break;
-      }
    }
 
    /**
@@ -562,6 +319,63 @@ function start_gameserver(maps, options, shared) {
          pad0(now.getSeconds()) + ' ' + options.name + ': ' + msg);
    }
 
+   function generateRandomWorld () {
+      if (world) {
+         world.reset();
+      }
+
+      var worldGenerator = new WorldGenerator();
+      worldGenerator.generateRandomWorld(world, function () {
+         generateRandomWorld();
+      });
+
+      var jsonWorld = world.toJson();
+
+      world.setTileManipulationObserver({
+            reset: function () {
+               broadcast(OP_WORLD_RESET);
+            },
+            createTile: function (tile) {
+               broadcast(OP_WORLD_CREATE_TILE, tile.toJson());
+            },
+            deleteTile: function (tile) {
+               broadcast(OP_WORLD_DELETE_TILE, tile.getId());
+            },
+            moveTile: function (tile, x, y) {
+               broadcast(OP_WORLD_MOVE_TILE, [
+                     tile.getId(),
+                     x,
+                     y
+                  ]);
+            },
+            animMoveTile: function (tile, x, y, speed) {
+               broadcast(OP_WORLD_ANIM_MOVE, [
+                     tile.getId(),
+                     x,
+                     y,
+                     speed
+                  ]);
+            },
+            tileStyleChange: function (tile) {
+               broadcast(OP_WORLD_UPDATE_TILE_STYLE, [
+                     tile.getId(),
+                     tile.styleToJson()
+                  ]);
+            },
+            tileTextChange: function (tile) {
+               broadcast(OP_WORLD_UPDATE_TILE_TEXT, [
+                     tile.getId(),
+                     tile.getText()
+                  ]);
+            }
+         });
+
+      for (var id in connections) {
+         var conn = connections[id];
+         conn.setWorld(jsonWorld);
+      }
+   }
+
    /**
     *  Load a map
     *  @param path {String} path to map.
@@ -572,9 +386,6 @@ function start_gameserver(maps, options, shared) {
 
    function load_map(path, default_on_fail, callback) {
       // TODO: Implement actual map loading
-      var serverTest = new ServerTest();
-      serverTest.generateWorld(world);
-      callback();
       return;
 
       var map_path = path;
@@ -585,21 +396,7 @@ function start_gameserver(maps, options, shared) {
          }
 
          if (map_data) {
-
-            if (gameloop) {
-               gameloop.ontick = null;
-               gameloop.kill();
-            }
-
-            world.build(map_data, get_rules(DEFAULT_OPTIONS, map_data.rules || {},
-                  options.rules));
-
-            if (gameloop) {
-               gameloop = new GameLoop();
-               gameloop.ontick = gameloop_tick;
-               gameloop.start();
-            }
-
+            // TODO: Load the map
          }
          callback(err);
       }
@@ -645,8 +442,14 @@ function start_gameserver(maps, options, shared) {
    server.on("connection", function (conn) {
          var connection_id = 0,
             disconnect_reason = 'Closed by client',
-            message_queue = [],
             p;
+
+         conn.setWorld = function (jsonWorld) {
+            if (p) {
+               conn.post(OP_WORLD_LOAD, jsonWorld);
+               p.setWorld(world, 3, 0);
+            }
+         }
 
          /**
           *  Sets client's information.
@@ -674,105 +477,13 @@ function start_gameserver(maps, options, shared) {
             }
          }
 
-         conn.auth = function (password) {
-            conn.is_admin = password == options.admin_password ? true : false;
-            return conn.is_admin;
-         }
-
-         conn.exec = function () {
-            return;
-
-            var args = Array.prototype.slice.call(arguments);
-            var command = args.shift();
-            switch (command) {
-            case 'map':
-               var path = args.shift();
-               load_map(path, false, function (err) {
-                     if (err) {
-                        conn.post(OP_SERVER_EXEC_RESP, err);
-                     } else {
-                        for (var id in connections) {
-                           var conn = connections[id];
-                           conn.post_command(OP_WORLD_RECONNECT);
-                           conn.set_state(STATE_HANDSHAKING);
-                        }
-                     }
-                  });
-               return 'Loading map';
-
-            case 'warmup':
-               switch (world.r_state) {
-               case ROUND_WARMUP:
-                  return 'Already in warmup mode';
-               case ROUND_RUNNING:
-               case ROUND_STARTING:
-                  world.set_round_state(ROUND_WARMUP);
-                  break;
-               case ROUND_FINISHED:
-                  return 'Game has already finished';
-               }
-               return 'Changed';
-
-            case 'start':
-               switch (world.r_state) {
-               case ROUND_WARMUP:
-                  world.set_round_state(ROUND_STARTING);
-                  break;
-               case ROUND_STARTING:
-                  world.set_round_state(ROUND_RUNNING);
-                  break;
-               case ROUND_RUNNING:
-                  return 'Game is already started. Type sv_restart to restart';
-               case ROUND_FINISHED:
-                  return 'Game has already finished';
-               }
-               return 'Changed';
-
-            case 'restart':
-               switch (world.r_state) {
-               case ROUND_WARMUP:
-               case ROUND_STARTING:
-                  return 'Cannot restart warmup round';
-               case ROUND_RUNNING:
-                  world.set_round_state(ROUND_STARTING);
-                  break;
-               case ROUND_FINISHED:
-                  world.set_round_state(ROUND_STARTING);
-                  break;
-               }
-               return 'Changed';
-
-            case 'kick':
-               var name = args.shift();
-               var reason = args.shift();
-               world.forEachPlayer(function (player) {
-                     if (player.name == name) {
-                        var conn = connection_for_player(player);
-                        conn.kill(reason);
-                        return "Player kicked";
-                     }
-                  })
-               return "Player not found";
-            }
-         }
-
          /**
           *  Forces a connection to be disconnected.
           */
          conn.kill = function (reason) {
             disconnect_reason = reason || 'Unknown Reason';
-            this.post(OP_DISCONNECT_REASON, disconnect_reason);
-            this.close();
-            message_queue = [];
-         }
-
-         /**
-          *  Queues the specified message and sends it on next flush.
-          */
-         conn.queue = function (msg) {
-            if (conn.state == STATE_JOINED) {
-               message_queue.push(msg);
-            }
+            conn.post(OP_DISCONNECT_REASON, disconnect_reason);
+            conn.close();
          }
 
          /**
@@ -784,53 +495,12 @@ function start_gameserver(maps, options, shared) {
                   o
                ], true);
 
-            this.send(strPacket);
+            conn.send(strPacket);
          }
 
          conn.post_command = function (iCommandId) {
             var strPacket = msgpack.pack([iCommandId], true);
-            this.send(strPacket);
-         }
-
-         /**
-          *  Posts specified data to this instances message queue
-          */
-         conn.flush_queue = function () {
-            var now = get_time(),
-               msg = null,
-               strData,
-               aPacketData = []
-
-            if (message_queue.length === 0) {
-               return;
-            }
-
-            while ((msg = message_queue.shift())) {
-               aPacketData.push(msg);
-            }
-
-            try {
-               strData = msgpack.pack([GAME_PACKET, aPacketData], true);
-               this.send(strData);
-               this.data_sent += strData.length;
-            } catch (err) {
-               return;
-            }
-
-
-            var diff = now - this.last_rate_check;
-
-            if (diff >= 1000) {
-               if (this.data_sent < this.rate && this.update_rate > 1) {
-                  this.update_rate--;
-               } else if (this.data_sent > this.rate) {
-                  this.update_rate++;
-               }
-               this.data_sent = 0;
-               this.last_rate_check = now;
-            }
-
-            message_queue = [];
+            conn.send(strPacket);
          }
 
          /**
@@ -867,10 +537,6 @@ function start_gameserver(maps, options, shared) {
                break;
 
             case STATE_HANDSHAKING:
-               if (!gameloop) {
-                  //start_gameloop();
-               }
-
                // FIXME
                if (false || (world.no_players >= world.max_players)) {
                   conn.kill('Server is full');
@@ -896,7 +562,12 @@ function start_gameserver(maps, options, shared) {
                conn.post(OP_WORLD_LOAD, jsonWorld);
 
                p = new Player();
-               p.initialize(broadcast);
+               p.initialize(conn.post);
+
+               var moneyControl = p.getMoneyControl();
+               moneyControl.setOnMoneyUpdate(function (iMoney) {
+                  conn.post(OP_MONEY_UPDATE, [iMoney]);
+               });
 
                p.setWorld(world, 3, 0);
 
@@ -915,12 +586,6 @@ function start_gameserver(maps, options, shared) {
                      conn.player = null;
                      log(conn + ' left the game (Reason: ' + disconnect_reason + ')');
                   }
-
-                  /*
-            if (world.no_players == 0) {
-              stop_gameloop();
-            }
-*/
 
                   if (conn.debug) {
                      log('Debug: ' + conn + ' disconnected (Reason: ' + disconnect_reason + ')');
@@ -953,17 +618,11 @@ function start_gameserver(maps, options, shared) {
                   return;
                }
 
+
                var iClientRequestTypeId = packet[0];
 
                switch (packet[0]) {
-
-               case GAME_PACKET:
-                  if (world) {
-                     //process_game_message([packet[1], conn.player, world]);
-                  }
-                  break;
-
-               case PING_PACKET:
+               case REQ_PING:
                   conn.ping = get_time() - conn.last_ping;
                   break;
 
@@ -998,157 +657,14 @@ function start_gameserver(maps, options, shared) {
          conn.remoteAddress = conn._socket.remoteAddress;
       });
 
-   load_map(null, true, function (err) {
-         console.log('Starting Game Server server at ' + shared.get_state().game_server_url);
-         // server.listen(parseInt(options.ws_port), options.host);
-      });
+   world = new World();
+   generateRandomWorld();
 
    return server;
 }
 
 /**
- *  Processes a control message from a connection.
-var process_control_message = match (
-
-  [[OP_REQ_SERVER_INFO], {'state =': STATE_CONNECTED}],
-  function(conn) {
-    conn.send_server_info();
-  },
-
-  /**
-   *  MUST be sent by the client when connected to server. It's used to validate
-   *  the session.
-  [[OP_CLIENT_CONNECT, String], {'state =': STATE_CONNECTED}],
-  function(version, conn) {
-    if (version != SERVER_VERSION) {
-      conn.kill('Wrong version');
-    } else {
-      conn.set_state(STATE_HANDSHAKING);
-    }
-  },
-
-  /**
-   *  Client has received world data. Client is now a player of the world.
-  [[OP_CLIENT_JOIN, Object], {'state =': STATE_HANDSHAKING}],
-  function(info, conn) {
-    conn.set_client_info(info);
-    conn.set_state(STATE_JOINED);
-  },
-
-  [[OP_CLIENT_SAY, String], {'state =': STATE_JOINED}],
-  function(message, conn) {
-    if (message.length > 200) {
-      conn.kill('Bad chat message');
-    } else {
-      conn.chat(message);
-    }
-  },
-
-  [[OP_CLIENT_SET, 'rate', Number], {'state =': STATE_JOINED}],
-  function(rate, conn) {
-    conn.rate = Math.min(rate, conn.max_rate);
-  },
-
-  [[OP_CLIENT_EXEC, String, 'kick', String, String], {'state =': STATE_JOINED}],
-  function(password, player_name, reason, conn) {
-    if (conn.auth(password)) {
-      var resp = conn.exec('kick', player_name, reason);
-      conn.post([OP_SERVER_EXEC_RESP, resp]);
-    } else {
-      conn.post([OP_SERVER_EXEC_RESP, 'Wrong password']);
-    }
-  },
-
-  [[OP_CLIENT_EXEC, String, 'map', String], {'state =': STATE_JOINED}],
-  function(password, path, conn) {
-    if (conn.auth(password)) {
-      var resp = conn.exec('map', path);
-      conn.post([OP_SERVER_EXEC_RESP, resp]);
-    } else {
-      conn.post([OP_SERVER_EXEC_RESP, 'Wrong password']);
-    }
-  },
-
-  [[OP_CLIENT_EXEC, String, 'warmup'], {'state =': STATE_JOINED}],
-  function(password, conn) {
-    if (conn.auth(password)) {
-      var resp = conn.exec('warmup');
-      conn.post([OP_SERVER_EXEC_RESP, resp]);
-    } else {
-      conn.post([OP_SERVER_EXEC_RESP, 'Wrong password']);
-    }
-  },
-
-  [[OP_CLIENT_EXEC, String, 'start'], {'state =': STATE_JOINED}],
-  function(password, conn) {
-    if (conn.auth(password)) {
-      var resp = conn.exec('start');
-    } else {
-      conn.post([OP_SERVER_EXEC_RESP, 'Wrong password']);
-    }
-  },
-
-  [[OP_CLIENT_EXEC, String, 'restart'], {'state =': STATE_JOINED}],
-  function(password, conn) {
-    if (conn.auth(password)) {
-      var resp = conn.exec('restart');
-      conn.post([OP_SERVER_EXEC_RESP, resp]);
-    } else {
-      conn.post([OP_SERVER_EXEC_RESP, 'Wrong password']);
-    }
-  },
-
-  function(data) {
-    console.error(data);
-    console.error(data[1].state);
-    data[1].kill('Bad control message');
-  }
-
-);
-
-/**
- *  Processes a game message from specified player.
-var process_game_message = match (
-
-  [[OP_CLIENT_SET, 'ready'], _, _],
-  function(player, world) {
-    world.set_player_ready(player.id);
-  },
-
-  [[OP_CLIENT_SET, 'name', String], _, _],
-  function(name, player, world) {
-    world.set_player_name(player.id, name);
-  },
-
-  /**
-   *  Players command state has changed.
-  [[OP_CLIENT_STATE, Number, Number], _, _],
-  function(action, angle, player, world) {
-    player.action = action;
-    if (!player.dead) {
-      player.entity.angle = angle;
-    }
-  },
-
-  /**
-   *  The message sent by the client could not be matched. Kill the session
-  function(obj) {
-    console.error(inspect(obj[0]));
-    var connection = obj[1].connection;
-
-    if (connection.debug) {
-      console.error('Unhandled message:');
-      console.error(inspect(obj[0]));
-    }
-
-    connection.kill('Bad game message');
-  }
-
-);
-*/
-
-/**
- *  Starts a webserver that serves WPilot client related files.
+ *  Starts a webserver that serves BomberBox client related files.
  *  @param {Object} options Web server options.
  *  @return {http.Server} Returns the HTTP server instance.
  */
@@ -1177,24 +693,6 @@ function start_webserver(options, shared) {
 }
 
 /**
- *  Filters all rules from a options dict
- *  @param {Object} options A option set
- *  @return {Object} All rules that was found in the specifed option set.
- */
-
-function get_rules(default_rules, map_rules, user_rules) {
-   var rules = {};
-   for (var option in default_rules) {
-      var match = option.match(/^r_([a-z_]+)/);
-      if (match) {
-         rules[match[1]] = default_rules[option];
-      }
-   }
-   return mixin(rules, mixin(map_rules, user_rules));
-}
-
-
-/**
  *  Parses and returns server options from ARGV.
  *  @returns {Options} Server options.
  */
@@ -1205,7 +703,7 @@ function parse_options() {
          rules: {},
          maps: []
       };
-   parser.banner = 'Usage: wpilots.js [options]';
+   parser.banner = 'Usage: bomberboxserver.js [options]';
 
    parser.on('help', function () {
          console.log(parser.toString());
@@ -1226,34 +724,6 @@ function parse_options() {
 
    parser.parse(process.argv);
    return parser._halt ? null : mixin(DEFAULT_OPTIONS, result);
-}
-
-function get_unique_name(players, player_id, name) {
-   var count = 0;
-   var unique_name = name;
-   while (true) {
-      for (var id in players) {
-         if (player_id == id) {
-            continue;
-         }
-         if (players[id].name != unique_name) {
-            return unique_name;
-         }
-         count++
-      }
-      if (count == 0) {
-         return name;
-      }
-      unique_name += '_';
-   }
-}
-
-/**
- *  Returns a packet vector
- */
-
-function pack_vector(v) {
-   return [round_number(v[0], 2), round_number(v[1], 2)];
 }
 
 /**
@@ -1280,70 +750,6 @@ function mixin(a, b) {
    }
 
    return result;
-}
-
-var DT = 0.017,
-   MILLI_STEP = 16,
-   TIME_STEP = MILLI_STEP / 1000,
-   ITERATIONS = 10;
-
-/**
- *  Class GameLoop
- */
-
-function GameLoop(tick) {
-   this.ontick = function () {};
-   this.ondone = function () {};
-   this._pid = null;
-   this._kill = false;
-   this._oneach = [];
-   this.tick = tick || 0;
-}
-
-/**
- *  Starts the game loop.
- */
-GameLoop.prototype.start = function () {
-   var self = this,
-      ontick = self.ontick,
-      ondone = self.ondone,
-      accumulator = 0,
-      dt = DT,
-      current_time = new Date().getTime();
-
-   this._kill = false;
-
-   function gameloop() {
-      var new_time = new Date().getTime();
-      var delta = (new_time - current_time) / 1000;
-      current_time = new_time;
-
-      if (delta > 0.25) delta = 0.25;
-
-      accumulator += delta;
-
-      while (accumulator >= dt) {
-         accumulator -= dt;
-         ontick(self.tick, dt);
-         self.tick += dt;
-      }
-
-      ondone(self.tick, dt, accumulator / dt);
-   };
-
-   self._pid = setInterval(gameloop, 10);
-   // gameloop();
-}
-
-//
-//  method GameLoop.prototype.kill
-//  Kills a running instance.
-//
-GameLoop.prototype.kill = function () {
-   this._kill = true;
-   if (this._pid) {
-      clearInterval(this._pid);
-   }
 }
 
 // Call programs entry point

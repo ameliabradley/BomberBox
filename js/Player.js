@@ -6,7 +6,9 @@ Player = function() {
       m_weaponSlotControl,
       m_world,
       m_tile,
-      m_fnSendCommand,
+
+      // As in, not a BROADCAST
+      m_fnSendToClient,
 
       m_aDeathObservers = [],
       onDeath = function(strKilledBy) {
@@ -36,7 +38,7 @@ Player = function() {
    };
 
    self.blinkPlayer = function() {
-      m_fnSendCommand(OP_PLAYER_BLINK, m_tile.getId());
+      m_fnSendToClient(OP_PLAYER_BLINK, m_tile.getId());
    }
 
    self.activateWeapon = function() {
@@ -89,8 +91,8 @@ Player = function() {
          return;
       }
 
+      m_fnSendToClient(OP_PLAYER_MOVE, [x, y]);
       m_world.moveTile(m_tile, x, y);
-      m_fnSendCommand(OP_PLAYER_MOVE, [x, y]);
    }
 
    self.addDeathObserver = function(fnObserver) {
@@ -128,23 +130,25 @@ Player = function() {
          onDeath("Bomb");
       });
 
-      /*
       if (!m_storeControl) {
          m_storeControl = new StoreControl();
          m_storeControl.initialize(self);
       }
-      */
+
+      m_fnSendToClient(OP_PLAYER_MOVE, [iX, iY]);
+   };
+
+   self.getMoneyControl = function () {
+      return m_moneyControl;
    };
 
    self.initialize = function(fnSendCommand) {
       m_weaponSlotControl = new WeaponSlotControl();
       m_weaponSlotControl.initialize();
 
-      /*
       m_moneyControl = new MoneyControl();
       m_moneyControl.initialize();
-      */
 
-      m_fnSendCommand = fnSendCommand;
+      m_fnSendToClient = fnSendCommand;
    };
 };

@@ -27,9 +27,9 @@ Charger = function(world, x, y) {
       m_tile.destroy();
    });
 
-   m_tile.friendlyWith = function(tile) {
+   m_tile.setInteract(function(tile) {
       if (tile.dieBy) tile.dieBy('Charger');
-   }
+   });
 
    self.runAmok = function() {
       if (m_tile.isDestroyed()) return;
@@ -53,7 +53,7 @@ Charger = function(world, x, y) {
 
       if (m_aLastSeenPath) {
          wanderingEntity.setTickSpeed(iTimoutFast);
-         wanderingEntity.move(nextMove[0], nextMove[1], 4);
+         wanderingEntity.move(nextMove[0], nextMove[1], 200);
          m_tile.setStyle(TILE_STYLE.TILE_CHARGER_RED);
 
          if (m_aLastSeenPath.length == 0) {

@@ -12,6 +12,7 @@ Tile = function(world) {
       m_aStyle,
       m_strTileImage,
       m_id,
+      m_bInitialized,
 
       m_fnGetState,
       m_fnOnFrag,
@@ -29,6 +30,10 @@ Tile = function(world) {
    self.setStyle = function(aStyle) {
       m_strTileImage = aStyle[TILE_SETTING.IMAGE];
       m_aStyle = aStyle;
+
+      if (m_bInitialized) {
+         world.tileStyleChange(self);
+      }
    };
 
    self.getTileImage = function() {
@@ -41,6 +46,9 @@ Tile = function(world) {
 
    self.setText = function(strText) {
       m_strText = strText;
+      if (m_bInitialized) {
+         world.tileTextChange(self);
+      }
    };
 
    self.getText = function() {
@@ -131,10 +139,19 @@ Tile = function(world) {
 
    self.setId = function (id) {
       m_id = id;
+      m_bInitialized = true;
    };
 
    self.getId = function () {
       return m_id;
+   };
+
+   self.styleToJson = function () {
+      return m_aStyle[TILE_SETTING.ID];
+   };
+
+   self.styleFromJson = function (json) {
+      self.setStyle(TILE_STYLE[STYLE_FROM_ID[json]]);
    };
 
    self.toJson = function () {

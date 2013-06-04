@@ -14,11 +14,10 @@ Bomb = function(world, x, y, timeout, radius, fnCallback) {
    self.tryFrag = function(x, y) {
       var aTiles = world.getTilesAtPosition(x, y),
          iTotalTiles = aTiles.length,
-         bHasEntities = (iTotalTiles != 0),
-         iTraitUnfraggable = TILE_TRAIT.TRAIT_UNFRAGGABLE;
+         bHasEntities = (iTotalTiles != 0);
 
-      while (iTotalTiles--) {
-         if (aTiles[iTotalTiles].getTrait(iTraitUnfraggable)) return false;
+      if (world.locationHasTraits(x, y, [TILE_TRAIT.TRAIT_STRONG, TILE_TRAIT.TRAIT_UNFRAGGABLE])) {
+         return false;
       }
 
       new BombFragment(world, x, y);
@@ -26,9 +25,11 @@ Bomb = function(world, x, y, timeout, radius, fnCallback) {
    };
 
    self.onExplode = function() {
+      var i = radius;
+
       new BombFragment(world, x, y);
 
-      for (var i = 0; i < radius; i++) {
+      while (i--) {
          var iRadius = i + 1,
             bWest = true, bEast = true, bNorth = true, bSouth = true;
 

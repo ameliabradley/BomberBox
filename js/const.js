@@ -18,9 +18,12 @@
    OP_WORLD_CREATE_TILE = I++,
    OP_WORLD_DELETE_TILE = I++,
    OP_WORLD_MOVE_TILE = I++,
+   OP_WORLD_UPDATE_TILE_TEXT = I++,
+   OP_WORLD_UPDATE_TILE_STYLE = I++,
    OP_WORLD_ANIM_MOVE = I++,
    OP_PLAYER_BLINK = I++,
    OP_PLAYER_MOVE = I++,
+   OP_MONEY_UPDATE = I++,
 
    // TODO: Remove old OP codes
    OP_PLAYER_SPAWN = I++,
@@ -34,6 +37,7 @@
    OP_POWERUP_DIE = I++,
    OP_ROUND_STATE = I++,
    OP_PLAYER_SAY = I++,
+   OP_PING = I++,
      
    OP_REQ_SERVER_INFO = I++,
    OP_SERVER_INFO = I++,
@@ -52,10 +56,11 @@
    I = 0,
    REQ_PLAYER_MOVE = I++,
    REQ_PLAYER_FIRE = I++,
+   REQ_GAME     = I++,
+   REQ_PING     = I++,
+
 
    // Packet types
-   GAME_PACKET     = 2,
-   PING_PACKET     = 1,
 
    // World round states
    ROUND_WARMUP  = 1,
@@ -71,6 +76,7 @@
       TRAIT_BLOCKING_COMPLETE: I++,
       TRAIT_BOMB: I++,
       TRAIT_UNFRAGGABLE: I++,
+      TRAIT_STRONG: I++,
       TRAIT_PLAYER: I++
    },
 
