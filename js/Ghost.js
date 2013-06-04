@@ -23,9 +23,9 @@ Ghost = function(world, x, y) {
       m_tile.destroy();
    });
 
-   m_tile.friendlyWith = function(tile) {
+   m_tile.setInteract(function(tile) {
       if (tile.dieBy) tile.dieBy('Ghost');
-   }
+   });
 
    self.runAmok = function() {
       if (m_tile.isDestroyed()) return;
@@ -42,11 +42,11 @@ Ghost = function(world, x, y) {
          if (world.locationHasTraits(coordinates[0], coordinates[1], [TILE_TRAIT.TRAIT_BLOCKING])) {
             wanderingEntity.setTickSpeed(iTimeoutSlow);
             m_tile.setStyle(TILE_STYLE.TILE_GHOST_INCOGNITO);
-            wanderingEntity.move(coordinates[0], coordinates[1], 20);
+            wanderingEntity.move(coordinates[0], coordinates[1], 300);
          } else {
             wanderingEntity.setTickSpeed(iTimoutFast);
             m_tile.setStyle(TILE_STYLE.TILE_GHOST);
-            wanderingEntity.move(coordinates[0], coordinates[1], 4);
+            wanderingEntity.move(coordinates[0], coordinates[1], 200);
          }
       } else {
          m_tile.setStyle(TILE_STYLE.TILE_GHOST);

@@ -3,6 +3,8 @@ window.Client = function () {
    var self = this,
 
       m_ctx,
+      m_world,
+      m_worldInterface,
       m_bIsConnected = false,
       
       clientObjectManager = new ClientObjectManager(),
@@ -33,36 +35,32 @@ window.Client = function () {
 
          // P key
          case 80:
-            //self.world.togglePause();
+            //m_world.togglePause();
             break;
       }
 
-      if (self.world.isPaused()) return;
+      if (m_world.isPaused()) return;
 
       var cancel = false;
 
       switch (evt.keyCode) {
          case 37: // LEFT
          case 65: // A
-            //m_cameraCursor.shift("left");
             self.sendRequest(REQ_PLAYER_MOVE, DIR_LEFT);
             break;   
 
          case 38: // UP
          case 87: // W
-            //m_cameraCursor.shift("up");
             self.sendRequest(REQ_PLAYER_MOVE, DIR_UP);
             break;
 
          case 39: // RIGHT
          case 68: // D
-            //m_cameraCursor.shift("right");
             self.sendRequest(REQ_PLAYER_MOVE, DIR_RIGHT);
             break;
 
          case 40: // DOWN
          case 83: // S
-            //m_cameraCursor.shift("down");
             self.sendRequest(REQ_PLAYER_MOVE, DIR_DOWN);
             break;
 
@@ -71,25 +69,20 @@ window.Client = function () {
             self.sendRequest(REQ_PLAYER_FIRE);
             break;
 
-         // Z key
-         case 90:
-            //self.triggerBombs();
-            break;
-
          // Q key
          case 81:
-            self.worldInterface.decreaseZoom();
+            m_worldInterface.decreaseZoom();
             break;
 
          // E key
          case 69:
-            self.worldInterface.increaseZoom();
+            m_worldInterface.increaseZoom();
             break;
       }
    };
 
    self.renderDebugFrame = function() {
-      self.worldInterface.renderDebug(m_ctx);
+      m_worldInterface.renderDebug(m_ctx);
       requestAnimFrame(self.renderDebugFrame);
    };
 
@@ -98,9 +91,9 @@ window.Client = function () {
          self.doResize();
       }
 
-      self.world = new World();
+      m_world = new World();
+      m_worldInterface = new WorldInterface(self, m_world);
 
-      self.worldInterface = new WorldInterface(self, self.world);
       var elCanvas = document.getElementById('canvas');
       m_ctx = elCanvas.getContext('2d');
       self.doResize();
@@ -108,7 +101,7 @@ window.Client = function () {
 
       ResourceManager.addImage('btn_play.png');
       ResourceManager.loadImages(function() {
-         self.worldInterface.cacheEntities(m_ctx);
+         m_worldInterface.cacheEntities(m_ctx);
          self.renderDebugFrame();
       });
    };
@@ -116,40 +109,63 @@ window.Client = function () {
    self.doResize = function() {
       m_ctx.canvas.width = window.innerWidth;
       m_ctx.canvas.height = window.innerHeight;
-      self.worldInterface.setCameraSize(window.innerWidth, window.innerHeight);
-      self.worldInterface.renderDebug(m_ctx);
+      m_worldInterface.setCameraSize(window.innerWidth, window.innerHeight);
+      m_worldInterface.renderDebug(m_ctx);
    };
 
    self.interpretCommand = function (iCommandId, o) {
       switch (iCommandId) {
       case OP_WORLD_LOAD:
-         self.world.fromJson(o);
+         m_world.fromJson(o);
          break;
 
       case OP_WORLD_RESET:
-         self.world.reset();
+         m_world.reset();
+         //m_world = new World();
+         //m_worldInterface.setWorld(m_world);
          break;
 
       case OP_WORLD_CREATE_TILE:
-         var tile = new Tile(self.world);
+         var tile = new Tile(m_world);
          tile.fromJson(o);
-         self.world.createTileClient(tile.getId(), tile);
+         m_world.createTileClient(tile.getId(), tile);
          break;
 
       case OP_WORLD_DELETE_TILE:
-         self.world.deleteTileClient(o);
+         m_world.deleteTileClient(o);
          break;
 
       case OP_WORLD_MOVE_TILE:
-         self.world.moveTileClient(o[0], o[1], o[2]);
+         m_world.moveTileClient(o[0], o[1], o[2]);
+         break;
+
+      case OP_WORLD_UPDATE_TILE_TEXT:
+         var tile = m_world.getTile(o[0]);
+         tile.setText(o[1]);
+         break;
+
+      case OP_WORLD_UPDATE_TILE_STYLE:
+         var tile = m_world.getTile(o[0]);
+         tile.styleFromJson(o[1]);
          break;
 
       case OP_WORLD_ANIM_MOVE:
-         self.world.animMoveTileClient(o[0], o[1], o[2], o[3]);
+         m_world.animMoveTileClient(o[0], o[1], o[2], o[3]);
          break;
 
       case OP_PLAYER_BLINK:
-         self.world.blinkPlayer(o);
+         m_world.blinkPlayer(o);
+         break;
+
+      case OP_MONEY_UPDATE:
+         $("#storeSelector").html(o[0]).css({
+            backgroundColor: "#FFBF1F",
+            borderColor: "#FFF146"
+         }).animate({
+            backgroundColor: "#9a7a2f",
+            borderColor: "#9a9343"
+         }, 1000);
+         $("#storeSelectorContainer").css({ top: -50 }).animate({ top: 10 }, { duration: 600, easing: "easeOutElastic" })
          break;
 
       /*
@@ -161,7 +177,7 @@ window.Client = function () {
       */
 
       case OP_PLAYER_MOVE:
-         self.worldInterface.moveCamera(o[0], o[1], null, {
+         m_worldInterface.moveCamera(o[0], o[1], null, {
             easing: 'linear',
             duration: 800
          });

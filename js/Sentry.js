@@ -22,9 +22,9 @@ Sentry = function(world, x, y) {
       m_tile.destroy();
    });
 
-   m_tile.friendlyWith = function(tile) {
+   m_tile.setInteract(function(tile) {
       if (tile.dieBy) tile.dieBy('Sentry');
-   }
+   });
 
    wanderingEntity.startMoving();
 };

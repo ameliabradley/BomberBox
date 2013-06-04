@@ -25,6 +25,10 @@ WorldInterface = function(game, world) {
          });
       };
 
+   self.setWorld = function (world) {
+      m_world = world;
+   };
+
    self.setZoom = function(iZoom) {
       m_iCurrentZoom = iZoom;
       self.moveCamera(xPos, yPos, m_iCurrentZoom);

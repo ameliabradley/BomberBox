@@ -8,8 +8,8 @@ CarpetBombDeployer = function() {
       return m_weapon;
    };
 
-   self.initialize = function(world, energyManager) {
-      m_weapon.initialize(world, energyManager, 'WEAPON_CARPET_BOMB', {
+   self.initialize = function(world) {
+      m_weapon.initialize(world, 'WEAPON_CARPET_BOMB', {
          useWeapon: function(iX, iY) {
             new CarpetBomb(world, iX, iY, m_iTimeout, m_iBombRadius);
          },

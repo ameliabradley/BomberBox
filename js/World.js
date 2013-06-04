@@ -127,16 +127,24 @@ World = function () {
       return dRemainingTime;
    };
 
+   self.tileStyleChange = function (tile) {
+      if (m_oTileManipulationObserver) {
+         m_oTileManipulationObserver.tileStyleChange(tile);
+      }
+   };
+
+   self.tileTextChange = function (tile) {
+      if (m_oTileManipulationObserver) {
+         m_oTileManipulationObserver.tileTextChange(tile);
+      }
+   };
+
    /**
     * Set the size of the world
     * @param x the width in cells
     * @param y the height in cells
     */ 
    self.reset = function() {
-      if (m_oTileManipulationObserver) {
-         m_oTileManipulationObserver.reset();
-      }
-
       // Destroy all the tiles
       for (var i in m_aTiles) {
          var a = m_aTiles[i];
@@ -160,6 +168,10 @@ World = function () {
       each(m_aResetObservers, function(i, fn) {
          fn();
       });
+
+      if (m_oTileManipulationObserver) {
+         m_oTileManipulationObserver.reset();
+      }
    };
 
    /**
@@ -198,12 +210,16 @@ World = function () {
    };
 
    self.locationHasTraits = function(x, y, aTraits) {
-      var aEntities = self.getTilesAtPosition(x, y);
-      for (var i = 0; i < aEntities.length; i++) {
-         var tile = aEntities[i];
+      var aEntities = self.getTilesAtPosition(x, y),
+         iEntity = aEntities.length,
+         iTrait;
+
+      while (iEntity--) {
+         var tile = aEntities[iEntity];
          
-         for (var j = 0; j < aTraits.length; j++) {
-            if (tile.getTrait(aTraits[j])) return true;
+         iTrait = aTraits.length;
+         while (iTrait--) {
+            if (tile.getTrait(aTraits[iTrait])) return true;
          }
       }
 
@@ -284,6 +300,7 @@ World = function () {
       wall.setStyle(TILE_STYLE.TILE_STONE_IMMOVABLE);
       wall.setPosition(x, y);
       wall.setTrait(TILE_TRAIT.TRAIT_BLOCKING, true);
+      wall.setTrait(TILE_TRAIT.TRAIT_STRONG, true);
       self.createTile(wall);
 
       wall.setOnSuperFrag(function() {
@@ -383,16 +400,15 @@ World = function () {
       if (!m_aTiles[iPos]) { m_aTiles[iPos] = []; };
       m_aTiles[iPos].push(tile);
 
-      var aEntities = m_aTiles[iPos];
-      each(aEntities, function(i, tileAtPosition) {
-         if (tileAtPosition.friendlyWith) {
-            tileAtPosition.friendlyWith(tile);
-         };
+      var aEntities = m_aTiles[iPos],
+         iEntity = aEntities.length,
+         tileAtPosition;
 
-         if (tile.friendlyWith) {
-            tile.friendlyWith(tileAtPosition);
-         }
-      });
+      while (iEntity--) {
+         tileAtPosition = aEntities[iEntity];
+         tileAtPosition.interact(tile);
+         tile.interact(tileAtPosition);
+      }
    };
 
    self.moveTileClient = function(iTileId, x, y) {
@@ -416,40 +432,37 @@ World = function () {
       }
 
       // Get the new position, in pixels
-      var iStartX = 0,
-         iStartY = 0,
+      var iStartX = tile.getOffsetLeft(),
+         iStartY = tile.getOffsetTop(),
          iEndX = (x * TILE_DRAW_SIZE).toString(),
-         iEndY = (y * TILE_DRAW_SIZE).toString();
+         iEndY = (y * TILE_DRAW_SIZE).toString(),
+         iDeltaX = iEndX - iStartX,
+         iDeltaY = iEndY - iStartY;
 
       tile.xMovingTo = x;
       tile.yMovingTo = y;
-
-      // Smoothly move the camera
-      var iSteps = speed;
 
       var iPos = self.getIndexFromPos(x, y);
       if (!m_aTiles[iPos]) { m_aTiles[iPos] = []; };
       m_aTiles[iPos].push(tile);
 
-      var anim = new CountDown(function(i) {
-         if (tile.isDestroyed()) return;
+      Util.anim(self, {
+         end: 1,
+         duration: speed,
+         easing: "easeOutQuad",
+         step: function (i) {
+            if (tile.isDestroyed()) return;
 
-         var iStepsLeft = (iSteps - i);
-         if (iStepsLeft == 0) {
+            var xNew = Math.floor(iStartX + (iDeltaX * i)),
+               yNew = Math.floor(iStartY + (iDeltaY * i));
+
+            tile.setOffset(xNew, yNew);
+         },
+         complete: function () {
             self.moveTile(tile, x, y, true);
             if (fnCallback) fnCallback();
-            return;
-         };
-
-         var xOld = tile.getOffsetLeft(),
-            yOld = tile.getOffsetTop(),
-            xNew = Math.floor(xOld + ((iEndX - xOld) / iStepsLeft)),
-            yNew = Math.floor(yOld + ((iEndY - yOld) / iStepsLeft));
-
-         tile.setOffset(xNew, yNew);
-      }, self.setTimeout, 30, iSteps, 1);
-
-      anim.start();
+         }
+      });
    };
 
    self.createTileRect = function(rectDimensions, fnCallback) {
