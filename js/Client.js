@@ -6,22 +6,8 @@ window.Client = function () {
       m_world,
       m_worldInterface,
       m_bIsConnected = false,
-      
-      clientObjectManager = new ClientObjectManager(),
 
-      m_playerTile,
-
-      setWorld = function (worldData) {
-      },
-
-      addPlayer = function (strPlayerId, playerData) {
-      },
-
-      killPlayer = function (strPlayerId) {
-      },
-
-      updatePlayerState = function (strPlayerId, iX, iY) {
-      };
+      m_playerInformationManager = new PlayerInformationManager();
 
    document.onkeyup = function(evt) {
       evt = (evt) ? evt : ((window.event) ? event : null);
@@ -86,6 +72,21 @@ window.Client = function () {
       requestAnimFrame(self.renderDebugFrame);
    };
 
+   self.hideText = function () {
+      $("#displayText").css({
+         display: "none"
+      });
+   };
+
+   self.showText = function(strText) {
+      $("#displayText").css({
+         display: "inline"
+      }).text(strText);
+      setTimeout(function() {
+         self.hideText();
+      }, 3000);
+   };
+
    self.start = function () {
       window.onresize = function() {
          self.doResize();
@@ -121,8 +122,6 @@ window.Client = function () {
 
       case OP_WORLD_RESET:
          m_world.reset();
-         //m_world = new World();
-         //m_worldInterface.setWorld(m_world);
          break;
 
       case OP_WORLD_CREATE_TILE:
@@ -183,49 +182,43 @@ window.Client = function () {
          });
          break;
 
+      case OP_PLAYER_CONNECT:
+         var iPlayerId = o[0],
+            strPlayerName = o[1],
+            playerInformation = m_playerInformationManager.add(iPlayerId, strPlayerName);
+         break;
+
+      case OP_PLAYER_DISCONNECT:
+         var iPlayerId = o[0],
+            playerInformation = m_playerInformationManager.get(iPlayerId);
+
+         m_playerInformationManager.setConnected(false);
+         break;
+
+      case OP_PLAYER_SPAWN:
+         var iPlayerId = o[0],
+            playerInformation = m_playerInformationManager.get(iPlayerId);
+
+         playerInformation.setAlive(true);
+         break;
+
+      case OP_PLAYER_DIE:
+         var iPlayerId = o[0],
+            strCauseOfDeath = o[1],
+            playerInformation = m_playerInformationManager.get(iPlayerId),
+            strPlayerName = playerInformation.getName();
+
+         playerInformation.setAlive(false);
+         self.showText(strPlayerName + " was killed by " + strCauseOfDeath);
+         break;
+
       default:
          console.debug("unrecognized command", iCommandId, "DATA", o);
       };
    };
 
-   self.fromServerJson = function (aSerializedObjects) {
-      var iCurrent = aSerializedObjects.length,
-         oJsonObject,
-         strObjectType,
-         o;
-
-      while (iCurrent--) {
-         oJsonObject = aSerializedObjects[iCurrent];
-         strObjectType = oJsonObject[0];
-         o = oJsonObject[1];
-
-   /*
-   self.createWall = function(x, y) {
-   self.createEndWall = function(x, y) {
-   self.createGravel = function(x, y) {
-   self.createDestructibleWall = function(x, y) {
-   self.createPortalSet = function(x1, y1, x2, y2) {
-   var BombFragment = function(world, x, y, bSuper) {
-   var MoneyBlock = function(world, x, y, iAmount) {
-   var CarpetBomb = function(world, x, y, timeout, radius, fnCallback) {
-   var Bomb = function(world, x, y, timeout, radius, fnCallback) {
-   var Ghost = function(world, x, y) {
-   var Sentry = function(world, x, y) {
-   var Charger = function(world, x, y) {
-   */
-         /*
-         case OBTY_MONEYBLOCK:
-         case OBTY_CARPETBOMB:
-         case OBTY_BOMB:
-         case OBTY_BOMBFRAGMENT:
-         */
-      };
-   };
-
    self.join = function (url) {
       if (!m_bIsConnected) {
-         //self.disconnect_reason = 'Unknown reason';
-         console.debug('Trying to join server at ' + url + '...');
          self.conn = new WebSocket(url);
 
          /**

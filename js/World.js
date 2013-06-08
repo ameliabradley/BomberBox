@@ -358,17 +358,26 @@ World = function () {
          m_oTileManipulationObserver.deleteTile(tile);
       }
 
+      // Cancel the animation
+      tile.stopAnim();
+
+      // Delete the tile's index by position
       self.deletePos(tile);
+
+      // Delete the tile's index by ID
       delete m_oTileById[tile.getId()];
    };
 
    self.deletePos = function(tile, x, y) {
-      if (x == undefined) x = tile.x;
-      if (y == undefined) y = tile.y;
+      if (x === undefined) x = tile.x;
+      if (y === undefined) y = tile.y;
 
-      var aTiles = self.getTilesAtPosition(x, y);
-      for (var i = 0; i < aTiles.length; i++) {
-         if (tile.getId() == aTiles[i].getId()) {
+      var aTiles = self.getTilesAtPosition(x, y),
+         strId = tile.getId(),
+         i = aTiles.length;
+
+      while (i--) {
+         if (strId === aTiles[i].getId()) {
             aTiles.splice(i, 1);
 
             if ((x != tile.xMovingTo) || (y != tile.yMovingTo))
@@ -446,7 +455,7 @@ World = function () {
       if (!m_aTiles[iPos]) { m_aTiles[iPos] = []; };
       m_aTiles[iPos].push(tile);
 
-      Util.anim(self, {
+      var anim = Util.anim(self, {
          end: 1,
          duration: speed,
          easing: "easeOutQuad",
@@ -463,6 +472,8 @@ World = function () {
             if (fnCallback) fnCallback();
          }
       });
+
+      tile.setAnim(anim);
    };
 
    self.createTileRect = function(rectDimensions, fnCallback) {

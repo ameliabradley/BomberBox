@@ -37,6 +37,10 @@ Player = function() {
       return m_world;
    };
 
+   self.removeFromWorld = function () {
+      m_world.deleteTile(m_tile);
+   };
+
    self.blinkPlayer = function() {
       m_fnSendToClient(OP_PLAYER_BLINK, m_tile.getId());
    }

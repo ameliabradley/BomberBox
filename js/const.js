@@ -25,14 +25,15 @@
    OP_PLAYER_MOVE = I++,
    OP_MONEY_UPDATE = I++,
 
-   // TODO: Remove old OP codes
+   OP_PLAYER_CONNECT = I++,
+   OP_PLAYER_DISCONNECT = I++,
    OP_PLAYER_SPAWN = I++,
    OP_PLAYER_DIE = I++,
+
+   // TODO: Remove old OP codes
    OP_PLAYER_STATE = I++,
    OP_PLAYER_INFO = I++,
    OP_PLAYER_FIRE = I++,
-   OP_PLAYER_CONNECT = I++,
-   OP_PLAYER_DISCONNECT = I++,
    OP_POWERUP_SPAWN = I++,
    OP_POWERUP_DIE = I++,
    OP_ROUND_STATE = I++,

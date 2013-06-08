@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 
+// !!! player can set bombs after dead
+
+// !!! Better UI for store
 // !!! lobby for multi-player to wait for players to join and click "ready"
 // !!! Player position on reset
 // !!! Map generation for multi-player games
 // !!! Different player colors
 // !!! Different player spawn locations
 // !!! Basic graphics for weapons
-// !!! Better UI for store
 // ! Dialog: Start single-player or multi-player game?
 // ! Zoom out to map, then zoom to player on start
 
+// Add icons (see bookmark)
+
+// YOU DIED - Killed by X - Respawn in Y
 // Player mini-game on death (keep them occupied)
 // Winning determined by taking enemy flag and carrying it back to your own base
 
@@ -50,6 +55,9 @@ require('./js/CountDown');
 require('./js/Player');
 require('./js/Portal');
 require('./js/RectDimensions');
+
+require('./js/PlayerInformation');
+require('./js/PlayerInformationManager');
 
 require('./js/ServerObjectManager');
 require('./js/WorldGenerator');
@@ -190,6 +198,8 @@ const SERVER_VERSION = '1.0',
       "js/World.js", "js/",
       "js/WorldInterface.js", "js/",
       "js/const.js", "js/",
+      "js/PlayerInformationManager.js", "js/",
+      "js/PlayerInformation.js", "js/",
 
       "client/FABridge.js", "lib/",
       'client/swfobject.js', 'lib/',
@@ -237,8 +247,8 @@ function start_gameserver(maps, options, shared) {
       no_connections = 0,
       world = null,
       server = null,
-      update_tick = 1,
-      next_map_index = 0;
+      next_map_index = 0,
+      iPlayerTotal = 0;
 
    // Is called by the web instance to get current state
    shared.get_state = function () {
@@ -442,6 +452,8 @@ function start_gameserver(maps, options, shared) {
    server.on("connection", function (conn) {
          var connection_id = 0,
             disconnect_reason = 'Closed by client',
+            iPlayerId,
+            playerInformation = new PlayerInformation(),
             p;
 
          conn.setWorld = function (jsonWorld) {
@@ -452,28 +464,12 @@ function start_gameserver(maps, options, shared) {
          }
 
          /**
-          *  Sets client's information.
-          */
-         conn.set_client_info = function (info) {
-            conn.rate = Math.min(info.rate, options.max_rate);
-            conn.player_name = info.name;
-            conn.dimensions = info.dimensions;
-         }
-
-         conn.send_server_info = function () {
-            if (conn.debug) {
-               log('Debug: Sending server state to ' + conn);
-            }
-            conn.post(OP_SERVER_INFO, shared.get_state());
-         }
-
-         /**
           *  Sends a chat message
           */
-         conn.chat = function (message) {
-            if (conn.player) {
-               broadcast(OP_PLAYER_SAY, conn.player.id, message);
-               log('Chat ' + conn.player.id + ': ' + message);
+         conn.chat = function (strMessage) {
+            if (p) {
+               broadcast(OP_PLAYER_SAY, [iPlayerId, strMessage]);
+               log('Chat ' + iPlayerId + ': ' + strMessage);
             }
          }
 
@@ -519,7 +515,6 @@ function start_gameserver(maps, options, shared) {
 
                conn.id = connection_id;
                conn.player = null;
-               conn.player_name = null;
                conn.is_admin = false;
                conn.rate = options.max_rate;
                conn.update_rate = 2;
@@ -541,7 +536,7 @@ function start_gameserver(maps, options, shared) {
                if (false || (world.no_players >= world.max_players)) {
                   conn.kill('Server is full');
                } else {
-                  conn.post(OP_WORLD_DATA, world.map_data, world.rules);
+                  //conn.post(OP_WORLD_DATA, world.map_data, world.rules);
 
                   if (conn.debug) {
                      log('Debug: ' + conn + ' connected to server. Sending handshake...');
@@ -550,19 +545,15 @@ function start_gameserver(maps, options, shared) {
                break;
 
             case STATE_JOINED:
-               var playeridincr = 0;
-
-               //BLAHBLAH
-               //while (world.players[++playeridincr]);
-
-               // FIXME
-               //conn.player = world.add_player(playeridincr, conn.player_name);
-
                var jsonWorld = world.toJson();
                conn.post(OP_WORLD_LOAD, jsonWorld);
 
                p = new Player();
                p.initialize(conn.post);
+               p.addDeathObserver(function (strKilledBy) {
+                  log(conn + playerInformation.getName() + ' was killed by ' + strKilledBy);
+                  broadcast(OP_PLAYER_DIE, [iPlayerId, strKilledBy]);
+               });
 
                var moneyControl = p.getMoneyControl();
                moneyControl.setOnMoneyUpdate(function (iMoney) {
@@ -571,7 +562,16 @@ function start_gameserver(maps, options, shared) {
 
                p.setWorld(world, 3, 0);
 
-               log(conn + conn.player_name + ' joined the game.');
+               iPlayerId = iPlayerTotal;
+               iPlayerTotal++;
+
+               var strPlayerName = "bob" + iPlayerId.toString();
+               playerInformation.setName(strPlayerName);
+
+               broadcast(OP_PLAYER_CONNECT, [iPlayerId, strPlayerName]);
+               broadcast(OP_PLAYER_SPAWN, [iPlayerId]);
+
+               log(conn + playerInformation.getName() + ' joined the game.');
                break;
 
             case STATE_DISCONNECTED:
@@ -580,11 +580,10 @@ function start_gameserver(maps, options, shared) {
 
                   no_connections--;
 
-                  if (conn.player) {
-                     // FIXME
-                     //world.remove_player(conn.player.id, disconnect_reason);
-                     conn.player = null;
+                  if (p) {
+                     p.removeFromWorld();
                      log(conn + ' left the game (Reason: ' + disconnect_reason + ')');
+                     broadcast(OP_PLAYER_DISCONNECT, [iPlayerId]);
                   }
 
                   if (conn.debug) {
