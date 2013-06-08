@@ -1,4 +1,36 @@
 // blah
+
+// 
+// 
+// Action Types
+// 1. Server
+//    a. Send command to player
+//       1. Reset random key to increase cheating difficulty
+//    b. Interpret command in browser
+//       1. Deterministically choose the step to apply the server's command
+// 2. Player
+//    a. Send command to server
+//    b. Interpret command on server
+//       (Server Response)
+//    c. Send command to player
+//       1. Reset random key to increase cheating difficulty
+//    d. Interpret command in browser
+//       1. Deterministically choose the step to apply the server's command
+// 3. Program/AI
+//    a. Generate command from key
+//    b. Interpret command in browser
+//       1. Deterministically choose the step to apply the AI's command
+//
+// 
+// Move Management
+// 1. Store Move ID/time-step
+// 2. Store Move action/data
+// 3. Store previous move ID/time-step in each move
+// 4. Retroactively apply moves when current time-step is ahead of received time-step
+// 5. Request the previous move if/while the previous ID/time-step wasn't recieved, then apply forward
+// 6. Delete moves when all previous moves were received
+//
+//
 window.Client = function () {
    var self = this,
 
@@ -113,6 +145,7 @@ window.Client = function () {
       m_worldInterface.setCameraSize(window.innerWidth, window.innerHeight);
       m_worldInterface.renderDebug(m_ctx);
    };
+
 
    self.interpretCommand = function (iCommandId, o) {
       switch (iCommandId) {
