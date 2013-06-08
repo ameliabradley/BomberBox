@@ -18,7 +18,8 @@ Tile = function(world) {
       m_fnOnFrag,
       m_fnOnSuperFrag,
       m_fnInteract,
-      m_bManaged;
+      m_bManaged,
+      m_anim;
 
    self.xMovingTo = 0;
    self.yMovingTo = 0;
@@ -28,6 +29,8 @@ Tile = function(world) {
 
    /** CLIENT ONLY **/
    self.setStyle = function(aStyle) {
+      if (m_aStyle === aStyle) return;
+
       m_strTileImage = aStyle[TILE_SETTING.IMAGE];
       m_aStyle = aStyle;
 
@@ -127,6 +130,10 @@ Tile = function(world) {
    };
 
    self.interact = function (tile) {
+      if (m_bDestroyed) {
+         return;
+      }
+
       if (m_fnInteract) {
          m_fnInteract(tile);
       }
@@ -182,5 +189,15 @@ Tile = function(world) {
       self.xMovingTo = json[8];
       self.yMovingTo = json[9];
       m_id = json[10];
+   };
+
+   self.setAnim = function (anim) {
+      m_anim = anim;
+   };
+
+   self.stopAnim = function () {
+      if (m_anim) {
+         m_anim.stop();
+      }
    };
 };
