@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Game Move Test</title>
+      <script src="/js/MoveDatabase.js"></script>
+      <script>
+         window.addEventListener('load',function(){
+            var moveDB = new window.MoveDatabase({
+               initialState:{},
+               getMoveID:function(move){
+                  return move.moveID;
+               },
+               getLastMoveID:function(move){
+                  return move.lastMoveID;
+               },
+               getMissedMove:function(lastMoveID,fCallback){
+                  fCallback({
+                     moveID: lastMoveID,
+                     lastMoveID: null
+                  });
+               },
+               executeMoveAction:function(move,oldState){
+                  // Execute the move
+               }
+            })
+            document.getElementById('AddChangeButton').addEventListener('click',function(){
+               var eMoveInput = document.getElementById('InputMoveID');
+               var eLastMoveInput = document.getElementById('InputLastMoveID');
+               var iMoveID = parseInt(eMoveInput.value);
+               var iLastMoveID = parseInt(eLastMoveInput.value);
+               if(isNaN(iMoveID)) throw 'Must input a move ID.';
+               var move = {
+                  moveID: iMoveID,
+                  lastMoveID: (isNaN(iLastMoveID) ? null : parseInt(iLastMoveID))
+               };
+               moveDB.applyMove(move);
+               var eActionList = document.getElementById('ActionShow');
+               eActionList.appendChild(
+                  document.createTextNode(iLastMoveID.toString()+' -> '+iMoveID.toString())
+               );
+               eActionList.appendChild(document.createElement('br'));
+               var dbShow = document.getElementById('DBShow')
+               if(dbShow.lastChild) dbShow.removeChild(dbShow.lastChild);
+               if(dbShow.lastChild) dbShow.removeChild(dbShow.lastChild);
+               dbShow.appendChild(
+                  document.createTextNode(moveDB.dumpDataBase())
+               );
+               dbShow.appendChild(document.createElement('br'));
+
+               var iNewMoveID = (typeof move.moveID === 'number' ? move.moveID : 0);
+               eMoveInput.value = iNewMoveID+1;
+               eLastMoveInput.value = iNewMoveID;
+            });
+         });
+      </script>
+   </head>
+   <body>
+      <div>
+         <label>Move ID: </label><input id="InputMoveID" type="text" value="0"/>
+         <label>Last Move ID: </label><input id="InputLastMoveID" type="text" value=""/>
+         <input id="AddChangeButton" type="button" value="Add Change"/>
+      </div>
+      <div style="float:left;width:50%;height:800px;overflow:auto;white-space:pre-line;">
+         <h1>Database</h1>
+         <div id="DBShow" class="content"></div>
+      </div>
+      <div style="float:left;width:50%;height:800px;overflow:auto;white-space:pre-line;">
+         <h1>Actions</h1>
+         <div id="ActionShow" class="content"></div>
+      </div>
+   </body>
+</html>
