@@ -1,11 +1,89 @@
-window.MoveDatabase = function(initialState){
-   var moveIDs = [];
+"use strict";
+window.MoveDatabase = function(options){
+
+   validateOptions(options);
+
+   function validateOptions(options){
+      if(typeof options !== 'object'){
+         throw '[MoveDatabase] options argument should be a plain Javascript object.';
+      }
+      var requiredOptions = [
+         // 
+         // [Type, Name, [Params]]
+         //
+         // Game State
+         ['object','initialState'],
+         // Return Move ID (number) or null
+         ['function','getMoveID',['move']],
+         // Return Previous Move ID (number) or null
+         ['function','getLastMoveID',['move']],
+         // Retrieve the missing move information, then feed the move into the given callback
+         ['function','getMissedMove',['lastMoveID','fCallback']],
+         // Execute the action associated withthe given move, *NOT* including any call to applyMove.
+         ['function','executeMoveAction',['move','oldState']]
+      ];
+      var missingOptions = [];
+      for(var i=0;i<requiredOptions.length;i++){
+         if(!options.hasOwnProperty(requiredOptions[i][1]) || typeof options[requiredOptions[i][1]] !== requiredOptions[i][0]){
+            missingOptions.push(requiredOptions[i][0]+' '+requiredOptions[i][1]+(requiredOptions[i][2]?'('+requiredOptions[i][2].join(',')+')':''));
+         }
+      }
+      if(missingOptions.length > 0){
+         throw '[MoveDatabase] missing option(s):'+missingOptions.join('; ');
+      }
+   }
+   function getMoveID(move){return options.getMoveID(move);}
+   function getLastMoveID(move){return options.getLastMoveID(move);}
+   function getMissedMove(iLastMoveID,fSuccessCallback){
+      if(iLastMoveID === null) {
+         fSuccessCallback();
+         return;
+      } else {
+         return options.getMissedMove(iLastMoveID,fSuccessCallback);
+      }
+   }
+   function executeMoveAction(iLastMoveID, oldState){return options.executeMoveAction(iLastMoveID, oldState);}
+
+   var aMoveIDs = [];
    var moveHistory = [];
-   var stateHistory = [initialState];
+   var stateHistory = [options.initialState];
+
    function applyMove(dicMove,dicState){
-      moveIDs.push(dicMove['moveId']);
-      moveHistory.push(dicMove);
-      stateHistory.push(dicState);
+      var iLastMoveID = getLastMoveID(dicMove);
+      if(iLastMoveID !== null && isMoveMissing(iLastMoveID)){
+         var iTimeStep = getTimeStep(iLastMoveID);
+         var aMovesAfter = getMovesAfterStep(iTimeStep);
+         aMovesAfter.push(dicMove);
+         rollbackToStep(iTimeStep);
+         var oldState = stateHistory[stateHistory.length-1];
+
+         getMissedMove(iLastMoveID,function(missedMove){
+            if(missedMove !== undefined && missedMove !== null){
+               aMovesAfter.unshift(missedMove);
+            }
+            for(var i=0;i<aMovesAfter.length;i++){
+               executeMoveAction(aMovesAfter[i], oldState);
+               moveDB.applyMove(aMovesAfter[i]);
+            }
+         });
+      } else {
+         aMoveIDs.push(getMoveID(dicMove));
+         moveHistory.push(dicMove);
+         stateHistory.push(dicState);
+      }
+   }
+   function getTimeStep(iMoveID){
+      if(aMoveIDs.indexOf(iMoveID) !== -1){
+         var iIndex = aMoveIDs.indexOf(iMoveID);
+         if(iIndex > 0) return iIndex;
+         else return 0;
+      } else if(aMoveIDs.length > 0){
+         for(var i=0;i<aMoveIDs.length;i++){
+            if(iMoveID > aMoveIDs[i]) return i+1;
+         }
+      } else {
+         return 0;
+      }
    }
    function getMovesAfterStep(iTimeStep){
       return moveHistory.slice(iTimeStep);
@@ -20,19 +98,14 @@ window.MoveDatabase = function(initialState){
    function getTimeStep(){
       return moveHistory.length;
    }
-   function isMoveMissing(){
-      for(var i=0;i<moveHistory.length;i++){
-         var iLastMoveId = moveHistory[i]['lastMoveId'];
-         if(iLastMoveId !== undefined && iLastMoveId !== null && !moveIDs.contains(iLastMoveId)){
-            return true;
-         }
-      }
-      return false;
+   function isMoveMissing(iMissingMoveID){
+      return aMoveIDs.indexOf(iMissingMoveID) === -1;
+   }
+   function dumpDataBase(){
+      return JSON.stringify(aMoveIDs)+"\n"+
+      JSON.stringify(moveHistory)+"\n"+
+      JSON.stringify(stateHistory);
    }
    this.applyMove = applyMove;
-   this.getMovesAfterStep = getMovesAfterStep;
-   this.rollbackToStep = rollbackToStep;
-   this.getCurrentState = getCurrentState;
-   this.getTimeStep = getTimeStep;
-   this.isMoveMissing = isMoveMissing;
+   this.dumpDataBase = dumpDataBase;
 }
