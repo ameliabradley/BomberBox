@@ -240,9 +240,9 @@ WorldInterface = function(game, world) {
       if (tile.getText()) {
          ctx.font = TILE_FONT;
          ctx.textAlign = "center";
-         ctx.fillStyle = "rgba(255,255,255,0.3)";
-         ctx.fillText(tile.getText(), x + (TILE_SIZE / 2) + 1, 1 + y + (TILE_SIZE + TILE_SIZE - TILE_FONT_SIZE) / 2);
-         ctx.fillStyle = "rgba(0,0,0,0.6)";
+         //ctx.fillStyle = "rgba(255,255,255,0.3)";
+         //ctx.fillText(tile.getText(), x + (TILE_SIZE / 2) + 1, 1 + y + (TILE_SIZE + TILE_SIZE - TILE_FONT_SIZE) / 2);
+         ctx.fillStyle = "rgba(0,0,0,0.3)";
          ctx.fillText(tile.getText(), x + (TILE_SIZE / 2), y + (TILE_SIZE + TILE_SIZE - TILE_FONT_SIZE) / 2);
       }
    };

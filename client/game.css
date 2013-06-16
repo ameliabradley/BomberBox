@@ -4,6 +4,13 @@ html, body, canvas {
    position: relative;
    overflow: hidden;
    font-family: 'Strait', sans-serif;
+
+   -webkit-touch-callout: none;
+   -webkit-user-select: none;
+   -khtml-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
 }
 
 html, body {
@@ -83,238 +90,155 @@ html, body {
 }
 
 /* SIDEBAR */
-.sidebar {
-   background-color: #373741;
+#sidebar {
    position: absolute;
    left: -250px;
-   top: 0;
-   bottom: 0;
-   width: 275px;
+   top: 72px;
+   bottom: 67px;
+   width: 240px;
    z-index: 3;
    color: white;
-   border-right: 1px solid rgba(0,0,0,0.2);
-   box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
    display: none;
 }
 
-.sidebar .sidebarClose {
+.tabContent {
    position: absolute;
-   top: 0;
+   top: 37px;
+   bottom: 37px;
    right: 0;
-   padding: 15px;
-   cursor: pointer;
-   color: rgba(255,255,255,0.5);
-   font-weight: bold;
-}
-
-.sidebar .sidebarClose:hover {
-   color: #fff;
-}
-
-.sidebar .sidebarBottom {
-   position: absolute;
-   bottom: 0;
    left: 0;
-   right: 0;
-   height: 50px;
-   background-color: #585869;
-   line-height: 50px;
-   border-top: 1px solid #2c2c34;
-}
-
-.sidebar .sidebarContent {
-   position: absolute;
-   left: 0;
-   right: 0;
-   bottom: 50px;
-   top: 50px;
-}
-
-.sidebar .sidebarTitle {
-   position: absolute;
-   top: 0;
-   left: 10px;
-   font-size: 20px;
-   line-height: 50px;
-   font-weight: bold;
-   color: #FFF;
-   text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.3);
-}
-
-/* STORE */
-#storeTotalGoldLabel {
-   position: absolute;
-   left: 15px;
-   bottom: 0;
-   text-transform: uppercase;
-   font-weight: bold;
-   font-size: 15px;
-   color: rgba(0, 0, 0, 0.7);
-   text-shadow: 1px 1px rgba(255, 255, 255, 0.3);
-}
-
-#storeTotalGold {
-   position: absolute;
-   right: 15px;
-   bottom: -3px;
-   line-height: 20px;
-   margin: 10px 0px;
-   padding: 0px 10px;
-   background-color: #FFBF1F;
-   color: black;
-
-   background-color: #FFBF1F;
-   color: rgba(0, 0, 0, 0.75);
-   padding: 6px;
-   cursor: pointer;
-   border: 2px solid #FFF146;
-   border-radius: 2px;
-   font-weight: bold;
-   text-shadow: 1px 1px 0px white;
-   font-size: 17px;
-   min-width: 22px;
-   text-align: center;
-}
-
-#storeItemList {
-   padding-top: 10px;
-   padding-left: 10px;
-   padding-right: 10px;
-   overflow-y: auto;
-}
-
-#storeItemList .storeItem {
-   font-size: 13px;
-   padding-top: 15px;
-   clear: both;
-   position: relative;
-}
-
-#storeItemList .storeItemPrice {
-   float: left;
-   font-size: 15px;
-   margin-left: 5px;
-   position: relative;
-   top: 1px;
-}
-
-#storeItemList .storeItemBonus {
-   /** color: #709570; **/
-   font-size: 14px;
-}
-
-#storeItemList .storeItemDescription {
-   color: #fff;
-   font-size: 14px;
-   padding-top: 3px;
-}
-
-#storeSelector,
-#storeItemList .storeItemPrice {
-   background-color: #9a7a2f;
-   border: 2px solid #9a9343;
-   color: rgba(0,0,0,0.75);
-   padding: 3px;
-   cursor: pointer;
-   border-radius: 2px;
-   font-weight: bold;
-   text-shadow: 1px 1px 0px rgba(255,255,255,0.3);
-   box-shadow: 0px 0px 3px #000;
-}
-
-#storeSelector:hover,
-#storeItemList .storeItemPrice:hover {
-   background-color: #FFBF1F;
-   border: 2px solid #FFF146;
-   color: #000;
-}
-
-#storeItemList .storeItemTemplate {
    display: none;
+   overflow: auto;
+   background-color: #373741;
 }
 
-#storeItemList .storeSection {
-   padding-bottom: 30px;
-}
-
-#storeItemList .storeSectionTitle {
-   font-weight: bold;
-   text-transform: uppercase;
-   text-align: center;
-   padding-bottom: 5px;
-   font-size: 15px;
-   letter-spacing: 3px;
-   color: #aaa;
-   opacity: 0.5;
-}
-
-#storeItemList .storeItemTitle {
-   font-weight: bold;
-   text-transform: uppercase;
-   font-size: 15px;
-}
-
-#storeItemList .storeItemFor {
-   text-transform: uppercase;
-   font-size: 14px;
-   color: #666;
-}
-
-#storeItemList .indent {
-   padding-left: 43px;
-}
-
-#storeItemList .subItems > .storeItem {
-   padding-top: 10px;
-}
-
-#storeItemList .lineage {
-   border-left: 2px dotted rgba(255,255,255,0.1);
-   position: absolute;
-   top: 20px;
-   bottom: 10px;
-   left: 18px;
-   right: 0;
-}
-
-#storeItemList .purchased > .subItems > .storeItem > .storeItemPrice {
+.tabContent.selected {
    display: block;
 }
 
-#storeItemList .purchased > .storeItemPrice {
-   background-image: url(images/checkmark.png);
+#storeSomethingSelected {
+   display: none;
+}
+
+#sidebar .item {
+   margin: 5px 5px 0px 5px;
+   position: relative;
+   display: none;
+}
+
+#sidebar .item .side {
+   position: absolute;
+   right: 0px;
+   top: 0px;
+}
+
+#sidebar .item .sidebtn {
+   width: 35px;
+   height: 35px;
+
+   cursor: pointer;
+
+   background-image: url(/images/mod-show.png);
    background-repeat: no-repeat;
-   background-position: center center;
-   width: 18px;
-   height: 17px;
+   background-position: top left;
+
+   position: relative;
+   top: 9px;
+   right: 9px;
+
+   opacity: 0.8;
 }
 
-#storeItemList .notPurchased > .subItems > .storeItem > .storeItemPrice,
-#storeItemList .purchased > .storeItemPrice {
-   cursor: default;
-   box-shadow: none;
-   border-color: #444;
-   background-color: #373741;
-   color: #999;
-   text-shadow: none;
+#sidebar .item.selected .sidebtn {
+   right: 26px;
 }
 
-#storeItemList .storeItemDescription b,
-#storeItemList .storeItemBonus b {
-   color: #999;
-   font-weight: normal;
-   text-transform: uppercase;
-   font-size: 12px;
+#sidebar .item.expanded .sidebtn {
+   background-image: url(/images/mod-hide.png);
 }
 
-#storeItemList .storeItemFor b {
-   color: #99B;
-   font-weight: normal;
+#sidebar .item .sidebtn:hover {
+   opacity: 1;
 }
 
-#storeItemList .storeItem i {
-   color: #56BF35;
-   font-style: normal;
+#sidebar .mods {
+   margin: 0px 5px 0px 5px;
+   font-size: 14px;
+   color: #aaa;
+   display: none;
+}
+
+#sidebar .mod .main {
+   width: 202px;
+   padding: 6px;
+   background-color: #222;
+   border: 3px solid #222;
+   cursor: pointer;
+   margin-left: 10px;
+   margin-top: 5px;
+   border-radius: 3px;
+}
+
+#sidebar .mod .main:hover {
+   background-color: #333;
+   border: 3px solid #333;
+}
+
+#sidebar .mod.selected .main {
+   border: 3px solid #888;
+   background-image: url(/images/checkmark-mod.png);
+   background-position: top right;
+   background-repeat: no-repeat;
+}
+
+#sidebar .item .main {
+   width: 212px;
+   padding: 6px;
+   background-color: #3E5B7A;
+   border: 3px solid #3E5B7A;
+   cursor: pointer;
+   border-radius: 3px;
+}
+
+#sidebar .item .main:hover {
+   background-color: #436E9C;
+   border: 3px solid #436E9C;
+}
+
+#sidebar .item.selected .main {
+   border: 3px solid #39A1C4;
+   background-image: url(/images/checkmark-item.png);
+   background-position: top right;
+   background-repeat: no-repeat;
+}
+
+#sidebarBottom {
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   padding: 10px;
+   background-color: #222;
+   border-bottom-right-radius: 3px;
+   border-bottom-left-radius: 3px;
+}
+
+#btnBuy {
+   background-color: #9a7a2f;
+   position: absolute;
+   right: 5px;
+   top: 5px;
+   padding: 5px 10px;
+   cursor: pointer;
+}
+
+#btnBuy:hover {
+   background-color: #FFBF1F;
+}
+
+#btnBuy.disabled {
+   background-color: #666;
+   color: #aaa;
 }
 
 /* Progress Bar */
@@ -381,8 +305,50 @@ html, body {
    bottom: 5px;
    right: 5px;
    font-size: 22px;
-   line-height: 30px;
+   line-height: 38px;
    text-align: center;
+   cursor: pointer;
+}
+
+#storeSelector {
+   background-color: #9a7a2f;
+   border-color: #9a9343;
+}
+
+#storeSelector:hover {
+   background-color: #FFBF1F;
+   border-color: #FFF146;
+}
+
+.tab {
+   padding: 10px 0px;
+   position: absolute;
+   top: 0px;
+   text-align: center;
+   background-color: #222;
+   cursor: pointer;
+}
+
+.tab:hover {
+   background-color: #565663;
+}
+
+.tab.selected,
+.tab.selected:hover {
+   background-color: #373741;
+   cursor: default;
+}
+
+#tabStore {
+   left: 0px;
+   right: 120px;
+   border-top-left-radius: 3px;
+}
+
+#tabInventory {
+   left: 120px;
+   right: 0px;
+   border-top-right-radius: 3px;
 }
 
 /* Pause Button */
