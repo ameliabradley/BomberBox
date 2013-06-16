@@ -185,31 +185,66 @@ html, body {
 }
 
 #sidebar .mod.selected .main {
-   border: 3px solid #888;
+   /*
    background-image: url(/images/checkmark-mod.png);
    background-position: top right;
    background-repeat: no-repeat;
+   */
 }
 
 #sidebar .item .main {
    width: 212px;
    padding: 6px;
    background-color: #3E5B7A;
-   border: 3px solid #3E5B7A;
+   border: 3px solid #506a86;
    cursor: pointer;
    border-radius: 3px;
 }
 
 #sidebar .item .main:hover {
    background-color: #436E9C;
-   border: 3px solid #436E9C;
+   border: 3px solid #557ca5;
+}
+
+#sidebar .item .main:hover .cost {
+   background-color: #557ca5;
 }
 
 #sidebar .item.selected .main {
-   border: 3px solid #39A1C4;
+   /*
    background-image: url(/images/checkmark-item.png);
    background-position: top right;
    background-repeat: no-repeat;
+   */
+}
+
+#sidebar .main .cost {
+   position: absolute;
+   top: 0;
+   right: 0;
+   padding: 5px;
+   background-color: #506a86;
+   color: white;
+   border-bottom-left-radius: 3px;
+   border-top-right-radius: 3px;
+}
+
+#sidebar .tabContent .selected .main:hover .cost {
+   background-color: #e6ad22;
+}
+
+#sidebar .tabContent .selected .main:hover {
+   border: 3px solid #e6ad22;
+   background-color: #af882c;
+}
+
+#sidebar .tabContent .selected .main .cost {
+   background-color: #c29528;
+}
+
+#sidebar .tabContent .selected .main {
+   border: 3px solid #c29528;
+   background-color: #876d33;
 }
 
 #sidebarBottom {

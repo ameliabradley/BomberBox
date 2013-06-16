@@ -35,8 +35,9 @@ StoreControl = function() {
          });
       };
 
-   self.tryBuyItem = function(iItemId, storeItem) {
-      var iPrice = storeItem.itemInfo.price;
+   self.tryBuyItem = function(iItemId) {
+      var storeItem = PLAYER_ITEMS[iItemId],
+         iPrice = storeItem.itemInfo.price;
 
       if (m_moneyControl.hasMoney(iPrice)) {
          m_moneyControl.modifyMoney(-iPrice);

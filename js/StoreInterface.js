@@ -10,6 +10,25 @@ StoreInterface = function () {
       m_jStoreBuyItems,
 
       m_storeControl,
+      m_moneyControl,
+
+      enableBuyButton = function () {
+         m_jBuy.removeClass("disabled").text("Buy");
+      },
+
+      disableBuyButton = function () {
+         m_jBuy.addClass("disabled").text("Not Enough");
+      },
+
+      hideNothingSelected = function () {
+         m_jStoreNothingSelected.hide();
+         m_jStoreSomethingSelected.show();
+      },
+
+      showNothingSelected = function () {
+         m_jStoreNothingSelected.show();
+         m_jStoreSomethingSelected.hide();
+      },
 
       formatPrice = function (iPrice) {
          return iPrice.toString() + " G";
@@ -20,13 +39,14 @@ StoreInterface = function () {
          m_jStoreTotalGold.text(m_iTotalPrice);
 
          if (m_iTotalPrice === 0) {
-            m_jBuy.addClass("disabled");
-            m_jStoreNothingSelected.show();
-            m_jStoreSomethingSelected.hide();
+            showNothingSelected();
          } else {
-            m_jBuy.removeClass("disabled");
-            m_jStoreNothingSelected.hide();
-            m_jStoreSomethingSelected.show();
+            hideNothingSelected();
+            if (m_moneyControl.hasMoney(m_iTotalPrice)) {
+               enableBuyButton();
+            } else {
+               disableBuyButton();
+            }
          }
       },
 
@@ -146,12 +166,16 @@ StoreInterface = function () {
       m_jStoreModTemplate = m_jStoreBody.find(".mod:first");
       m_jStoreTotalGold = $("#storeTotalGold");
       m_jBuy = $("#btnBuy");
+      m_jBuy.click(function () {
+      });
 
       m_jStoreNothingSelected = $("#storeNothingSelected");
       m_jStoreSomethingSelected = $("#storeSomethingSelected");
 
+      m_moneyControl = moneyControl;
+
       m_storeControl = new StoreControl();
-      m_storeControl.initialize(moneyControl, {
+      m_storeControl.initialize(m_moneyControl, {
          onAddItem: function (iItemId, storeInfo) {
             var itemInfo = storeInfo.itemInfo;
             addStoreItem({
