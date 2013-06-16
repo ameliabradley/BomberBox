@@ -639,6 +639,7 @@ function start_gameserver(maps, options, shared) {
 
                case REQ_BUY:
                   // TODO: Purchasing items
+                  //p.getStoreControl().tryBuyItemr
                   break;
 
                case REQ_PLAYER_FIRE:
