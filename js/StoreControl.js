@@ -1,103 +1,63 @@
 StoreControl = function() {
    var self = this,
-      m_player,
 
+      m_moneyControl,
       m_oPurchasedItems = {},
-      m_oFnOnPurchase = {},
-      m_interfaceElements = {};
+      m_observer,
 
-   this.tryBuyItem = function(strId, storeItem) {
-      var iPrice = storeItem.itemInfo.price,
-         moneyControl = m_player.getMoneyControl();
+      onBuyItem = function(iItemId, storeItem) {
+         // Weapon Upgrad
+         //m_player.getWeaponSlotControl().upgradeWeapon(storeInfo.weaponModInfo.forWeapon, storeInfo);
 
-      if (moneyControl.hasMoney(iPrice)) {
-         moneyControl.modifyMoney(-iPrice);
-         m_oFnOnPurchase[strId]();
-      }
-   };
-
-   this.addClick = function(jItem, strId, storeItem) {
-      jItem.hammer({ prevent_default: true }).bind("tap", function() {
-         self.tryBuyItem(strId, storeItem);
-      });
-   }
-
-   this.onBuyWeapon = function(strId, storeInfo) {
-      m_player.addWeapon(strId);
-   }
-
-   this.onBuyWeaponMod = function(strId, storeInfo) {
-      m_player.getWeaponSlotControl().upgradeWeapon(storeInfo.weaponModInfo.forWeapon, storeInfo);
-   };
-
-   this.onBuyPlayerUpgrade = function(strId, storeInfo) {
-      var upgrade = storeInfo.playerUpgradeInfo;
-      if (upgrade.addEnergy) {
-         var energyManager = m_player.getEnergyManager(),
-            iMax = energyManager.getMax();
-
-         energyManager.setMax(iMax + upgrade.addEnergy);
-      }
-   };
-
-   this.onBuyBombMod = function(strId, storeInfo) {
-   };
-
-   this.addList = function(oList) {
-      each(oList, function(strId, storeItem) {
-         var fnOnBuy, itemInfo = storeItem.itemInfo;
-
-         switch (itemInfo.type) {
-            case ITEM_TYPE.TYPE_WEAPON:
-               fnOnBuy = self.onBuyWeapon;
-               break;
-
-            case ITEM_TYPE.TYPE_WEAPON_MOD:
-               fnOnBuy = self.onBuyWeaponMod;
-               break;
-
-            case ITEM_TYPE.TYPE_PLAYER_UPGRADE:
-               fnOnBuy = self.onBuyPlayerUpgrade;
-               break;
-
-            case ITEM_TYPE.TYPE_BOMB_MOD:
-               fnOnBuy = self.onBuyBombMod;
-               break;
-         }
-
+         // Player Upgrade
          /*
-         var bRequirementsMet = true;
-         if (oInfo.requires) {
-            each(oInfo.requires, function(i, strRequiresName) {
-               if (!m_oPurchasedItems[strRequiresName]) {
-                  bRequirementsMet = false;
-                  return false;
-               }
-            });
-         }
+         var upgrade = storeInfo.playerUpgradeInfo;
+         if (upgrade.addEnergy) {
+            var energyManager = m_player.getEnergyManager(),
+               iMax = energyManager.getMax();
 
-         if (!bRequirementsMet) return;
+            energyManager.setMax(iMax + upgrade.addEnergy);
+         }
          */
+         m_observer.onBuyItem(iItemId, storeItem);
+         m_oPurchasedItems[iItemId] = storeItem;
+      },
 
-         m_oFnOnPurchase[strId] = function() {
-            //self.purchaseInterfaceItem(strId);
+      addAvailableItems = function(oList) {
+         each(oList, function(iItemId, storeItem) {
+            var itemInfo = storeItem.itemInfo;
 
-            // Add items that require this item
-            m_oPurchasedItems[strId] = storeItem;
+            m_observer.onAddItem(iItemId, storeItem);
 
-            // Upgrade player weapon
-            fnOnBuy(strId, storeItem);
-         };
+            if (itemInfo.price === PRICE_PLAYER_STARTING_ITEM) {
+               self.tryBuyItem(iItemId, storeItem);
+            }
+         });
+      };
 
-         if (itemInfo.price === PRICE_PLAYER_STARTING_ITEM) {
-            self.tryBuyItem(strId, storeItem);
-         }
-      });
-   }
+   self.tryBuyItem = function(iItemId, storeItem) {
+      var iPrice = storeItem.itemInfo.price;
 
-   this.initialize = function(player) {
-      m_player = player;
+      if (m_moneyControl.hasMoney(iPrice)) {
+         m_moneyControl.modifyMoney(-iPrice);
+         onBuyItem(iItemId, storeItem);
+         return true;
+      } else {
+         return false;
+      }
+   };
 
-      self.addList(PLAYER_ITEMS);
+   self.isPurchased = function (iItemId) {
+      return (m_oPurchasedItems[iItemId] !== undefined);
+   };
+
+   self.getPurchasedItems = function () {
+      return m_oPurchasedItems;
+   };
+
+   self.initialize = function (moneyControl, observer) {
+      m_moneyControl = moneyControl;
+      m_observer = observer;
+      addAvailableItems(PLAYER_ITEMS);
    };
 };

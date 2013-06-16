@@ -50,6 +50,9 @@
    <script src="js/WorldInterface.js"></script>
    <script src="js/PlayerInformation.js"></script>
    <script src="js/PlayerInformationManager.js"></script>
+   <script src="js/MoneyControl.js"></script>
+   <script src="js/StoreControl.js"></script>
+   <script src="js/StoreInterface.js"></script>
    <script src="js/const.js"></script>
 
 <script>
@@ -125,38 +128,43 @@ $(document).ready(function() {
       <span id="displayText" class="hud">Test</span>
    </div>
 
-   <div id="storeContainer" class="sidebar">
-      <div class="sidebarTitle">UPGRADE PATHS</div>
-      <div class="sidebarClose">X</div>
-      <div id="storeItemList" class="sidebarContent">
-         <div class="storeItem storeItemTemplate notPurchased">
-            <div class="lineage"></div>
-            <div class="storeItemPrice"></div>
-            <div class="indent">
-               <div class="storeItemTitle"></div>
-               <div class="storeItemFor"></div>
-               <div class="storeItemBonus"></div>
-               <div class="storeItemRequires"></div>
-               <div class="storeItemDescription"></div>
+   <div id="sidebar">
+      <div id="tabContainer">
+         <div id="tabStore" class="tab selected">Buy</div>
+         <div id="tabInventory" class="tab">Sell</div>
+      </div>
+      <div id="bodyStore" class="tabContent selected">
+         <div class="item">
+            <div class="main">
+               <div class="title">Freeze Trap</div>
+               <div class="cost">20 G</div>
             </div>
-            <div class="subItems"></div>
+            <div class="side">
+               <div class="btnMods sidebtn"></div>
+            </div>
          </div>
-         <div id="storeSectionCharacter" class="storeSection">
-            <div class="storeSectionTitle">Character</div>
-            <div class="container"></div>
-         </div>
-         <div id="storeSectionWeapons" class="storeSection">
-            <div class="storeSectionTitle">Weapons</div>
-            <div class="container"></div>
-         </div>
-         <div id="storeSectionMisc" class="storeSection">
-            <div class="storeSectionTitle">Misc</div>
-            <div class="container"></div>
+         <div class="mods">
+            <div class="mod">
+               <div class="main">
+                  <div class="title">Metalic Thumb</div>
+                  <div class="cost">20 G</div>
+               </div>
+            </div>
          </div>
       </div>
-      <div class="sidebarBottom">
-         <div id="storeTotalGoldLabel">Your Experience:</div>
-         <div id="storeTotalGold">0</div>
+      <div id="bodyInventory" class="tabContent">
+      </div>
+      <div id="sidebarBottom">
+         <div id="storeNothingSelected">
+            No items selected
+         </div>
+         <div id="storeSomethingSelected">
+            <div id="storeTotalGoldLabel">
+               Price:
+               <span id="storeTotalGold">0</span> G
+            </div>
+            <div id="btnBuy" class="disabled">Buy</div>
+         </div>
       </div>
    </div>
 

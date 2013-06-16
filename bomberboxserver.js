@@ -160,6 +160,11 @@ const SERVER_VERSION = '1.0',
 
       "client/images/btn_play.png", "images/",
       "client/images/btn_pause.png", "images/",
+      "client/images/checkmark-item.png", "images/",
+      "client/images/checkmark-mod.png", "images/",
+
+      "client/images/mod-show.png", "images/",
+      "client/images/mod-hide.png", "images/",
 
       "lib/jquery-1.8.2.js", "lib/",
       "lib/jquery-ui/jquery-ui.css", "lib/jquery-ui/",
@@ -200,6 +205,9 @@ const SERVER_VERSION = '1.0',
       "js/const.js", "js/",
       "js/PlayerInformationManager.js", "js/",
       "js/PlayerInformation.js", "js/",
+      "js/MoneyControl.js", "js/",
+      "js/StoreControl.js", "js/",
+      "js/StoreInterface.js", "js/",
 
       "client/FABridge.js", "lib/",
       'client/swfobject.js', 'lib/',
@@ -627,6 +635,10 @@ function start_gameserver(maps, options, shared) {
 
                case REQ_PLAYER_MOVE:
                   p.shift(packet[1]);
+                  break;
+
+               case REQ_BUY:
+                  // TODO: Purchasing items
                   break;
 
                case REQ_PLAYER_FIRE:

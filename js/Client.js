@@ -1,4 +1,5 @@
 // blah
+// BACKPACK ICON
 
 // 
 // 
@@ -39,7 +40,13 @@ window.Client = function () {
       m_worldInterface,
       m_bIsConnected = false,
 
-      m_playerInformationManager = new PlayerInformationManager();
+      m_bRendering = true,
+
+      m_playerInformationManager = new PlayerInformationManager(),
+      m_storeInterface = new StoreInterface(),
+      m_moneyControl = new MoneyControl(),
+
+      m_jGold;
 
    document.onkeyup = function(evt) {
       evt = (evt) ? evt : ((window.event) ? event : null);
@@ -100,8 +107,54 @@ window.Client = function () {
    };
 
    self.renderDebugFrame = function() {
+      if (!m_bRendering) return;
       m_worldInterface.renderDebug(m_ctx);
       requestAnimFrame(self.renderDebugFrame);
+   };
+
+   self.setupSidebar = function () {
+      var jSidebar = $("#sidebar"),
+         bShowing = false,
+         iLeftShowing = 13,
+         iLeftHiding = -280;
+
+      m_storeInterface.initialize(m_moneyControl);
+
+      m_moneyControl.setOnMoneyUpdate(function (iMoney) {
+         var jStoreSelector = $("#storeSelector"),
+            strMoney = iMoney.toString();
+
+         jStoreSelector.html(strMoney).css({
+            backgroundColor: "#FFBF1F",
+            borderColor: "#FFF146"
+         }).animate({
+            backgroundColor: "#9a7a2f",
+            borderColor: "#9a9343"
+         }, {
+            duration: 1000,
+            complete: function () {
+               jStoreSelector.css({
+                  backgroundColor: "",
+                  borderColor: ""
+               });
+            }
+         });
+         m_jGold.css({ top: -50 }).animate({ top: 10 }, { duration: 600, easing: "easeOutElastic" })
+      });
+
+      m_jGold = $("#storeSelectorContainer");
+      m_jGold.click(function () {
+         jSidebar
+            .show()
+            .stop()
+            .animate({
+               left: (bShowing) ? iLeftHiding : iLeftShowing
+            }, {
+               easing: 'easeOutQuad'
+            });
+
+         bShowing = !bShowing;
+      });
    };
 
    self.hideText = function () {
@@ -131,6 +184,8 @@ window.Client = function () {
       m_ctx = elCanvas.getContext('2d');
       self.doResize();
       //self.reset();
+
+      self.setupSidebar();
 
       ResourceManager.addImage('btn_play.png');
       ResourceManager.loadImages(function() {
@@ -190,14 +245,7 @@ window.Client = function () {
          break;
 
       case OP_MONEY_UPDATE:
-         $("#storeSelector").html(o[0]).css({
-            backgroundColor: "#FFBF1F",
-            borderColor: "#FFF146"
-         }).animate({
-            backgroundColor: "#9a7a2f",
-            borderColor: "#9a9343"
-         }, 1000);
-         $("#storeSelectorContainer").css({ top: -50 }).animate({ top: 10 }, { duration: 600, easing: "easeOutElastic" })
+         m_moneyControl.setMoney(o[0]);
          break;
 
       /*
@@ -276,6 +324,12 @@ window.Client = function () {
          */
          self.conn.onmessage = function(event) {
             self.receiveCommand(event.data);
+         }
+
+         self.conn.onclose = function () {
+            m_bRendering = false;
+            // TODO: More permanant display for closed connection
+            self.showText("Connection to server was closed");
          }
       }
    };

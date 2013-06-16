@@ -136,7 +136,20 @@ Player = function() {
 
       if (!m_storeControl) {
          m_storeControl = new StoreControl();
-         m_storeControl.initialize(self);
+         m_storeControl.initialize(m_moneyControl, {
+            onBuyItem: function (iItemId, storeItem) {
+               var itemInfo = storeItem.itemInfo;
+
+               switch (itemInfo.type) {
+               case ITEM_TYPE.TYPE_WEAPON:
+                  self.addWeapon(iItemId);
+                  break;
+               // TODO: Buy mods
+               }
+            },
+            onAddItem: function (iItemId, storeItem) {
+            }
+         });
       }
 
       m_fnSendToClient(OP_PLAYER_MOVE, [iX, iY]);

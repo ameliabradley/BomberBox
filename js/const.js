@@ -57,6 +57,7 @@
    I = 0,
    REQ_PLAYER_MOVE = I++,
    REQ_PLAYER_FIRE = I++,
+   REQ_BUY      = I++,
    REQ_GAME     = I++,
    REQ_PING     = I++,
 
