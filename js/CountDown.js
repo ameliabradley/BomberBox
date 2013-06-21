@@ -7,11 +7,11 @@
  * @param iStart the starting point
  */
 CountDown = function (fnCallback, setTimeout, iInterval, iEnd, iIncrement) {
-   var self = this;
-   self.cancelled = false;
+   var self = this,
+      m_bCancelled = false;
 
    self.start = function(iStart) {
-      if (self.cancelled) return;
+      if (m_bCancelled) return;
       if (!iStart) iStart = 0;
 
       fnCallback(iStart);
@@ -25,6 +25,6 @@ CountDown = function (fnCallback, setTimeout, iInterval, iEnd, iIncrement) {
    }
    
    self.cancel = function() {
-      self.cancelled = true;
+      m_bCancelled = true;
    }
 }
