@@ -1,5 +1,9 @@
 World = function () {
+   "use strict";
+
    var self = this,
+
+   bCleared = false,
 
       // Tiles
       m_iTotalTiles = 0, m_aTiles = [], m_oTileById  = {},
@@ -9,7 +13,7 @@ World = function () {
       m_iTotalBackgroundTiles = 0, m_aBackgroundTiles = [], m_oBackgroundTilesById = {},
 
       // Timeout
-      m_oTimeouts = {},
+      m_oTimeouts = {}, m_iTimeoutId = 0,
       m_dPauseTime = 0, m_dWorldTimeOffset = new Date(), m_aOnResume = [], m_aPauseObserver = [],
       m_aResetObservers = [];
 
@@ -40,11 +44,16 @@ World = function () {
 
       oInfo.fn = fnWrapper;
       oInfo.id = iTimeoutId;
-      oInfo.origId = iTimeoutId;
 
-      m_oTimeouts[iTimeoutId] = oInfo;
+      // This custom timeout ID is REQUIRED for compatibility
+      // with Node.js (which, as of the latest version, returns
+      // an object instead of a Number for timeouts)
+      oInfo.origId = m_iTimeoutId;
 
-      return iTimeoutId;
+      m_oTimeouts[m_iTimeoutId] = oInfo;
+      m_iTimeoutId++;
+
+      return m_iTimeoutId;
    };
 
    self.isPaused = function() {
