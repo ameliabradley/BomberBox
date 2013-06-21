@@ -175,7 +175,17 @@ Player = function() {
 
    self.initialize = function(fnSendCommand) {
       m_weaponSlotControl = new WeaponSlotControl();
-      m_weaponSlotControl.initialize();
+      m_weaponSlotControl.initialize({
+         onSetWeapon: function (iWeaponSlot) {
+            m_fnSendToClient(OP_PLAYER_WEAPON_SET, iWeaponSlot);
+         },
+         onAddWeapon: function (iWeaponSlot, iItemId) {
+            m_fnSendToClient(OP_PLAYER_WEAPON_ADD, [iWeaponSlot, iItemId]);
+         },
+         onRemoveWeapon: function (iWeaponSlot, iItemId) {
+            m_fnSendToClient(OP_PLAYER_WEAPON_REMOVE, [iWeaponSlot, iItemId]);
+         }
+      });
 
       m_moneyControl = new MoneyControl();
       m_moneyControl.initialize();
