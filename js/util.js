@@ -351,10 +351,18 @@ Util = {
  * @param fn the function to call
  */
 each = function(a, fn) {
-   for (var key in a) {
-      if (a.hasOwnProperty(key)) {
-         var bValue = fn(key, a[key]);
+   var len = a.length, key, bValue;
+   if (len) {
+      for (var key = 0; key < len; key++) {
+         bValue = fn(key, a[key]);
          if (bValue === false) break;
+      }
+   } else {
+      for (key in a) {
+         if (a.hasOwnProperty(key)) {
+            bValue = fn(key, a[key]);
+            if (bValue === false) break;
+         }
       }
    }
 };

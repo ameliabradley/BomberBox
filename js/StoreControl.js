@@ -1,4 +1,6 @@
 StoreControl = function() {
+   "use strict";
+
    var self = this,
 
       m_moneyControl,
@@ -23,8 +25,13 @@ StoreControl = function() {
          m_oPurchasedItems[iItemId] = storeItem;
       },
 
-      addAvailableItems = function(oList) {
-         each(oList, function(iItemId, storeItem) {
+      onSellItem = function (iItemId, storeItem) {
+         m_observer.onSellItem(iItemId, storeItem);
+         delete m_oPurchasedItems[iItemId];
+      },
+
+      addAvailableItems = function (alist) {
+         each(alist, function(iItemId, storeItem) {
             var itemInfo = storeItem.itemInfo;
 
             m_observer.onAddItem(iItemId, storeItem);
@@ -35,17 +42,46 @@ StoreControl = function() {
          });
       };
 
-   self.tryBuyItem = function(iItemId) {
-      var storeItem = PLAYER_ITEMS[iItemId],
-         iPrice = storeItem.itemInfo.price;
+   /**
+    * Tries to buy the item with the specified item ID
+    * Does not trust input to be valid
+    */
+   self.tryBuyItem = function (iItemId) {
+      var storeItem,
+         iPrice,
+         bOwned = m_oPurchasedItems[iItemId];
+
+      if (bOwned) {
+         return PURCHASE_ERROR_ITEM_ALREADY_OWNED;
+      }
+
+      storeItem = PLAYER_ITEMS[iItemId];
+      iPrice = storeItem.itemInfo.price;
 
       if (m_moneyControl.hasMoney(iPrice)) {
          m_moneyControl.modifyMoney(-iPrice);
          onBuyItem(iItemId, storeItem);
-         return true;
+         return PURCHASE_SUCCESS;
       } else {
-         return false;
+         return PURCHASE_ERROR_INSUFFICIENT_FUNDS;
       }
+   };
+
+   self.trySellItem = function (iItemId) {
+      var storeItem,
+         iPrice,
+         bOwned = m_oPurchasedItems[iItemId];
+
+      if (!bOwned) {
+         return SELL_ERROR_ITEM_NOT_OWNED;
+      }
+
+      storeItem = PLAYER_ITEMS[iItemId];
+      iPrice = storeItem.itemInfo.price;
+
+      m_moneyControl.modifyMoney(iPrice);
+      onSellItem(iItemId, storeItem);
+      return SELL_SUCCESS;
    };
 
    self.isPurchased = function (iItemId) {

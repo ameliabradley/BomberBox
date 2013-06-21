@@ -130,14 +130,14 @@ $(document).ready(function() {
 
    <div id="sidebar">
       <div id="tabContainer">
-         <div id="tabStore" class="tab selected">Buy</div>
-         <div id="tabInventory" class="tab">Sell</div>
+         <div id="tabBuy" class="tab selected">Buy</div>
+         <div id="tabSell" class="tab">Sell</div>
       </div>
-      <div id="bodyStore" class="tabContent selected">
+      <div id="bodyBuy" class="tabContent selected">
          <div class="item">
             <div class="main">
                <div class="title">Freeze Trap</div>
-               <div class="subtitle">(subtitle)</div>
+               <div class="subtitle"></div>
                <div class="cost">20 G</div>
             </div>
             <div class="side">
@@ -153,18 +153,30 @@ $(document).ready(function() {
             </div>
          </div>
       </div>
-      <div id="bodyInventory" class="tabContent">
+      <div id="bodySell" class="tabContent">
       </div>
-      <div id="sidebarBottom">
-         <div id="storeNothingSelected">
-            No items selected
+      <div id="sidebarBuyBottom" class="sidebarBottom">
+         <div class="storeNothingSelected">
+            Select items to buy
          </div>
-         <div id="storeSomethingSelected">
-            <div id="storeTotalGoldLabel">
+         <div class="storeSomethingSelected">
+            <div class="totalLabel">
                Total:
-               <span id="storeTotalGold">0</span> G
+               <span class="totalText">0</span> G
             </div>
-            <div id="btnBuy" class="disabled">Buy</div>
+            <div class="btnFinish disabled">Buy</div>
+         </div>
+      </div>
+      <div id="sidebarSellBottom" class="sidebarBottom">
+         <div class="storeNothingSelected">
+            Select items to sell
+         </div>
+         <div class="storeSomethingSelected">
+            <div class="totalLabel">
+               Total:
+               <span class="totalText">0</span> G
+            </div>
+            <div class="btnFinish disabled">Sell</div>
          </div>
       </div>
    </div>
@@ -173,11 +185,14 @@ $(document).ready(function() {
       <div id="storeSelector">0</div>
    </div>
 
+   <!--
+   TODO: Add for single-player
    <div id="pauseContainer" class="hud">
       <div id="pauseButton">
          <img src="images/btn_pause.png" height="100%" />
       </div>
    </div>
+   -->
 
    <div id="weaponSelectionContainer" class="hud">
       <div class="weaponSlot disabled selected"><div class="slotCooldown"></div></div>

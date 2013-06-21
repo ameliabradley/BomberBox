@@ -9,7 +9,8 @@ BombDeployer = function() {
    };
 
    self.initialize = function(world) {
-      m_weapon.initialize(world, 'WEAPON_BOMB', {
+      // TODO: Use better ID than 0
+      m_weapon.initialize(world, WEAPON_BOMB, {
          useWeapon: function(iX, iY) {
             new Bomb(world, iX, iY, m_iTimeout, m_iBombRadius);
          },

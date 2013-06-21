@@ -12,6 +12,8 @@
    INT_SIZE = 32, // While the ints are actually larger, ECMA-262 bitwise operators act as if the int is 32 bits
    INT_HALF_AND = 0xFFFF, // Used to clear out the first half of the bits
 
+   /* SERVER COMMANDS TO CLIENT
+    *=======================*/
    I = 0,
    OP_WORLD_LOAD = I++,
    OP_WORLD_RESET = I++,
@@ -24,6 +26,12 @@
    OP_PLAYER_BLINK = I++,
    OP_PLAYER_MOVE = I++,
    OP_MONEY_UPDATE = I++,
+
+   OP_BUY_SUCCESS = I++,
+   OP_BUY_FAILURE = I++,
+
+   OP_SELL_SUCCESS = I++,
+   OP_SELL_FAILURE = I++,
 
    OP_PLAYER_CONNECT = I++,
    OP_PLAYER_DISCONNECT = I++,
@@ -54,13 +62,24 @@
    OP_CLIENT_EXEC = I++,
    OP_CLIENT_SAY = I++,
 
+   /* CLIENT REQUESTS TO SERVER
+    *=======================*/
    I = 0,
    REQ_PLAYER_MOVE = I++,
    REQ_PLAYER_FIRE = I++,
    REQ_BUY      = I++,
+   REQ_SELL      = I++,
    REQ_GAME     = I++,
    REQ_PING     = I++,
 
+   I = 0,
+   PURCHASE_SUCCESS = I++,
+   PURCHASE_ERROR_INSUFFICIENT_FUNDS = I++,
+   PURCHASE_ERROR_ITEM_ALREADY_OWNED = I++,
+
+   I = 0,
+   SELL_SUCCESS = I++,
+   SELL_ERROR_ITEM_NOT_OWNED = I++,
 
    // Packet types
 
@@ -91,91 +110,33 @@
       TYPE_BOMB_MOD: 4
    },
 
-   PLAYER_ITEMS = {
-      /** PLAYER ATTRIBUTES **/
-      PLAYER_ENERGY_TRAINING: {
-         itemInfo: {
-            name: "Energy Training",
-            type: ITEM_TYPE.TYPE_PLAYER_UPGRADE,
-            price: 10,
-            description: "",
-            bonus: "",
-            parentItem: null
-         },
-         playerUpgradeInfo: {
-            addEnergy: 100
-         }
-      },
-      PLAYER_ENERGY_TRAINING2: {
-         itemInfo: {
-            name: "Energy Training 2",
-            type: ITEM_TYPE.TYPE_PLAYER_UPGRADE,
-            price: 10,
-            description: "",
-            bonus: "",
-            parentItem: "PLAYER_ENERGY_TRAINING"
-         },
-         playerUpgradeInfo: {
-            addEnergy: 100
-         }
-      },
+   // IMPORTANT: Must sync with item ID
+   I = 0,
+   WEAPON_BOMB = I++,
+   WEAPON_CARPET_BOMB = I++,
 
-      /** BOMB **/
-      WEAPON_BOMB: {
+   I = 0,
+   PLAYER_ITEMS = [
+      {
          itemInfo: {
+            id: WEAPON_BOMB,
             name: "Bomb",
+            description: "Standard Bomb",
             type: ITEM_TYPE.TYPE_WEAPON,
-            price: PRICE_PLAYER_STARTING_ITEM,
-            description: "Your basic timed explosion",
-            bonus: "",
-            parentItem: null
+            price: PRICE_PLAYER_STARTING_ITEM
          },
          weaponInfo: {
             cooldown: 0,
             energy: 50
          }
       },
-      WEAPONMOD_DEPLOYER_EFFICIENCY: {
+      {
          itemInfo: {
-            name: "Deployer Efficiency",
-            type: ITEM_TYPE.TYPE_WEAPON_MOD,
-            price: 10,
-            description: "",
-            bonus: "-25 Energy Usage",
-            parentItem: "WEAPON_BOMB"
-         },
-         weaponModInfo: {
-            forWeapon: "WEAPON_BOMB",
-            cooldown: 0,
-            energy: 25
-         }
-      },
-      WEAPONMOD_BOMB_M2: {
-         itemInfo: {
-            name: "M2",
-            type: ITEM_TYPE.TYPE_WEAPON_MOD,
-            price: 10,
-            description: "",
-            bonus: "+1 Radius",
-            parentItem: "WEAPON_BOMB"
-         },
-         weaponModInfo: {
-            forWeapon: "WEAPON_BOMB",
-            cooldown: null,
-            energy: null
-         },
-         bombUpgradeInfo: {
-            radius: 2
-         }
-      },
-
-      /** CARPET BOMB **/
-      WEAPON_CARPET_BOMB: {
-         itemInfo: {
+            id: WEAPON_CARPET_BOMB,
             name: "Carpet Bomb",
             type: ITEM_TYPE.TYPE_WEAPON,
             price: 30,
-            description: "Destroys almost all blocks and explodes in circle. Very effective.",
+            description: "Destroys almost all blocks in a circle",
             bonus: "",
             parentItem: null
          },
@@ -183,25 +144,8 @@
             cooldown: 15000,
             energy: 200
          }
-      },
-      WEAPONMOD_CARPET_BOMB_M2: {
-         itemInfo: {
-            name: "M2",
-            type: ITEM_TYPE.TYPE_WEAPON_MOD,
-            price: 20,
-            description: "",
-            bonus: "30% Faster Recharge",
-            parentItem: "WEAPON_CARPET_BOMB"
-         },
-         weaponModInfo: {
-            forWeapon: "WEAPON_CARPET_BOMB",
-            cooldown: 10000,
-            energy: null
-         }
       }
-
-      /** Item - Hint of Glory ... very expensive? does absolutely nothing, but has awesome sub items */
-   },
+   ],
 
    DIR_LEFT = 0,
    DIR_RIGHT = 1,

@@ -119,6 +119,14 @@ window.Client = function () {
          iLeftHiding = -280;
 
       m_storeInterface.initialize(m_moneyControl);
+      m_storeInterface.setObserver({
+         onBuy: function (aItemIds) {
+            self.sendRequest(REQ_BUY, aItemIds);
+         },
+         onSell: function (aItemIds) {
+            self.sendRequest(REQ_SELL, aItemIds);
+         }
+      });
 
       m_moneyControl.setOnMoneyUpdate(function (iMoney) {
          var jStoreSelector = $("#storeSelector"),
@@ -246,6 +254,17 @@ window.Client = function () {
 
       case OP_MONEY_UPDATE:
          m_moneyControl.setMoney(o[0]);
+         break;
+
+      case OP_BUY_SUCCESS:
+         m_storeInterface.buyItemsSuccess(o);
+         break;
+
+      case OP_BUY_FAILURE:
+         break;
+
+      case OP_SELL_SUCCESS:
+         m_storeInterface.sellItemsSuccess(o);
          break;
 
       /*

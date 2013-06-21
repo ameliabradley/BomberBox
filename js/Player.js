@@ -52,22 +52,26 @@ Player = function() {
       }
    }
 
-   self.addWeapon = function(strId) {
+   self.addWeapon = function(iItemId, storeItem) {
       var weapon;
-      
-      switch (strId) {
-         case 'WEAPON_BOMB':
-            weapon = new BombDeployer();
-            break;
 
-         case 'WEAPON_CARPET_BOMB':
-            weapon = new CarpetBombDeployer();
-            break;
+      switch (iItemId) {
+      case WEAPON_BOMB:
+         weapon = new BombDeployer();
+         break;
+
+      case WEAPON_CARPET_BOMB:
+         weapon = new CarpetBombDeployer();
+         break;
       }
 
       weapon.initialize(m_world);
-      m_weaponSlotControl.addWeapon(weapon.getWeapon());
-   }
+      m_weaponSlotControl.addWeapon(iItemId, weapon.getWeapon());
+   };
+
+   self.removeWeapon = function (iItemId, storeItem) {
+      m_weaponSlotControl.removeWeapon(iItemId);
+   };
 
    self.shift = function(iDirection) {
       if (m_tile.isDestroyed()) return;
@@ -137,12 +141,22 @@ Player = function() {
       if (!m_storeControl) {
          m_storeControl = new StoreControl();
          m_storeControl.initialize(m_moneyControl, {
+            onSellItem: function (iItemId, storeItem) {
+               var itemInfo = storeItem.itemInfo;
+
+               switch (itemInfo.type) {
+               case ITEM_TYPE.TYPE_WEAPON:
+                  self.removeWeapon(iItemId, storeItem);
+                  break;
+               // TODO: Sell mods
+               }
+            },
             onBuyItem: function (iItemId, storeItem) {
                var itemInfo = storeItem.itemInfo;
 
                switch (itemInfo.type) {
                case ITEM_TYPE.TYPE_WEAPON:
-                  self.addWeapon(iItemId);
+                  self.addWeapon(iItemId, storeItem);
                   break;
                // TODO: Buy mods
                }

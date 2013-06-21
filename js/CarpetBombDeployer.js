@@ -9,7 +9,7 @@ CarpetBombDeployer = function() {
    };
 
    self.initialize = function(world) {
-      m_weapon.initialize(world, 'WEAPON_CARPET_BOMB', {
+      m_weapon.initialize(world, WEAPON_CARPET_BOMB, {
          useWeapon: function(iX, iY) {
             new CarpetBomb(world, iX, iY, m_iTimeout, m_iBombRadius);
          },
