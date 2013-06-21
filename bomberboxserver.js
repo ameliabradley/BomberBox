@@ -643,6 +643,11 @@ function start_gameserver(maps, options, shared) {
                   conn.ping = get_time() - conn.last_ping;
                   break;
 
+               case REQ_PLAYER_WEAPON_SET:
+                  var iWeaponIndex = packet[1];
+                  p.getWeaponSlotControl().setWeapon(iWeaponIndex);
+                  break;
+
                case REQ_PLAYER_MOVE:
                   p.shift(packet[1]);
                   break;

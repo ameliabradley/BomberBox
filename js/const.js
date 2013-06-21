@@ -25,6 +25,9 @@
    OP_WORLD_ANIM_MOVE = I++,
    OP_PLAYER_BLINK = I++,
    OP_PLAYER_MOVE = I++,
+   OP_PLAYER_WEAPON_SET = I++,
+   OP_PLAYER_WEAPON_ADD = I++,
+   OP_PLAYER_WEAPON_REMOVE = I++,
    OP_MONEY_UPDATE = I++,
 
    OP_BUY_SUCCESS = I++,
@@ -67,6 +70,7 @@
    I = 0,
    REQ_PLAYER_MOVE = I++,
    REQ_PLAYER_FIRE = I++,
+   REQ_PLAYER_WEAPON_SET = I++,
    REQ_BUY      = I++,
    REQ_SELL      = I++,
    REQ_GAME     = I++,

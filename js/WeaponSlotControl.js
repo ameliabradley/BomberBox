@@ -1,19 +1,21 @@
 WeaponSlotControl = function() {
    var self = this,
       m_aSlotIndexByItemId = {},
-      m_aWeaponSlots = [],
+      m_aWeaponSlots = [null, null, null, null, null],
       m_oWeapons = {},
-      m_iWeaponIndex = 0;
+      m_iWeaponIndex = null,
+      m_observer,
 
-   self.tabWeapon = function() {
-      m_iWeaponIndex++;
-
-      if (m_iWeaponIndex >= m_aWeaponSlots.length) {
-         m_iWeaponIndex = 0;
-      }
-
-      self.setWeapon(m_iWeaponIndex);
-   };
+      getFirstEmptySlot = function () {
+         var iSlot = null;
+         each(m_aWeaponSlots, function (i, weapon) {
+            if (weapon === null) {
+               iSlot = i;
+               return false;
+            }
+         });
+         return iSlot;
+      };
 
    self.upgradeWeapon = function(iItemId, itemInfo) {
       m_oWeapons[iItemId].upgrade(itemInfo);
@@ -21,13 +23,18 @@ WeaponSlotControl = function() {
 
    self.setWeapon = function(iWeaponIndex) {
       m_iWeaponIndex = iWeaponIndex;
+      m_observer.onSetWeapon(m_iWeaponIndex);
    };
 
    self.addWeapon = function(iItemId, weapon) {
-      var index = m_aWeaponSlots.length;
-      m_aSlotIndexByItemId[iItemId] = index;
-      m_aWeaponSlots.push(weapon);
+      var iWeaponIndex = getFirstEmptySlot();
+      m_aSlotIndexByItemId[iItemId] = iWeaponIndex;
+      m_aWeaponSlots[iWeaponIndex] = weapon;
       m_oWeapons[iItemId] = weapon;
+      m_observer.onAddWeapon(iWeaponIndex, iItemId);
+      if (m_iWeaponIndex === null) {
+         self.setWeapon(iWeaponIndex);
+      }
    };
 
    self.updateWeaponOrder = function (aItemId) {
@@ -35,15 +42,21 @@ WeaponSlotControl = function() {
    };
 
    self.removeWeapon = function (iItemId) {
-      var iSlotIndex = m_aSlotIndexByItemId[iItemId];
-      m_aWeaponSlots.splice(iSlotIndex, 1);
+      var iWeaponIndex = m_aSlotIndexByItemId[iItemId];
+      m_aWeaponSlots[iWeaponIndex] = null;
       delete m_oWeapons[iItemId];
+      m_observer.onRemoveWeapon(iWeaponIndex, iItemId);
    };
 
    self.getSelectedWeapon = function() {
-      return m_aWeaponSlots[m_iWeaponIndex];
+      if (m_iWeaponIndex === null) {
+         return null;
+      } else {
+         return m_aWeaponSlots[m_iWeaponIndex];
+      }
    };
 
-   self.initialize = function() {
+   self.initialize = function(observer) {
+      m_observer = observer;
    };
 };

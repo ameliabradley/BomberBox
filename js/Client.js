@@ -46,12 +46,66 @@ window.Client = function () {
       m_storeInterface = new StoreInterface(),
       m_moneyControl = new MoneyControl(),
 
-      m_jGold;
+      m_jGold,
 
-   document.onkeyup = function(evt) {
-      evt = (evt) ? evt : ((window.event) ? event : null);
-      if (!evt) return;
+      WeaponSlotControlInterface = function () {
+         var self = this,
+            m_jSelected,
+            m_jWeaponSlots,
+            m_jWeaponContainer;
 
+         self.getCurrentIndex = function () {
+            return m_jWeaponContainer.find(".selected").index();
+         };
+
+         self.getNextWeapon = function () {
+            var jNext, bFound = false;
+
+            if (m_jSelected) {
+               jNext = m_jSelected.nextAll(":not(.disabled)").eq(0);
+               bFound = (jNext.length === 1);
+            }
+
+            if (!bFound) {
+               jNext = m_jWeaponSlots.filter(":not(.disabled)").eq(0);
+               bFound = (jNext.length === 1);
+            }
+
+            if (bFound) {
+               return jNext.index();
+            } else {
+               return null;
+            }
+         };
+
+         self.setSelected = function (iWeaponSlot) {
+            if (m_jSelected) {
+               m_jSelected.removeClass("selected");
+            }
+
+            m_jSelected = m_jWeaponSlots.eq(iWeaponSlot).addClass("selected");
+         };
+
+         self.addWeapon = function (iWeaponSlot, iItemId) {
+            // TODO: Change image
+            //var strImage = ...
+            m_jWeaponSlots.eq(iWeaponSlot).removeClass("disabled");
+         };
+
+         self.removeWeapon = function (iWeaponSlot, iItemId) {
+            // TODO: Remove image
+            m_jWeaponSlots.eq(iWeaponSlot).addClass("disabled");
+         };
+
+         self.initialize = function () {
+            m_jWeaponContainer = $("#weaponSelectionContainer");
+            m_jWeaponSlots = m_jWeaponContainer.find(".weaponSlot");
+         };
+      },
+
+      m_weaponSlotControlInterface = new WeaponSlotControlInterface();
+
+   $(document).keyup(function(evt) {
       switch (evt.keyCode) {
          // Escape key
          case 27:
@@ -66,45 +120,53 @@ window.Client = function () {
 
       if (m_world.isPaused()) return;
 
-      var cancel = false;
+      switch (evt.keyCode) {
+      case 37: // LEFT
+      case 65: // A
+         self.sendRequest(REQ_PLAYER_MOVE, DIR_LEFT);
+         break;   
+
+      case 38: // UP
+      case 87: // W
+         self.sendRequest(REQ_PLAYER_MOVE, DIR_UP);
+         break;
+
+      case 39: // RIGHT
+      case 68: // D
+         self.sendRequest(REQ_PLAYER_MOVE, DIR_RIGHT);
+         break;
+
+      case 40: // DOWN
+      case 83: // S
+         self.sendRequest(REQ_PLAYER_MOVE, DIR_DOWN);
+         break;
+
+      case 32: // SPACE
+         self.sendRequest(REQ_PLAYER_FIRE);
+         evt.preventDefault();
+         break;
+
+      case 81: // Q
+         m_worldInterface.decreaseZoom();
+         break;
+
+      case 69: // E
+         m_worldInterface.increaseZoom();
+         break;
+      }
+   }).keydown(function (evt) {
+      if (m_world.isPaused()) return;
 
       switch (evt.keyCode) {
-         case 37: // LEFT
-         case 65: // A
-            self.sendRequest(REQ_PLAYER_MOVE, DIR_LEFT);
-            break;   
-
-         case 38: // UP
-         case 87: // W
-            self.sendRequest(REQ_PLAYER_MOVE, DIR_UP);
-            break;
-
-         case 39: // RIGHT
-         case 68: // D
-            self.sendRequest(REQ_PLAYER_MOVE, DIR_RIGHT);
-            break;
-
-         case 40: // DOWN
-         case 83: // S
-            self.sendRequest(REQ_PLAYER_MOVE, DIR_DOWN);
-            break;
-
-         // Space bar
-         case 32:
-            self.sendRequest(REQ_PLAYER_FIRE);
-            break;
-
-         // Q key
-         case 81:
-            m_worldInterface.decreaseZoom();
-            break;
-
-         // E key
-         case 69:
-            m_worldInterface.increaseZoom();
-            break;
+      case 9: // TAB
+         var iWeaponSlot = m_weaponSlotControlInterface.getNextWeapon();
+         if (iWeaponSlot !== null) {
+            self.sendRequest(REQ_PLAYER_WEAPON_SET, iWeaponSlot);
+         }
+         evt.preventDefault();
+         break;
       }
-   };
+   });
 
    self.renderDebugFrame = function() {
       if (!m_bRendering) return;
@@ -195,6 +257,8 @@ window.Client = function () {
 
       self.setupSidebar();
 
+      m_weaponSlotControlInterface.initialize();
+
       ResourceManager.addImage('btn_play.png');
       ResourceManager.loadImages(function() {
          m_worldInterface.cacheEntities(m_ctx);
@@ -280,6 +344,23 @@ window.Client = function () {
             easing: 'linear',
             duration: 800
          });
+         break;
+
+      case OP_PLAYER_WEAPON_SET:
+         var iWeaponSlot = o;
+         m_weaponSlotControlInterface.setSelected(iWeaponSlot);
+         break;
+
+      case OP_PLAYER_WEAPON_ADD:
+         var iWeaponSlot = o[0],
+            iItemId = o[1];
+         m_weaponSlotControlInterface.addWeapon(iWeaponSlot, iItemId);
+         break;
+
+      case OP_PLAYER_WEAPON_REMOVE:
+         var iWeaponSlot = o[0],
+            iItemId = o[1];
+         m_weaponSlotControlInterface.removeWeapon(iWeaponSlot, iItemId);
          break;
 
       case OP_PLAYER_CONNECT:
