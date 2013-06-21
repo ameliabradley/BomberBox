@@ -568,6 +568,8 @@ function start_gameserver(maps, options, shared) {
                   conn.post(OP_MONEY_UPDATE, [iMoney]);
                });
 
+               moneyControl.setMoney(40);
+
                p.setWorld(world, 3, 0);
 
                iPlayerId = iPlayerTotal;
@@ -578,6 +580,14 @@ function start_gameserver(maps, options, shared) {
 
                broadcast(OP_PLAYER_CONNECT, [iPlayerId, strPlayerName]);
                broadcast(OP_PLAYER_SPAWN, [iPlayerId]);
+
+               var purchasedItems = p.getStoreControl().getPurchasedItems(),
+                  aPurchasedIds = [];
+
+               each(purchasedItems, function (iItemId, item) {
+                  aPurchasedIds.push(iItemId);
+               });
+               conn.post(OP_BUY_SUCCESS, aPurchasedIds);
 
                log(conn + playerInformation.getName() + ' joined the game.');
                break;
@@ -638,8 +648,44 @@ function start_gameserver(maps, options, shared) {
                   break;
 
                case REQ_BUY:
-                  // TODO: Purchasing items
-                  //p.getStoreControl().tryBuyItemr
+                  var aItemIds = packet[1],
+                     aPurchasedItems = [];
+
+                  each(aItemIds, function (i, iItemId) {
+                     var iResult = p.getStoreControl().tryBuyItem(iItemId);
+                     switch (iResult) {
+                     case PURCHASE_SUCCESS:
+                        aPurchasedItems.push(iItemId);
+                        break;
+
+                     case PURCHASE_ERROR_INSUFFICIENT_FUNDS:
+                        break;
+
+                     case PURCHASE_ERROR_ITEM_ALREADY_OWNED:
+                        break;
+                     }
+                  });
+
+                  conn.post(OP_BUY_SUCCESS, aPurchasedItems);
+                  break;
+
+               case REQ_SELL:
+                  var aItemIds = packet[1],
+                     oSoldItems = [];
+
+                  each(aItemIds, function (i, iItemId) {
+                     var iResult = p.getStoreControl().trySellItem(iItemId);
+                     switch (iResult) {
+                     case SELL_SUCCESS:
+                        oSoldItems.push(iItemId);
+                        break;
+
+                     case SELL_ERROR_ITEM_NOT_OWNED:
+                        break;
+                     }
+                  });
+
+                  conn.post(OP_SELL_SUCCESS, oSoldItems);
                   break;
 
                case REQ_PLAYER_FIRE:

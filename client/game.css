@@ -247,7 +247,25 @@ html, body {
    background-color: #876d33;
 }
 
-#sidebarBottom {
+#sidebar .tabContent .disabled .main .cost {
+   background-color: #999;
+}
+
+#sidebar .tabContent .disabled .main {
+   border: 3px solid #999;
+   background-color: #666;
+   cursor: default;
+}
+
+#sidebarSellBottom {
+   display: none;
+}
+
+.storeSomethingSelected {
+   display: none;
+}
+
+.sidebarBottom {
    position: absolute;
    bottom: 0;
    left: 0;
@@ -258,7 +276,7 @@ html, body {
    border-bottom-left-radius: 3px;
 }
 
-#btnBuy {
+.btnFinish {
    background-color: #9a7a2f;
    position: absolute;
    right: 5px;
@@ -267,11 +285,11 @@ html, body {
    cursor: pointer;
 }
 
-#btnBuy:hover {
+.btnFinish:hover {
    background-color: #FFBF1F;
 }
 
-#btnBuy.disabled {
+.btnFinish.disabled {
    background-color: #666;
    color: #aaa;
 }
@@ -374,13 +392,13 @@ html, body {
    cursor: default;
 }
 
-#tabStore {
+#tabBuy {
    left: 0px;
    right: 120px;
    border-top-left-radius: 3px;
 }
 
-#tabInventory {
+#tabSell {
    left: 120px;
    right: 0px;
    border-top-right-radius: 3px;
@@ -423,20 +441,17 @@ html, body {
    position: relative;
 
    background-color: #444;
-   outline: 1px solid #666;
+   box-shadow: 0px 0px 0px 1px #666;
+   border-radius: 3px;
 }
 
 #weaponSelectionContainer .weaponSlot.selected {
-   /*
-   outline: 3px solid orange;
-   */
-   box-shadow: 0px 0px 7px rgba(0,0,0,0.9);
-   outline: 1px solid #888;
+   box-shadow: 0px 0px 0px 3px #598A4C;
 }
 
 #weaponSelectionContainer .weaponSlot.disabled {
    background-color: #111;
-   outline: 1px solid #555;
+   box-shadow: 0px 0px 0px 1px #555;
    background-color: transparent;
 
    /*

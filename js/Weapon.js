@@ -1,13 +1,13 @@
 Weapon = function() {
    var self = this,
-      m_strId,
+      m_id,
       m_strName,
       m_weaponImplementation,
       m_world,
       m_cooldown;
 
    self.getId = function() {
-      return m_strId;
+      return m_id;
    };
 
    self.getName = function() {
@@ -42,10 +42,10 @@ Weapon = function() {
       m_weaponImplementation.upgrade(upgrade);
    };
 
-   self.initialize = function(world, strWeaponId, weaponImplentation) {
-      var item = PLAYER_ITEMS[strWeaponId];
+   self.initialize = function(world, iWeaponId, weaponImplentation) {
+      var item = PLAYER_ITEMS[iWeaponId];
 
-      m_strId = strWeaponId;
+      m_id = iWeaponId;
 
       m_world = world;
 
