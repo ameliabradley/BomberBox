@@ -635,72 +635,74 @@ function start_gameserver(maps, options, shared) {
                   return;
                }
 
-
                var iClientRequestTypeId = packet[0];
 
-               switch (packet[0]) {
-               case REQ_PING:
-                  conn.ping = get_time() - conn.last_ping;
-                  break;
+               if (p.isDead()) {
+                  switch (packet[0]) {
+                  case REQ_PING:
+                     conn.ping = get_time() - conn.last_ping;
+                     break;
+                  }
+               } else {
+                  switch (packet[0]) {
+                  case REQ_PING:
+                     conn.ping = get_time() - conn.last_ping;
+                     break;
 
-               case REQ_PLAYER_WEAPON_SET:
-                  var iWeaponIndex = packet[1];
-                  p.getWeaponSlotControl().setWeapon(iWeaponIndex);
-                  break;
+                  case REQ_PLAYER_WEAPON_SET:
+                     var iWeaponIndex = packet[1];
+                     p.getWeaponSlotControl().setWeapon(iWeaponIndex);
+                     break;
 
-               case REQ_PLAYER_MOVE:
-                  p.shift(packet[1]);
-                  break;
+                  case REQ_PLAYER_MOVE:
+                     p.shift(packet[1]);
+                     break;
 
-               case REQ_BUY:
-                  var aItemIds = packet[1],
-                     aPurchasedItems = [];
+                  case REQ_BUY:
+                     var aItemIds = packet[1],
+                        aPurchasedItems = [];
 
-                  each(aItemIds, function (i, iItemId) {
-                     var iResult = p.getStoreControl().tryBuyItem(iItemId);
-                     switch (iResult) {
-                     case PURCHASE_SUCCESS:
-                        aPurchasedItems.push(iItemId);
-                        break;
+                     each(aItemIds, function (i, iItemId) {
+                        var iResult = p.getStoreControl().tryBuyItem(iItemId);
+                        switch (iResult) {
+                        case PURCHASE_SUCCESS:
+                           aPurchasedItems.push(iItemId);
+                           break;
 
-                     case PURCHASE_ERROR_INSUFFICIENT_FUNDS:
-                        break;
+                        case PURCHASE_ERROR_INSUFFICIENT_FUNDS:
+                           break;
 
-                     case PURCHASE_ERROR_ITEM_ALREADY_OWNED:
-                        break;
-                     }
-                  });
+                        case PURCHASE_ERROR_ITEM_ALREADY_OWNED:
+                           break;
+                        }
+                     });
 
-                  conn.post(OP_BUY_SUCCESS, aPurchasedItems);
-                  break;
+                     conn.post(OP_BUY_SUCCESS, aPurchasedItems);
+                     break;
 
-               case REQ_SELL:
-                  var aItemIds = packet[1],
-                     oSoldItems = [];
+                  case REQ_SELL:
+                     var aItemIds = packet[1],
+                        oSoldItems = [];
 
-                  each(aItemIds, function (i, iItemId) {
-                     var iResult = p.getStoreControl().trySellItem(iItemId);
-                     switch (iResult) {
-                     case SELL_SUCCESS:
-                        oSoldItems.push(iItemId);
-                        break;
+                     each(aItemIds, function (i, iItemId) {
+                        var iResult = p.getStoreControl().trySellItem(iItemId);
+                        switch (iResult) {
+                        case SELL_SUCCESS:
+                           oSoldItems.push(iItemId);
+                           break;
 
-                     case SELL_ERROR_ITEM_NOT_OWNED:
-                        break;
-                     }
-                  });
+                        case SELL_ERROR_ITEM_NOT_OWNED:
+                           break;
+                        }
+                     });
 
-                  conn.post(OP_SELL_SUCCESS, oSoldItems);
-                  break;
+                     conn.post(OP_SELL_SUCCESS, oSoldItems);
+                     break;
 
-               case REQ_PLAYER_FIRE:
-                  p.activateWeapon();
-                  break;
-
-               default:
-                  //process_control_message([packet, conn]);
-                  break;
-
+                  case REQ_PLAYER_FIRE:
+                     p.activateWeapon();
+                     break;
+                  }
                }
             });
 

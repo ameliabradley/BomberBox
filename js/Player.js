@@ -6,12 +6,15 @@ Player = function() {
       m_weaponSlotControl,
       m_world,
       m_tile,
+      m_bDead = false,
 
       // As in, not a BROADCAST
       m_fnSendToClient,
 
       m_aDeathObservers = [],
+
       onDeath = function(strKilledBy) {
+         m_bDead = true;
          each(m_aDeathObservers, function(i, fn) {
             fn(strKilledBy);
          });
@@ -171,6 +174,10 @@ Player = function() {
 
    self.getMoneyControl = function () {
       return m_moneyControl;
+   };
+
+   self.isDead = function () {
+      return m_bDead;
    };
 
    self.initialize = function(fnSendCommand) {
