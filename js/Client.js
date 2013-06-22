@@ -84,6 +84,7 @@ window.Client = function () {
             }
 
             m_jSelected = m_jWeaponSlots.eq(iWeaponSlot).addClass("selected");
+            m_jSelected = m_jWeaponSlots.eq(iWeaponSlot).addClass("selected").stop().css({ top: -10 }).animate({ top: 0 }, { duration: 600, easing: "easeOutElastic" });
          };
 
          self.addWeapon = function (iWeaponSlot, iItemId) {
@@ -210,6 +211,7 @@ window.Client = function () {
             }
          });
          m_jGold.css({ top: -50 }).animate({ top: 10 }, { duration: 600, easing: "easeOutElastic" })
+         m_jGold.css({ top: -50 }).animate({ top: 10 }, { duration: 600, easing: "easeOutElastic" });
       });
 
       m_jGold = $("#storeSelectorContainer");
