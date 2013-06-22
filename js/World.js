@@ -3,8 +3,6 @@ World = function () {
 
    var self = this,
 
-   bCleared = false,
-
       // Tiles
       m_iTotalTiles = 0, m_aTiles = [], m_oTileById  = {},
       m_oTileManipulationObserver,

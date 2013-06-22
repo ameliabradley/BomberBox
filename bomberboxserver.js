@@ -163,6 +163,9 @@ const SERVER_VERSION = '1.0',
       "client/images/checkmark-item.png", "images/",
       "client/images/checkmark-mod.png", "images/",
 
+      "client/images/item_bomb.png", "images/",
+      "client/images/item_carpetbomb.png", "images/",
+
       "client/images/mod-show.png", "images/",
       "client/images/mod-hide.png", "images/",
 
