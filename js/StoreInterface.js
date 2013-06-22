@@ -352,6 +352,10 @@ StoreInterface = function () {
          jItem.find(".subtitle").text(strStoreDesc);
          jItem.find(".cost").text(formatPrice(iPrice));
 
+         jMain.css({
+            backgroundImage: "url(images/" + o.image + ")"
+         });
+
          jMain.click(checkableItem.toggleCheck);
 
          jList.append(jItem);

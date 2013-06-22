@@ -218,6 +218,25 @@ html, body {
    */
 }
 
+#sidebar .main {
+   background-position: 5px 5px;
+   background-repeat: no-repeat;
+}
+
+#sidebar .main .title {
+   font-size: 20px;
+}
+
+#sidebar .main .subtitle {
+   font-size: 14px;
+   color: rgba(255, 255, 255, 0.8);
+}
+
+#sidebar .main .title,
+#sidebar .main .subtitle {
+   padding-left: 44px;
+}
+
 #sidebar .main .cost {
    position: absolute;
    top: 0;
@@ -441,18 +460,36 @@ html, body {
    position: relative;
 
    background-color: #444;
-   box-shadow: 0px 0px 0px 1px #666;
+   box-shadow: 0px 0px 0px 2px #666;
    border-radius: 3px;
+
+   background-repeat: no-repeat;
+   background-position: center center;
 }
 
 #weaponSelectionContainer .weaponSlot.selected {
    box-shadow: 0px 0px 0px 3px #598A4C;
+   background-color: #385730;
+}
+
+#weaponSelectionContainer .weaponSlot:not(.disabled) .innerShadow {
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   border-radius: 3px;
+   box-shadow: inset 0px 0px 19px #333;
+}
+
+#weaponSelectionContainer .weaponSlot.selected .innerShadow {
+   box-shadow: inset 0px 0px 19px #598A4C;
 }
 
 #weaponSelectionContainer .weaponSlot.disabled {
    background-color: #111;
-   box-shadow: 0px 0px 0px 1px #555;
-   background-color: transparent;
+   box-shadow: 0px 0px 0px 1px #444;
+   background-color: #333;
 
    /*
    -moz-box-shadow: inset 0 0 5px 5px rgba(0,0,0,0.1);

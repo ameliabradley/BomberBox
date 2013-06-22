@@ -83,19 +83,25 @@ window.Client = function () {
                m_jSelected.removeClass("selected");
             }
 
-            m_jSelected = m_jWeaponSlots.eq(iWeaponSlot).addClass("selected");
             m_jSelected = m_jWeaponSlots.eq(iWeaponSlot).addClass("selected").stop().css({ top: -10 }).animate({ top: 0 }, { duration: 600, easing: "easeOutElastic" });
          };
 
          self.addWeapon = function (iWeaponSlot, iItemId) {
             // TODO: Change image
             //var strImage = ...
-            m_jWeaponSlots.eq(iWeaponSlot).removeClass("disabled");
+            var item = PLAYER_ITEMS[iItemId];
+            m_jWeaponSlots.eq(iWeaponSlot).removeClass("disabled")
+               .css({
+                  backgroundImage: "url(images/" + item.itemInfo.image + ")"
+               });
          };
 
          self.removeWeapon = function (iWeaponSlot, iItemId) {
             // TODO: Remove image
-            m_jWeaponSlots.eq(iWeaponSlot).addClass("disabled");
+            m_jWeaponSlots.eq(iWeaponSlot).addClass("disabled")
+               .css({
+                  backgroundImage: "none"
+               });
          };
 
          self.initialize = function () {
@@ -210,7 +216,6 @@ window.Client = function () {
                });
             }
          });
-         m_jGold.css({ top: -50 }).animate({ top: 10 }, { duration: 600, easing: "easeOutElastic" })
          m_jGold.css({ top: -50 }).animate({ top: 10 }, { duration: 600, easing: "easeOutElastic" });
       });
 

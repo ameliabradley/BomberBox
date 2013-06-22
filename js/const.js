@@ -124,6 +124,7 @@
       {
          itemInfo: {
             id: WEAPON_BOMB,
+            image: "item_bomb.png",
             name: "Bomb",
             description: "Standard Bomb",
             type: ITEM_TYPE.TYPE_WEAPON,
@@ -137,6 +138,7 @@
       {
          itemInfo: {
             id: WEAPON_CARPET_BOMB,
+            image: "item_carpetbomb.png",
             name: "Carpet Bomb",
             type: ITEM_TYPE.TYPE_WEAPON,
             price: 30,
