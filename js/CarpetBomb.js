@@ -25,20 +25,23 @@ CarpetBomb = function(world, x, y, timeout, radius, fnCallback) {
 
       m_bombBase = new BombBase(world, x, y, timeout, radius, fnCallback),
 
-      tryFrag = function () {
+      tryFrag = function (x, y) {
          new BombFragment(world, x, y, true);
       },
       
       onExplode = function () {
+         var iRadius;
+
          new BombFragment(world, x, y);
 
          for (var i = 0; i < radius; i++) {
-            var iRadius = i + 1;
+            iRadius = i + 1;
             world.setTimeout((function(iRadius) {
                return function() {
                   // Currently will go through walls
-                  var size = (iRadius * 2);
-                  var rectDimensions = new RectDimensions(x - iRadius, y - iRadius, size, size);
+                  var size = (iRadius * 2),
+                     rectDimensions = new RectDimensions(x - iRadius, y - iRadius, size, size);
+
                   world.createTileRect(rectDimensions, tryFrag);
                }
             }(iRadius)), 100 * iRadius);
