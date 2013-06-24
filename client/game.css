@@ -132,6 +132,10 @@ html, body {
    display: none;
 }
 
+#sidebar .item .main {
+   width: 212px;
+}
+
 /* SIDEBAR MODS BUTTON
  * ================================ */
 #sidebar .btnMods {
@@ -160,50 +164,24 @@ html, body {
 #sidebar .modContainer {
    margin: 0px 5px 0px 5px;
    font-size: 14px;
-   color: #aaa;
    display: none;
 }
 
 #sidebar .mod .main {
    position: relative;
    width: 202px;
-   padding: 6px;
-   background-color: #222;
-   border: 3px solid #222;
-   cursor: pointer;
    margin-left: 10px;
    margin-top: 5px;
-   border-radius: 3px;
-}
-
-#sidebar .mod .main:hover {
-   background-color: #333;
-   border: 3px solid #333;
-}
-
-/* SIDEBAR ITEM BODY
- * ================================ */
-#sidebar .item .main {
-   width: 212px;
-   padding: 6px;
-   background-color: #3E5B7A;
-   border: 3px solid #506a86;
-   cursor: pointer;
-   border-radius: 3px;
-}
-
-#sidebar .item .main:hover {
-   background-color: #436E9C;
-   border: 3px solid #557ca5;
-}
-
-#sidebar .item .main:hover .cost {
-   background-color: #557ca5;
 }
 
 /* SIDEBAR MOD/ITEM BODY
  * ================================ */
 #sidebar .main {
+   padding: 6px;
+   background-color: #3E5B7A;
+   border: 3px solid #506a86;
+   cursor: pointer;
+   border-radius: 3px;
    background-position: 5px 5px;
    background-repeat: no-repeat;
    min-height: 44px;
@@ -233,6 +211,15 @@ html, body {
    color: white;
    border-bottom-left-radius: 3px;
    border-top-right-radius: 3px;
+}
+
+#sidebar .main:hover {
+   background-color: #436E9C;
+   border: 3px solid #557ca5;
+}
+
+#sidebar .main:hover .cost {
+   background-color: #557ca5;
 }
 
 #sidebar .tabContent .selected .main:hover .cost {
