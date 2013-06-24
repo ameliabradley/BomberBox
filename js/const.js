@@ -150,6 +150,8 @@
          description: "Standard Bomb",
          type: ITEM_TYPE_WEAPON,
          price: PRICE_PLAYER_STARTING_ITEM,
+
+         /*
          mods: [
             {
                id: WEAPON_BOMB_M2,
@@ -159,6 +161,7 @@
                price: 1
             }
          ],
+         */
 
          cooldown: 0
       },
