@@ -27,23 +27,8 @@ ItemCooldown = function() {
          return iLeft;
       };
 
-   self.updateProgress = function() {
-      if (!m_observer) return;
-
-      var iLeft = getTimeLeft();
-
-      m_observer.updateCooldown(iLeft);
-   };
-
    self.setObserver = function(observer) {
       m_observer = observer;
-   };
-
-   self.updateLoop = function() {
-      self.updateProgress();
-      m_iUpdateTimeoutId = m_world.setTimeout(function() {
-         self.updateLoop();
-      }, m_iUpdateSpeed);
    };
 
    self.testItemReady = function() {
@@ -71,11 +56,9 @@ ItemCooldown = function() {
    self.tryUseItem = function() {
       if (m_iCooldownTime == 0) return true;
 
-      // TODO: Animation on failure
       if (m_bActive) {
          m_bActive = false;
-         if (m_observer) m_observer.startCooldown();
-         self.updateLoop();
+         if (m_observer) m_observer.startCooldown(m_iCooldownTime);
          m_iTimeoutId = m_world.setTimeout(function() {
             self.clearCooldown();
          }, m_iCooldownTime);
