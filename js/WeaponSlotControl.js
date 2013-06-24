@@ -60,6 +60,10 @@ WeaponSlotControl = function() {
       m_observer.onRemoveWeapon(iWeaponIndex, iItemId);
    };
 
+   self.getSlotIndexByItemId = function (iItemId) {
+      return m_aSlotIndexByItemId[iItemId];
+   };
+
    self.getSelectedWeapon = function() {
       if (m_iWeaponIndex === null) {
          return null;

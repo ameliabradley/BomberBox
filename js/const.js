@@ -41,6 +41,7 @@
    OP_PLAYER_WEAPON_SET = I++,
    OP_PLAYER_WEAPON_ADD = I++,
    OP_PLAYER_WEAPON_REMOVE = I++,
+   OP_PLAYER_WEAPON_STARTCOOLDOWN = I++,
    OP_MONEY_UPDATE = I++,
 
    OP_BUY_SUCCESS = I++,
@@ -163,7 +164,7 @@
          ],
          */
 
-         cooldown: 0
+         cooldown: 5000
       },
       {
          id: WEAPON_CARPET_BOMB,

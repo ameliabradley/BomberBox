@@ -69,20 +69,35 @@ Player = function() {
    }
 
    self.addWeapon = function(iItemId, item) {
-      var weapon;
+      var specificWeapon,
+         weapon;
 
       switch (iItemId) {
       case WEAPON_BOMB:
-         weapon = new BombDeployer();
+         specificWeapon = new BombDeployer();
          break;
 
       case WEAPON_CARPET_BOMB:
-         weapon = new CarpetBombDeployer();
+         specificWeapon = new CarpetBombDeployer();
          break;
       }
 
-      weapon.initialize(m_world);
-      m_weaponSlotControl.addWeapon(iItemId, weapon.getWeapon());
+      specificWeapon.initialize(m_world);
+      weapon = specificWeapon.getWeapon();
+      m_weaponSlotControl.addWeapon(iItemId, weapon);
+      weapon.setCooldownObserver({
+         onItemTestedButNotReady: function () {
+            self.blinkPlayer();
+         },
+         startCooldown: function (iCooldownTime) {
+            var iSlotIndex = m_weaponSlotControl.getSlotIndexByItemId(iItemId);
+            m_fnSendToClient(OP_PLAYER_WEAPON_STARTCOOLDOWN, [iCooldownTime, iSlotIndex]);
+         },
+         updateCooldown: function () {
+         },
+         finishCooldown: function () {
+         }
+      });
    };
 
    self.removeWeapon = function (iItemId, item) {
@@ -166,8 +181,6 @@ Player = function() {
                }
             },
             onBuyItem: function (iItemId, item) {
-               console.log("onBuyItem", iItemId, item);
-
                switch (item.type) {
                case ITEM_TYPE_WEAPON:
                   self.addWeapon(iItemId, item);

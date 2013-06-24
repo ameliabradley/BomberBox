@@ -117,6 +117,19 @@ window.Client = function () {
                });
          };
 
+         self.setCooldown = function (iWeaponSlot, iCooldownTime) {
+            m_jWeaponSlots.eq(iWeaponSlot).find(".slotCooldown").css({
+               top: "0%"
+            }).show().animate({
+               top: "100%"
+            }, {
+               easing: "easeInQuad",
+               duration: iCooldownTime,
+               complete: function () {
+               }
+            });
+         };
+
          self.initialize = function () {
             m_jWeaponContainer = $("#weaponSelectionContainer");
             m_jWeaponSlots = m_jWeaponContainer.find(".weaponSlot");
@@ -381,6 +394,12 @@ window.Client = function () {
          var iWeaponSlot = o[0],
             iItemId = o[1];
          m_weaponSlotControlInterface.removeWeapon(iWeaponSlot, iItemId);
+         break;
+
+      case OP_PLAYER_WEAPON_STARTCOOLDOWN:
+         var iCooldownTime = o[0],
+            iSlotIndex = o[1];
+         m_weaponSlotControlInterface.setCooldown(iSlotIndex, iCooldownTime);
          break;
 
       case OP_PLAYER_CONNECT:
