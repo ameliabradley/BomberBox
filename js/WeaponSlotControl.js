@@ -17,8 +17,8 @@ WeaponSlotControl = function() {
          return iSlot;
       };
 
-   self.upgradeWeapon = function(iItemId, itemInfo) {
-      m_oWeapons[iItemId].upgrade(itemInfo);
+   self.upgradeWeapon = function(iItemId, item) {
+      m_oWeapons[iItemId].upgrade(item);
    };
 
    self.setWeapon = function(iWeaponIndex) {

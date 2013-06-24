@@ -5,3 +5,28 @@ PURCHASABLE ITEMS
 - Traps: Show up for you, or if you have "Eyes"
    - Ice trap: Slows enemies down
    - Shadow trap: Modifies vision to fog-of-war
+
+StoreDirectory.addItem({
+   itemInfo: {
+      id: WEAPON_BOMB,
+      image: "item_bomb.png",
+      name: "Bomb",
+      description: "Standard Bomb",
+      type: ITEM_TYPE_WEAPON,
+      price: PRICE_PLAYER_STARTING_ITEM,
+      mods: [
+         {
+            id: WEAPON_BOMB_M2,
+            name: "Mark II",
+            description: "+1 Radius",
+            price: 1
+         }
+      ]
+   },
+   weaponInfo: {
+      cooldown: 0,
+      energy: 50
+   }
+});
+
+WeaponStoreItem

@@ -18,6 +18,7 @@ StoreInterface = function () {
 
       m_storeControl,
       m_moneyControl,
+      m_itemManager,
 
       m_observer,
 
@@ -180,6 +181,7 @@ StoreInterface = function () {
             m_checkTrackerListener,
             m_bChecked = false,
             m_bDisabled = false,
+            m_bVisible = true,
 
             initialize = function (info) {
                m_info = info;
@@ -224,6 +226,24 @@ StoreInterface = function () {
             });
          };
 
+         self.hide = function () {
+            if (!m_bVisible) return;
+            self.uncheck();
+            m_bVisible = false;
+            each(m_aObservers, function (i, observer) {
+               if (observer.hide) observer.hide(self);
+            });
+         };
+
+         self.show = function () {
+            if (m_bVisible) return;
+            self.uncheck();
+            m_bVisible = true;
+            each(m_aObservers, function (i, observer) {
+               if (observer.show) observer.show(self);
+            });
+         };
+
          self.enable = function () {
             if (!m_bDisabled) return;
             m_bDisabled = false;
@@ -250,67 +270,89 @@ StoreInterface = function () {
       m_checkListBuy = new CheckList(),
       m_checkListSell = new CheckList(),
 
-      addMods = function (jItem, jBtnMods, oMods, fnCheck) {
-         // TODO: Mods
-         /*
-         var jMods = $("<div class='mods' />"),
-            aMods = [];
+      addMods = function (jList, jItem, parentCheckbox, checkList, jBtnMods, oMods, bSell) {
+         var jMods = $("<div class='modContainer' />"),
+            aMods = [],
+            iVisibleMods = 0;
 
          $.each(oMods, function (i, oMod) {
             var jMod = m_jStoreModTemplate.clone(),
                strTitle = oMod.name,
                jMain = jMod.find(".main"),
                iPrice = oMod.price,
-               m_checkableItem = m_checkList.addItem(oMod);
+               checkableItem = checkList.addItem(oMod.id, oMod);
 
-            m_checkableItem.addObserver({
+            checkableItem.addObserver({
                check: function () {
                   jMod.addClass("selected");
-                  modifyPrice(iPrice);
-                  fnCheck();
+                  checkList.modifyPrice(iPrice);
+                  
+                  if (!bSell) {
+                     parentCheckbox.check();
+                  }
                },
                uncheck: function () {
                   jMod.removeClass("selected");
-                  modifyPrice(-iPrice);
+                  checkList.modifyPrice(-iPrice);
+
+                  if (bSell) {
+                     parentCheckbox.uncheck();
+                  }
+               },
+               hide: function () {
+                  jMod.hide();
+                  iVisibleMods--;
+
+                  if (iVisibleMods === 0) {
+                     jBtnMods.hide();
+                  }
+               },
+               show: function () {
+                  jMod.show();
+                  iVisibleMods++;
+
+                  if (iVisibleMods > 0) {
+                     jBtnMods.show();
+                  }
                }
             });
 
-            jMod.find(".title").text(strTitle);
-            jMod.find(".cost").text(formatPrice(iPrice));
+            jMain.find(".title").text(strTitle);
+            jMain.find(".cost").text(formatPrice(iPrice));
 
-            jMain.click(m_checkableItem.toggleCheck);
+            jMain.click(checkableItem.toggleCheck);
             
             jMods.append(jMod);
             aMods.push({
                uncheck: function () {
-                  uncheck();
+                  checkableItem.uncheck();
+               },
+               check: function () {
+                  checkableItem.check();
                }
             });
+
+            iVisibleMods++;
+            if (bSell) {
+               checkableItem.hide();
+            }
          });
 
-         jBtnMods.click(function () {
+         jBtnMods.click(function (e) {
             jMods.slideToggle({
                duration: 300
             });
 
             jItem.toggleClass("expanded");
+            e.stopPropagation();
          });
 
-         m_jBuyBody.append(jMods);
+         jList.append(jMods);
 
          return aMods;
-         */
       },
 
-      Weapon = function () {
-         var self = this,
-            m_checkableItem = new CheckableItem(),
-            initialize = function () {
-               m_checkableItem.initialize();
-            };
-      },
-
-      addStoreItem = function (jList, checkList, o) {
+      addStoreItem = function (jList, checkList, o, bSell) {
          var jItem = m_jStoreItemTemplate.clone(),
             strTitle = o.name,
             iPrice = o.price,
@@ -325,12 +367,18 @@ StoreInterface = function () {
             check: function () {
                jItem.addClass("selected");
                checkList.modifyPrice(iPrice);
+
+               if (bSell && aMods) {
+                  $.each(aMods, function (i, mod) {
+                     mod.check();
+                  });
+               }
             },
             uncheck: function () {
                jItem.removeClass("selected");
                checkList.modifyPrice(-iPrice);
 
-               if (aMods) {
+               if (!bSell && aMods) {
                   $.each(aMods, function (i, mod) {
                      mod.uncheck();
                   });
@@ -344,6 +392,12 @@ StoreInterface = function () {
             },
             disable: function () {
                jItem.addClass("disabled");
+            },
+            hide: function () {
+               jItem.hide();
+            },
+            show: function () {
+               jItem.show();
             }
          });
 
@@ -361,11 +415,13 @@ StoreInterface = function () {
          jList.append(jItem);
 
          if (oMods && oMods.length) {
-            aMods = addMods(jItem, jBtnMods, oMods, function () {
-               checkableItem.check();
-            });
+            aMods = addMods(jList, jItem, checkableItem, checkList, jBtnMods, oMods, bSell);
          } else {
             jBtnMods.hide();
+         }
+
+         if (bSell) {
+            checkableItem.hide();
          }
       };
 
@@ -375,10 +431,9 @@ StoreInterface = function () {
 
    self.buyItemsSuccess = function (aItemIds) {
       each(aItemIds, function (i, iItemId) {
-         var storeInfo = PLAYER_ITEMS[iItemId],
-            itemInfo = storeInfo.itemInfo;
+         var item = m_itemManager.getItemById(iItemId);
 
-         addStoreItem(m_jSellBody, m_checkListSell, itemInfo);
+         m_checkListSell.getItem(iItemId).show();
          m_checkListBuy.getItem(iItemId).disable();
       });
 
@@ -387,24 +442,30 @@ StoreInterface = function () {
 
    self.sellItemsSuccess = function (aItemIds) {
       each(aItemIds, function (i, iItemId) {
-         var storeInfo = PLAYER_ITEMS[iItemId],
-            itemInfo = storeInfo.itemInfo;
-
-         //addStoreItem(m_jBuyBody, m_checkListBuy, itemInfo);
+         var item = m_itemManager.getItemById(iItemId);
          m_checkListBuy.getItem(iItemId).enable();
-         m_checkListSell.removeItem(iItemId);
+         m_checkListSell.getItem(iItemId).hide();
+         //m_checkListSell.removeItem(iItemId);
       });
 
       m_checkListSell.uncheckAll();
    };
 
-   self.initialize = function (moneyControl) {
+   self.getStoreControl = function () {
+      return m_storeControl;
+   };
+
+   self.initialize = function (itemManager, moneyControl) {
       initializeBuyTab();
       initializeSellTab();
 
-      m_jStoreItemTemplate = m_jBuyBody.find(".item:first");
-      m_jStoreModTemplate = m_jBuyBody.find(".mod:first");
-      m_jStoreItemTemplate.hide();
+      var jItemTemplate = m_jBuyBody.find(".item:first"),
+         jModTemplate = m_jBuyBody.find(".mod:first");
+
+      m_jStoreModTemplate = jModTemplate.clone();
+      jModTemplate.remove();
+      m_jStoreItemTemplate = jItemTemplate.clone();
+      jItemTemplate.remove();
 
       m_jBuyTab.click(function () {
          m_jBuyBody.show();
@@ -425,18 +486,18 @@ StoreInterface = function () {
       });
 
       m_moneyControl = moneyControl;
+      m_itemManager = itemManager;
 
       m_storeControl = new StoreControl();
-      m_storeControl.initialize(m_moneyControl, {
-         onAddItem: function (iItemId, storeInfo) {
-            var itemInfo = storeInfo.itemInfo;
-            addStoreItem(m_jBuyBody, m_checkListBuy, itemInfo);
+      m_storeControl.initialize(m_itemManager, m_moneyControl, {
+         onAddItem: function (iItemId, item) {
+            addStoreItem(m_jBuyBody, m_checkListBuy, item);
+            addStoreItem(m_jSellBody, m_checkListSell, item, true);
          },
-         onBuyItem: function (iItemId, storeInfo) {
+         onBuyItem: function (iItemId, item) {
             /*
-            var itemInfo = storeInfo.itemInfo;
-            m_checkListBuy.disableItem(itemInfo);
-            m_checkListSell.addItem(iItemId, itemInfo);
+            m_checkListBuy.disableItem(item);
+            m_checkListSell.addItem(iItemId, item);
             */
          }
       });

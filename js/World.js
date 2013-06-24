@@ -13,7 +13,13 @@ World = function () {
       // Timeout
       m_oTimeouts = {}, m_iTimeoutId = 0,
       m_dPauseTime = 0, m_dWorldTimeOffset = new Date(), m_aOnResume = [], m_aPauseObserver = [],
-      m_aResetObservers = [];
+      m_aResetObservers = [],
+
+      m_itemManager = new ItemManager();
+
+   self.getItemManager = function () {
+      return m_itemManager;
+   };
 
    self.addResetObserver = function(observer) {
       m_aResetObservers.push(observer);

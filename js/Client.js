@@ -89,10 +89,10 @@ window.Client = function () {
          self.addWeapon = function (iWeaponSlot, iItemId) {
             // TODO: Change image
             //var strImage = ...
-            var item = PLAYER_ITEMS[iItemId];
+            var item = m_world.getItemManager().getItemById(iItemId);
             m_jWeaponSlots.eq(iWeaponSlot).removeClass("disabled")
                .css({
-                  backgroundImage: "url(images/" + item.itemInfo.image + ")"
+                  backgroundImage: "url(images/" + item.image + ")"
                });
          };
 
@@ -187,7 +187,7 @@ window.Client = function () {
          iLeftShowing = 13,
          iLeftHiding = -280;
 
-      m_storeInterface.initialize(m_moneyControl);
+      m_storeInterface.initialize(m_world.getItemManager(), m_moneyControl);
       m_storeInterface.setObserver({
          onBuy: function (aItemIds) {
             self.sendRequest(REQ_BUY, aItemIds);

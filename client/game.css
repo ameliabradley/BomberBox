@@ -126,42 +126,28 @@ html, body {
    display: none;
 }
 
-#sidebar .item .side {
+#sidebar .btnMods {
    position: absolute;
-   right: 0px;
-   top: 0px;
-}
-
-#sidebar .item .sidebtn {
-   width: 35px;
-   height: 35px;
-
+   bottom: 6px;
+   right: 6px;
+   height: 25px;
+   width: 25px;
    cursor: pointer;
-
-   background-image: url(/images/mod-show.png);
+   background-image: url(images/arrow_down.png);
    background-repeat: no-repeat;
    background-position: top left;
-
-   position: relative;
-   top: 9px;
-   right: 9px;
-
-   opacity: 0.8;
+   opacity: 0.9;
 }
 
-#sidebar .item.selected .sidebtn {
-   right: 26px;
+#sidebar .item.expanded .btnMods {
+   background-image: url(/images/arrow_up.png);
 }
 
-#sidebar .item.expanded .sidebtn {
-   background-image: url(/images/mod-hide.png);
-}
-
-#sidebar .item .sidebtn:hover {
+#sidebar .item .btnMods:hover {
    opacity: 1;
 }
 
-#sidebar .mods {
+#sidebar .modContainer {
    margin: 0px 5px 0px 5px;
    font-size: 14px;
    color: #aaa;
@@ -169,6 +155,7 @@ html, body {
 }
 
 #sidebar .mod .main {
+   position: relative;
    width: 202px;
    padding: 6px;
    background-color: #222;
@@ -221,6 +208,7 @@ html, body {
 #sidebar .main {
    background-position: 5px 5px;
    background-repeat: no-repeat;
+   min-height: 44px;
 }
 
 #sidebar .main .title {
@@ -235,6 +223,7 @@ html, body {
 #sidebar .main .title,
 #sidebar .main .subtitle {
    padding-left: 44px;
+   padding-right: 30px;
 }
 
 #sidebar .main .cost {

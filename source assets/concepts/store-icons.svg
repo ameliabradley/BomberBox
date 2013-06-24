@@ -15,7 +15,7 @@
    id="svg2"
    inkscape:version="0.48.2 r9819"
    sodipodi:docname="store-icons.svg"
-   inkscape:export-filename="/Users/lbradley/Sites/BomberBoxMultiplayer/source assets/concepts/store-icons.png"
+   inkscape:export-filename="/Users/lbradley/Sites/BomberBoxMultiplayer/source assets/concepts/item_carpetbomb.png"
    inkscape:export-xdpi="36"
    inkscape:export-ydpi="36">
   <metadata
@@ -110,9 +110,9 @@
      inkscape:window-height="776"
      id="namedview6"
      showgrid="true"
-     inkscape:zoom="1.362782"
-     inkscape:cx="-31.925439"
-     inkscape:cy="7.2615822"
+     inkscape:zoom="1"
+     inkscape:cx="-10.628887"
+     inkscape:cy="-102.09014"
      inkscape:window-x="-2"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
@@ -474,5 +474,38 @@
        inkscape:connector-curvature="0"
        d="M 58.814607,17.259457 58.497106,15.579171 56.824045,15.225517 56.235637,2.4203363 44.373077,14.030161 l 0.206256,4.48063 c -3.382683,0.377889 -6.668767,1.844177 -9.289545,4.40912 L 7.7121476,49.910012 C 1.4727885,56.01643 1.3650017,66.025655 7.4714346,72.265019 13.578457,78.504985 23.586528,78.611548 29.825852,72.505123 L 57.404083,45.514451 c 2.620778,-2.564943 4.158656,-5.817495 4.608122,-9.191266 l 4.474574,0.302086 11.862562,-11.609824 -12.788963,-0.863394 -0.317503,-1.680285 -1.67249,-0.353143 3.722422,-8.400535 -8.478172,3.541248 z"
        id="path4237" />
+    <path
+       sodipodi:type="star"
+       style="opacity:0.72429905;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path4239"
+       sodipodi:sides="3"
+       sodipodi:cx="84.386207"
+       sodipodi:cy="149.89793"
+       sodipodi:r1="21.393561"
+       sodipodi:r2="10.696781"
+       sodipodi:arg1="1.5707963"
+       sodipodi:arg2="2.6179939"
+       inkscape:flatsided="true"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 84.386208,171.29149 -18.527367,-32.09034 37.054729,0 z"
+       transform="scale(0.8,0.8)"
+       inkscape:transform-center-y="5.3483904" />
+    <path
+       id="path4307"
+       d="m 89.555925,184.08646 c 0,5.33399 4.324297,9.65848 9.658484,9.65848 5.334191,0 9.658481,-4.32449 9.658481,-9.65848 0,-5.33438 -4.32429,-9.65848 -9.658481,-9.65848 -5.333996,0 -9.658484,4.32391 -9.658484,9.65848 z m 14.309045,-3.86339 2.50406,2.50425 -7.15443,7.15384 -7.154424,-7.15404 2.504058,-2.50405 4.650366,4.64997 4.65037,-4.64997 z"
+       inkscape:connector-curvature="0"
+       style="fill:#ffffff;fill-opacity:1"
+       inkscape:export-filename="/Users/lbradley/Sites/BomberBoxMultiplayer/source assets/concepts/arrow_down.png"
+       inkscape:export-xdpi="93.182358"
+       inkscape:export-ydpi="93.182358" />
+    <path
+       style="fill:#ffffff;fill-opacity:1"
+       inkscape:connector-curvature="0"
+       d="m 58.35592,184.08646 c 0,-5.334 4.324302,-9.65848 9.658489,-9.65848 5.334187,0 9.658482,4.32448 9.658482,9.65848 0,5.33438 -4.324295,9.65848 -9.658482,9.65848 -5.333996,0 -9.658489,-4.32391 -9.658489,-9.65848 z m 14.309048,3.86339 2.504058,-2.50425 -7.154426,-7.15385 -7.154424,7.15404 2.504058,2.50406 4.650366,-4.64998 4.650368,4.64998 z"
+       id="path4318"
+       inkscape:export-filename="/Users/lbradley/Sites/BomberBoxMultiplayer/source assets/concepts/arrow_up.png"
+       inkscape:export-xdpi="93.182327"
+       inkscape:export-ydpi="93.182327" />
   </g>
 </svg>

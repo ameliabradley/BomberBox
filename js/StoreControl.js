@@ -3,11 +3,12 @@ StoreControl = function() {
 
    var self = this,
 
+      m_itemManager,
       m_moneyControl,
       m_oPurchasedItems = {},
       m_observer,
 
-      onBuyItem = function(iItemId, storeItem) {
+      onBuyItem = function(iItemId, item) {
          // Weapon Upgrad
          //m_player.getWeaponSlotControl().upgradeWeapon(storeInfo.weaponModInfo.forWeapon, storeInfo);
 
@@ -21,23 +22,23 @@ StoreControl = function() {
             energyManager.setMax(iMax + upgrade.addEnergy);
          }
          */
-         m_observer.onBuyItem(iItemId, storeItem);
-         m_oPurchasedItems[iItemId] = storeItem;
+         m_observer.onBuyItem(iItemId, item);
+         m_oPurchasedItems[iItemId] = item;
       },
 
-      onSellItem = function (iItemId, storeItem) {
-         m_observer.onSellItem(iItemId, storeItem);
+      onSellItem = function (iItemId, item) {
+         m_observer.onSellItem(iItemId, item);
          delete m_oPurchasedItems[iItemId];
       },
 
       addAvailableItems = function (alist) {
-         each(alist, function(iItemId, storeItem) {
-            var itemInfo = storeItem.itemInfo;
+         each(alist, function(i, item) {
+            var iItemId = item.id;
 
-            m_observer.onAddItem(iItemId, storeItem);
+            m_observer.onAddItem(iItemId, item);
 
-            if (itemInfo.price === PRICE_PLAYER_STARTING_ITEM) {
-               self.tryBuyItem(iItemId, storeItem);
+            if (item.price === PRICE_PLAYER_STARTING_ITEM) {
+               self.tryBuyItem(iItemId, item);
             }
          });
       };
@@ -47,7 +48,7 @@ StoreControl = function() {
     * Does not trust input to be valid
     */
    self.tryBuyItem = function (iItemId) {
-      var storeItem,
+      var item,
          iPrice,
          bOwned = m_oPurchasedItems[iItemId];
 
@@ -55,12 +56,14 @@ StoreControl = function() {
          return PURCHASE_ERROR_ITEM_ALREADY_OWNED;
       }
 
-      storeItem = PLAYER_ITEMS[iItemId];
-      iPrice = storeItem.itemInfo.price;
+      // TODO: Make sure we're not trying to buy a mod that
+      // the player does not own the weapon for
+      item = m_itemManager.getItemById(iItemId);
+      iPrice = item.price;
 
       if (m_moneyControl.hasMoney(iPrice)) {
          m_moneyControl.modifyMoney(-iPrice);
-         onBuyItem(iItemId, storeItem);
+         onBuyItem(iItemId, item);
          return PURCHASE_SUCCESS;
       } else {
          return PURCHASE_ERROR_INSUFFICIENT_FUNDS;
@@ -68,7 +71,7 @@ StoreControl = function() {
    };
 
    self.trySellItem = function (iItemId) {
-      var storeItem,
+      var item,
          iPrice,
          bOwned = m_oPurchasedItems[iItemId];
 
@@ -76,11 +79,12 @@ StoreControl = function() {
          return SELL_ERROR_ITEM_NOT_OWNED;
       }
 
-      storeItem = PLAYER_ITEMS[iItemId];
-      iPrice = storeItem.itemInfo.price;
+      // TODO: Sell all mods with any given weapon
+      item = m_itemManager.getItemById(iItemId);
+      iPrice = item.price;
 
       m_moneyControl.modifyMoney(iPrice);
-      onSellItem(iItemId, storeItem);
+      onSellItem(iItemId, item);
       return SELL_SUCCESS;
    };
 
@@ -92,7 +96,8 @@ StoreControl = function() {
       return m_oPurchasedItems;
    };
 
-   self.initialize = function (moneyControl, observer) {
+   self.initialize = function (itemManager, moneyControl, observer) {
+      m_itemManager = itemManager;
       m_moneyControl = moneyControl;
       m_observer = observer;
       addAvailableItems(PLAYER_ITEMS);
