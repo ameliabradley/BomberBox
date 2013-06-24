@@ -107,49 +107,56 @@
 
    PRICE_PLAYER_STARTING_ITEM = 0,
 
-   ITEM_TYPE = {
-      TYPE_PLAYER_UPGRADE: 1,
-      TYPE_WEAPON: 2,
-      TYPE_WEAPON_MOD: 3,
-      TYPE_BOMB_MOD: 4
-   },
+   I = 0,
+   ITEM_TYPE_WEAPON = I++,
+   ITEM_TYPE_BOMB_MOD = I++,
 
    // IMPORTANT: Must sync with item ID
    I = 0,
    WEAPON_BOMB = I++,
+   WEAPON_BOMB_M2 = I++,
    WEAPON_CARPET_BOMB = I++,
 
+   /*
+   bomb = weaponGen.create({
+      id: WEAPON_BOMB,
+
+   });
+
+   weaponGen.getById(WEAPON_BOMB)
+   */
+
+   // TODO: possibly have categories for mods
+   // (ex: Range, Element, etc)
    I = 0,
    PLAYER_ITEMS = [
       {
-         itemInfo: {
-            id: WEAPON_BOMB,
-            image: "item_bomb.png",
-            name: "Bomb",
-            description: "Standard Bomb",
-            type: ITEM_TYPE.TYPE_WEAPON,
-            price: PRICE_PLAYER_STARTING_ITEM
-         },
-         weaponInfo: {
-            cooldown: 0,
-            energy: 50
-         }
+         id: WEAPON_BOMB,
+         image: "item_bomb.png",
+         name: "Bomb",
+         description: "Standard Bomb",
+         type: ITEM_TYPE_WEAPON,
+         price: PRICE_PLAYER_STARTING_ITEM,
+         mods: [
+            {
+               id: WEAPON_BOMB_M2,
+               //type: ITEM_TYPE_WEAPON_MOD,
+               name: "Mark II",
+               description: "+1 Radius",
+               price: 1
+            }
+         ],
+
+         cooldown: 0
       },
       {
-         itemInfo: {
-            id: WEAPON_CARPET_BOMB,
-            image: "item_carpetbomb.png",
-            name: "Carpet Bomb",
-            type: ITEM_TYPE.TYPE_WEAPON,
-            price: 30,
-            description: "Destroys almost all blocks in a circle",
-            bonus: "",
-            parentItem: null
-         },
-         weaponInfo: {
-            cooldown: 15000,
-            energy: 200
-         }
+         id: WEAPON_CARPET_BOMB,
+         image: "item_carpetbomb.png",
+         name: "Carpet Bomb",
+         type: ITEM_TYPE_WEAPON,
+         price: 30,
+         description: "Destroys almost all blocks in a circle",
+         cooldown: 15000
       }
    ],
 

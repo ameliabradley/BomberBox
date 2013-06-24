@@ -43,17 +43,17 @@ Weapon = function() {
    };
 
    self.initialize = function(world, iWeaponId, weaponImplentation) {
-      var item = PLAYER_ITEMS[iWeaponId];
-
       m_id = iWeaponId;
+
+      var item = world.getItemManager().getItemById(iWeaponId);
 
       m_world = world;
 
-      m_strName = item.itemInfo.name;
+      m_strName = item.name;
 
       m_weaponImplementation = weaponImplentation;
       
       m_cooldown = new ItemCooldown();
-      m_cooldown.initialize(world, item.weaponInfo.cooldown);
+      m_cooldown.initialize(world, item.cooldown);
    };
 };

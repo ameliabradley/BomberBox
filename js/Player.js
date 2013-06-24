@@ -55,7 +55,7 @@ Player = function() {
       }
    }
 
-   self.addWeapon = function(iItemId, storeItem) {
+   self.addWeapon = function(iItemId, item) {
       var weapon;
 
       switch (iItemId) {
@@ -72,7 +72,7 @@ Player = function() {
       m_weaponSlotControl.addWeapon(iItemId, weapon.getWeapon());
    };
 
-   self.removeWeapon = function (iItemId, storeItem) {
+   self.removeWeapon = function (iItemId, item) {
       m_weaponSlotControl.removeWeapon(iItemId);
    };
 
@@ -143,28 +143,26 @@ Player = function() {
 
       if (!m_storeControl) {
          m_storeControl = new StoreControl();
-         m_storeControl.initialize(m_moneyControl, {
-            onSellItem: function (iItemId, storeItem) {
-               var itemInfo = storeItem.itemInfo;
-
-               switch (itemInfo.type) {
-               case ITEM_TYPE.TYPE_WEAPON:
-                  self.removeWeapon(iItemId, storeItem);
+         m_storeControl.initialize(m_world.getItemManager(), m_moneyControl, {
+            onSellItem: function (iItemId, item) {
+               switch (item.type) {
+               case ITEM_TYPE_WEAPON:
+                  self.removeWeapon(iItemId, item);
                   break;
                // TODO: Sell mods
                }
             },
-            onBuyItem: function (iItemId, storeItem) {
-               var itemInfo = storeItem.itemInfo;
+            onBuyItem: function (iItemId, item) {
+               console.log("onBuyItem", iItemId, item);
 
-               switch (itemInfo.type) {
-               case ITEM_TYPE.TYPE_WEAPON:
-                  self.addWeapon(iItemId, storeItem);
+               switch (item.type) {
+               case ITEM_TYPE_WEAPON:
+                  self.addWeapon(iItemId, item);
                   break;
                // TODO: Buy mods
                }
             },
-            onAddItem: function (iItemId, storeItem) {
+            onAddItem: function (iItemId, item) {
             }
          });
       }

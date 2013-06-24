@@ -41,6 +41,7 @@ require('./js/BombDeployer');
 require('./js/BombFragment');
 require('./js/CarpetBomb');
 require('./js/CarpetBombDeployer');
+require('./js/ItemManager');
 
 require('./js/WanderingEntity');
 require('./js/Charger');
@@ -166,8 +167,8 @@ const SERVER_VERSION = '1.0',
       "client/images/item_bomb.png", "images/",
       "client/images/item_carpetbomb.png", "images/",
 
-      "client/images/mod-show.png", "images/",
-      "client/images/mod-hide.png", "images/",
+      "client/images/arrow_down.png", "images/",
+      "client/images/arrow_up.png", "images/",
 
       "lib/jquery-1.8.2.js", "lib/",
       "lib/jquery-ui/jquery-ui.css", "lib/jquery-ui/",
@@ -190,6 +191,7 @@ const SERVER_VERSION = '1.0',
       "js/ClientObjectManager.js", "js/",
       "js/ContextCache.js", "js/",
       "js/CountDown.js", "js/",
+      "js/ItemManager.js", "js/",
       "js/Ghost.js", "js/",
       "js/ItemCooldown.js", "js/",
       "js/MoneyBlock.js", "js/",
