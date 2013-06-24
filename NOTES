@@ -6,27 +6,22 @@ PURCHASABLE ITEMS
    - Ice trap: Slows enemies down
    - Shadow trap: Modifies vision to fog-of-war
 
-StoreDirectory.addItem({
-   itemInfo: {
-      id: WEAPON_BOMB,
-      image: "item_bomb.png",
-      name: "Bomb",
-      description: "Standard Bomb",
-      type: ITEM_TYPE_WEAPON,
-      price: PRICE_PLAYER_STARTING_ITEM,
-      mods: [
-         {
-            id: WEAPON_BOMB_M2,
-            name: "Mark II",
-            description: "+1 Radius",
-            price: 1
-         }
-      ]
-   },
-   weaponInfo: {
-      cooldown: 0,
-      energy: 50
-   }
-});
+MMO-LIKE IDEAS
+- Characters (like in the original.. QUTE, ZOMB, etc) that can only be purchased, or earned through playing a certain number of times (XP vs IP)
+- QUTE starts with a special bomb
+- GHST starts with limited invisibility
+- ???? starts with ability to darken the screen
 
-WeaponStoreItem
+GHOST WORLD MINIGAME
+I REALLY like the idea that players can be kept busy during spawn count-down. There needs to be a spawning mini-game. How about a "Ghost world" that you can only get to after being killed by a PLAYER. The ghost world can give you back money and give you special items. It can also offset player's bad luck when they die often...
+
+Ghost World will be dark and filled with horrors. Not zombies. Ghosts! Liches! Maybe it will overlay on top of the regular world's design? Maybe there will be special rooms with cool items, protected by deadly things... but dying AGAIN will kick you back to a boring spawn counter.
+
+ARENA
+BomberBox is going to stand out as an MMO because there is no persistant world, and every game will basically be a FFA deathmatch. Hmm... how do I prevent players from working together? Should I prevent this? Questions for later!
+
+REGENERATING SHIELD
+Where do players spawn? Why wouldn't they just immediately find eachother to kill them? I need more long-range items for the player. They should be able to take pot-shots at each other. How about players have a shield that can take ONE extra shot, but has a slow regeneration?
+
+SPAWN POINTS / PURCHASING ITEMS
+Players should have a designated spawn area which is protected, where they can purchase items. Enemies can get in for a limited time by spending a shitload of gold. This decision should not be an easy one, and there should be great items they can buy for ths price. This will be most end-games.
