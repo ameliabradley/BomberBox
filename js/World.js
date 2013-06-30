@@ -535,8 +535,7 @@ World = function () {
    };
 
    self.toJson = function () {
-      var iCurrentTile = m_iTotalTiles,
-         oTileById = {};
+      var oTileById = {};
 
       each(m_oTileById, function (strTileId, tile) {
          var oTile = tile.toJson();
