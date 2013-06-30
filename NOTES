@@ -17,6 +17,8 @@ I REALLY like the idea that players can be kept busy during spawn count-down. Th
 
 Ghost World will be dark and filled with horrors. Not zombies. Ghosts! Liches! Maybe it will overlay on top of the regular world's design? Maybe there will be special rooms with cool items, protected by deadly things... but dying AGAIN will kick you back to a boring spawn counter.
 
+Deep, throbbing sound (like far-away wobbling metal)... hard to see around corners... your character is "ghostly"
+
 ARENA
 BomberBox is going to stand out as an MMO because there is no persistant world, and every game will basically be a FFA deathmatch. Hmm... how do I prevent players from working together? Should I prevent this? Questions for later!
 
@@ -25,3 +27,20 @@ Where do players spawn? Why wouldn't they just immediately find eachother to kil
 
 SPAWN POINTS / PURCHASING ITEMS
 Players should have a designated spawn area which is protected, where they can purchase items. Enemies can get in for a limited time by spending a shitload of gold. This decision should not be an easy one, and there should be great items they can buy for ths price. This will be most end-games.
+
+COMMENTS FROM OTHER PEOPLE
+Kyle:
+- Single-player mode is fun sometimes
+- Carpet bomb destroying scenery is too much. It should go through walls to destroy the Ghost.
+- Levels should not allow the player to continue until you destroy all mobs
+- Boss fights
+  - Boss is larger or faster
+  - Boss can destroy places player can hide, or there should be fewer places to hide
+- Players should not be able to go through each other
+  - Bad guys should not go through eachother, but they need better pathfinding (to work together to get to player) to do so
+- Bad guy that trails incendiary fire, which goes out over time
+
+TODO
+- Respawning the player on death
+- Bigger maps
+- Fewer slots for weapons
