@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+   <title>Light Test</title>
+   <script src="Range.js"></script>
+   <style>
+#canvas { border: 1px solid black; cursor: crosshair; }
+   </style>
+</head>
+<body>
+Click to toggle cells, move to show FOV. Topology: <select id="topology">
+<option value="4">4</option>
+<option value="8" selected="selected">8</option>
+</select><br/>
+<canvas id="canvas"></canvas><br/>
+FOV: <span id="fov"></span>ms, draw: <span id="draw"></span>ms
+   <script src="light.js"></script>
+</body>
+</html>
