@@ -77,7 +77,7 @@ require('./js/WorldGenerator');
 //
 //  bomberboxserver.js
 //  BomberBox Server
-//  Copyright (c) 2010 Lee Bradley
+//  Copyright (c) 2013 Lee Bradley
 //
 //  Read README for instructions and LICENSE license.
 //
