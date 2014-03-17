@@ -1,7 +1,7 @@
 BomberBox
 =========
 
-A simple multiplayer web game, using sockets and canvas. Players run through a dungeon, containing a mixture of horrificly annoying to laughably easy enemies. This game is far from finished.
+A simple multiplayer web game, using sockets and canvas. Players run through a dungeon, containing a mixture of horrifically annoying to laughably easy enemies. This game is far from finished.
 
 Playing
 =========
