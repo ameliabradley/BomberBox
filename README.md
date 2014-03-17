@@ -3,7 +3,7 @@ BomberBox
 
 A simple multiplayer web game, using sockets and canvas. Players run through a dungeon, containing a mixture of horrifically annoying to laughably easy enemies. This game is far from finished.
 
-![BomberBox Gameplay](https://raw.github.com/leebradley/BomberBox/master/screenshot.png "Gameplay Screenshot")
+![BomberBox Gameplay](screenshot.png "Gameplay Screenshot")
 
 Playing
 =========
