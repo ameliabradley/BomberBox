@@ -1,2 +1,0 @@
-#!/bin/bash
-java -jar compiler.jar --js game.js --js_output_file game-compiled.js
