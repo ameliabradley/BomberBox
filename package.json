@@ -1,0 +1,26 @@
+{
+  "name": "bomberbox",
+  "version": "1.0.0",
+  "description": "Fun socket game where you run from monsters",
+  "main": "bomberboxserver.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "ws": "^0.4.25"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node bomberboxserver.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leebradley/BomberBox.git"
+  },
+  "author": "Lee Bradley",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leebradley/BomberBox/issues"
+  },
+  "homepage": "https://github.com/leebradley/BomberBox#readme"
+}
