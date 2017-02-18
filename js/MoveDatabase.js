@@ -1,15 +1,3 @@
-/**
- * Copyright © 2012-2013 Tim Bradley 
- * All Rights Reserved
- * 
- * NOTICE: All information herein is, and remains the property of
- * Tim Bradley. Dissemation of this information or reproduction of
- * this material is strictly forbidden unless prior written permission
- * is obtained from Tim Bradley.
- * 
- * The above copyright notice and this notice shall be included in
- * all copies or substantial portions of Tim's modifications to the Software.
- */
 "use strict";
 window.MoveDatabase = function(options){
 
@@ -20,7 +8,7 @@ window.MoveDatabase = function(options){
          throw '[MoveDatabase] options argument should be a plain Javascript object.';
       }
       var requiredOptions = [
-         // 
+         //
          // [Type, Name, [Params]]
          //
          // Game State

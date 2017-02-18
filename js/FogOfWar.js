@@ -1,16 +1,3 @@
-/**
- * Copyright © 2012-2013 Lee Bradley 
- * All Rights Reserved
- * 
- * NOTICE: All information herein is, and remains the property of
- * Lee Bradley. Dissemation of this information or reproduction of
- * this material is strictly forbidden unless prior written permission
- * is obtained from Lee Bradley.
- * 
- * The above copyright notice and this notice shall be included in
- * all copies or substantial portions of the Software.
- */
-
 FogOfWar = function(world, x, y) {
    "use strict";
 
@@ -18,7 +5,7 @@ FogOfWar = function(world, x, y) {
 
       m_world,
       m_oVisiblePoints = {},
-      
+
       VisionPoint = function (id, x, y, pos, radius) {
          var self = this;
          self.id = id;
@@ -53,7 +40,7 @@ FogOfWar = function(world, x, y) {
          visionPoint.x = x;
          visionPoint.y = y;
       },
-      
+
       initialize = function (world, tileManipulationObserver) {
          m_world = world;
          m_tileManipulationObserver = tileManipulationObserver;

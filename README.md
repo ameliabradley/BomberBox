@@ -15,3 +15,8 @@ BomberBox is server-based. To start a server, run this command:
 Start playing by opening a browser and going to the entered IP address on port **8000**.
 
 The game server runs on port **6114**.
+
+License
+=========
+
+This project is licensed under the standard MIT license. See the [LICENSE](LICENSE) file.
