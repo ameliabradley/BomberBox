@@ -1,12 +1,12 @@
 /**
- * Copyright © 2012-2013 Lee Bradley 
+ * Copyright © 2012-2013 Lee Bradley
  * All Rights Reserved
- * 
+ *
  * NOTICE: All information herein is, and remains the property of
  * Lee Bradley. Dissemation of this information or reproduction of
  * this material is strictly forbidden unless prior written permission
  * is obtained from Lee Bradley.
- * 
+ *
  * The above copyright notice and this notice shall be included in
  * all copies or substantial portions of the Software.
  */
@@ -14,8 +14,8 @@
 // blah
 // BACKPACK ICON
 
-// 
-// 
+//
+//
 // Action Types
 // 1. Server
 //    a. Send command to player
@@ -35,7 +35,7 @@
 //    b. Interpret command in browser
 //       1. Deterministically choose the step to apply the AI's command
 //
-// 
+//
 // Move Management
 // 1. Store Move ID/time-step
 // 2. Store Move action/data
@@ -52,6 +52,8 @@ window.Client = function () {
       m_world,
       m_worldInterface,
       m_bIsConnected = false,
+      m_bLocal,
+      m_sendRequestLocal,
 
       m_bRendering = true,
 
@@ -157,7 +159,7 @@ window.Client = function () {
       case 37: // LEFT
       case 65: // A
          self.sendRequest(REQ_PLAYER_MOVE, DIR_LEFT);
-         break;   
+         break;
 
       case 38: // UP
       case 87: // W
@@ -306,7 +308,6 @@ window.Client = function () {
       m_worldInterface.renderDebug(m_ctx);
    };
 
-
    self.interpretCommand = function (iCommandId, o) {
       switch (iCommandId) {
       case OP_WORLD_LOAD:
@@ -437,7 +438,14 @@ window.Client = function () {
       };
    };
 
-   self.join = function (url) {
+   self.joinLocal = function (sendRequest) {
+      m_bIsConnected = true;
+      m_bLocal = true;
+      m_sendRequestLocal = sendRequest;
+   };
+
+   self.joinServer = function (url) {
+     m_bLocal = false;
       if (!m_bIsConnected) {
          self.conn = new WebSocket(url);
 
@@ -474,10 +482,14 @@ window.Client = function () {
    };
 
    self.sendRequest = function (iRequestId, oMessage) {
-      if (self.conn) {
-         var strRequest = msgpack.pack([iRequestId, oMessage], true);
-         //parent.frames.server.receive(strMessage);
-         self.conn.send(strRequest);
+      if (m_sendRequestLocal) {
+        m_sendRequestLocal([iRequestId, oMessage]);
+      } else {
+        if (self.conn) {
+           var strRequest = msgpack.pack([iRequestId, oMessage], true);
+           //parent.frames.server.receive(strMessage);
+           self.conn.send(strRequest);
+        }
       }
    };
 

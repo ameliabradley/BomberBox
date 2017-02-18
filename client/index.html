@@ -14,7 +14,9 @@
    <script src="lib/FABridge.js"></script>
    <script src="lib/web_socket.js"></script>
 
-<!--
+   <script src="js/WorldGenerator.js"></script>
+   <script src="js/WorldServer.js"></script>
+
    <script src="lib/dijkstra.js"></script>
    <script src="js/Blaster.js"></script>
    <script src="js/Bomb.js"></script>
@@ -34,10 +36,8 @@
    <script src="js/RectDimensions.js"></script>
    <script src="js/CarpetBomb.js"></script>
    <script src="js/CarpetBombDeployer.js"></script>
-   <script src="js/ServerTest.js"></script>
    <script src="js/ClientObjectManager.js"></script>
    <script src="js/ServerObjectManager.js"></script>
--->
 
    <script src="js/util.js"></script>
    <script src="js/util-client.js"></script>
@@ -57,9 +57,6 @@
    <script src="js/const.js"></script>
 
 <script>
-// Set location for the WebSocket SWF library.
-WebSocket.__swfLocation = "lib/WebSocketMain.swf";
-
 function supports_canvas_text() {
    if (!document.createElement('canvas').getContext) { return false; }
    var dummy_canvas = document.createElement('canvas');
@@ -67,16 +64,27 @@ function supports_canvas_text() {
    return typeof context.fillText == 'function';
 }
 
-/**
- *  Is called when the document is loaded and ready. Creates a new client.
- */
-$(document).ready(function() {
+function startLocal () {
+  function broadcast (type, payload) {
+    if (client) client.interpretCommand(type, payload);
+  }
+
+  // Create the world server first
+  var worldServer = new WorldServer(broadcast, console.log);
+  worldServer.setupWorld();
+
+  // Create the client
+  var client = new Client();
+  client.start();
+
+  // Connect the client to the world server
+  var connection = worldServer.createConnection('local', broadcast);
+  client.joinLocal(connection.handleClientRequest);
+}
+
+function startConnectToServer () {
    if (WebSocket.__initialize && swfobject.getFlashPlayerVersion()['major'] < 1) {
       return alert('Your browser doesnt support WebSocket or Flash');
-   }
-
-   if (!supports_canvas_text()) {
-      return alert('Your browser doesnt support <canvas> or fillText.');
    }
 
    var startime = new Date();
@@ -86,18 +94,20 @@ $(document).ready(function() {
 
       var client = new Client();
       client.start();
-      client.join(strUrl);
-
-/*
-      $('#splash .notice').css('display', 'none');
-      $('#splash .server-info h2').html(state.server_name + '<span>' + state.game_server_url + '</span>');
-      $('#splash .server-info .ping').html('Response time (http)<span>' + ping + ' ms</span>');
-      $('#splash .server-info .map').html('Map name<span>' + state.map_name + '</span>');
-      $('#splash .server-info .players').html('Connected players<span>' + state.no_players + ' of ' + state.max_players + '</span>');
-      $('#splash .server-info button').data('url', state.game_server_url);
-      $('#splash .server-info').css('display', 'block');
-*/
+      client.joinServer(strUrl);
    });
+}
+
+/**
+ *  Is called when the document is loaded and ready. Creates a new client.
+ */
+$(document).ready(function() {
+  if (!supports_canvas_text()) {
+    return alert('Your browser doesnt support <canvas> or fillText.');
+  }
+
+  startLocal();
+  // startConnectToServer();
 });
 </script>
 
@@ -111,10 +121,12 @@ $(document).ready(function() {
          <div id="instructionsKeyboard">
             <span class="dark">Arrow Keys / WASD:</span> Move<br />
             <span class="dark">Space:</span> Drop Bomb<br />
-            <span class="dark">Escape:</span> New World<br />
             <span class="dark">Q / E:</span> Zoom Out / Zoom In<br />
             <span class="dark">Tab:</span> Switch Weapon<br />
+            <!--
+            <span class="dark">Escape:</span> New World<br />
             <span class="dark">P:</span> Pause<br />
+            -->
          </div>
          <!--
          <div id="instructionsTouch">
@@ -184,42 +196,11 @@ $(document).ready(function() {
       <div id="storeSelector">0</div>
    </div>
 
-   <!--
-   TODO: Add for single-player
-   <div id="pauseContainer" class="hud">
-      <div id="pauseButton">
-         <img src="images/btn_pause.png" height="100%" />
-      </div>
-   </div>
-   -->
-
    <div id="weaponSelectionContainer" class="hud">
-      <div class="weaponSlot disabled"><div class="innerShadow"></div><div class="slotCooldown"></div></div>
-      <div class="weaponSlot disabled"><div class="innerShadow"></div><div class="slotCooldown"></div></div>
-      <div class="weaponSlot disabled"><div class="innerShadow"></div><div class="slotCooldown"></div></div>
       <div class="weaponSlot disabled"><div class="innerShadow"></div><div class="slotCooldown"></div></div>
       <div class="weaponSlot disabled"><div class="innerShadow"></div><div class="slotCooldown"></div></div>
    </div>
 
    <canvas id="canvas"></canvas>
-
-<!--
-   <style>
-   #test {
-      color: white;
-   -webkit-text-stroke-width: 1px;
-   -webkit-text-stroke-color: black;
-
-      text-align: center;
-      position: absolute;
-      right: 0px;
-      left: 0px;
-      font-weight: bold;
-      font-size: 30px;
-      top: 100px;
-   }
-   </style>
-   <div id="test">+1</div>
--->
 </body>
 </html>
