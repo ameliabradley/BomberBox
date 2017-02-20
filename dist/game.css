@@ -1,0 +1,351 @@
+/* SIDEBAR GENERAL
+ * ================================ */
+#sidebar {
+   position: absolute;
+   left: -250px;
+   top: 72px;
+   bottom: 67px;
+   width: 240px;
+   z-index: 3;
+   color: white;
+   display: none;
+}
+
+#sidebar .tabContent {
+   position: absolute;
+   top: 37px;
+   bottom: 37px;
+   right: 0;
+   left: 0;
+   display: none;
+   overflow: auto;
+   background-color: #373741;
+}
+
+#sidebar .tabContent.selected {
+   display: block;
+}
+
+/* SIDEBAR ITEM
+ * ================================ */
+#sidebar .item {
+   margin: 5px 5px 0px 5px;
+   position: relative;
+   display: none;
+}
+
+#sidebar .item .main {
+   width: 212px;
+}
+
+/* SIDEBAR MODS BUTTON
+ * ================================ */
+#sidebar .btnMods {
+   position: absolute;
+   bottom: 6px;
+   right: 6px;
+   height: 25px;
+   width: 25px;
+   cursor: pointer;
+   background-image: url(images/arrow_down.png);
+   background-repeat: no-repeat;
+   background-position: top left;
+   opacity: 0.9;
+}
+
+#sidebar .item.expanded .btnMods {
+   background-image: url(/images/arrow_up.png);
+}
+
+#sidebar .item .btnMods:hover {
+   opacity: 1;
+}
+
+/* SIDEBAR MODS
+ * ================================ */
+#sidebar .modContainer {
+   margin: 0px 5px 0px 5px;
+   font-size: 14px;
+   display: none;
+}
+
+#sidebar .mod .main {
+   position: relative;
+   width: 202px;
+   margin-left: 10px;
+   margin-top: 5px;
+}
+
+/* SIDEBAR MOD/ITEM BODY
+ * ================================ */
+#sidebar .main {
+   padding: 6px;
+   background-color: #3E5B7A;
+   border: 3px solid #506a86;
+   cursor: pointer;
+   border-radius: 3px;
+   background-position: 5px 5px;
+   background-repeat: no-repeat;
+   min-height: 44px;
+}
+
+#sidebar .main .title {
+   font-size: 20px;
+}
+
+#sidebar .main .subtitle {
+   font-size: 14px;
+   color: rgba(255, 255, 255, 0.8);
+}
+
+#sidebar .main .title,
+#sidebar .main .subtitle {
+   padding-left: 44px;
+   padding-right: 30px;
+}
+
+#sidebar .main .cost {
+   position: absolute;
+   top: 0;
+   right: 0;
+   padding: 5px;
+   background-color: #506a86;
+   color: white;
+   border-bottom-left-radius: 3px;
+   border-top-right-radius: 3px;
+}
+
+#sidebar .main:hover {
+   background-color: #436E9C;
+   border: 3px solid #557ca5;
+}
+
+#sidebar .main:hover .cost {
+   background-color: #557ca5;
+}
+
+#sidebar .tabContent .selected .main:hover .cost {
+   background-color: #e6ad22;
+}
+
+#sidebar .tabContent .selected .main:hover {
+   border: 3px solid #e6ad22;
+   background-color: #af882c;
+}
+
+#sidebar .tabContent .selected .main .cost {
+   background-color: #c29528;
+}
+
+#sidebar .tabContent .selected .main {
+   border: 3px solid #c29528;
+   background-color: #876d33;
+}
+
+#sidebar .tabContent .disabled .main .cost {
+   background-color: #999;
+}
+
+#sidebar .tabContent .disabled .main {
+   border: 3px solid #999;
+   background-color: #666;
+   cursor: default;
+}
+
+/* SIDEBAR BOTTOM
+ * ================================ */
+#sidebarSellBottom {
+   display: none;
+}
+
+#sidebar .storeSomethingSelected {
+   display: none;
+}
+
+#sidebar .sidebarBottom {
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   padding: 10px;
+   background-color: #222;
+   border-bottom-right-radius: 3px;
+   border-bottom-left-radius: 3px;
+}
+
+#sidebar .btnFinish {
+   background-color: #9a7a2f;
+   position: absolute;
+   right: 5px;
+   top: 5px;
+   padding: 5px 10px;
+   cursor: pointer;
+}
+
+#sidebar .btnFinish:hover {
+   background-color: #FFBF1F;
+}
+
+#sidebar .btnFinish.disabled {
+   background-color: #666;
+   color: #aaa;
+}
+
+/* STORE SIDEBAR
+ * ================================ */
+#storeSelectorContainer {
+   position: absolute;
+   top: 10px;
+   bottom: 10px;
+   left: 10px;
+   width: 50px;
+   height: 50px;
+   padding: 0;
+}
+
+#storeSelector {
+   position: absolute;
+   top: 5px;
+   left: 5px;
+   bottom: 5px;
+   right: 5px;
+   font-size: 22px;
+   line-height: 38px;
+   text-align: center;
+   cursor: pointer;
+}
+
+#storeSelector {
+   background-color: #9a7a2f;
+   border-color: #9a9343;
+}
+
+#storeSelector:hover {
+   background-color: #FFBF1F;
+   border-color: #FFF146;
+}
+
+.tab {
+   padding: 10px 0px;
+   position: absolute;
+   top: 0px;
+   text-align: center;
+   background-color: #222;
+   cursor: pointer;
+}
+
+.tab:hover {
+   background-color: #565663;
+}
+
+.tab.selected,
+.tab.selected:hover {
+   background-color: #373741;
+   cursor: default;
+}
+
+#tabBuy {
+   left: 0px;
+   right: 120px;
+   border-top-left-radius: 3px;
+}
+
+#tabSell {
+   left: 120px;
+   right: 0px;
+   border-top-right-radius: 3px;
+}
+
+/* PAUSE BUTTON
+ * ================================ */
+#pauseContainer {
+   position: absolute;
+   top: 10px;
+   left: 65px;
+   width: 50px;
+   height: 50px;
+   padding: 0;
+   cursor: pointer;
+}
+
+#pauseButton {
+   position: absolute;
+   top: 10px;
+   left: 5px;
+   bottom: 10px;
+   right: 5px;
+   font-size: 22px;
+   line-height: 30px;
+   text-align: center;
+}
+
+/* WEAPON SLOTS
+ * ================================ */
+#weaponSelectionContainer {
+   position: absolute;
+   left: 10px;
+   height: 50px;
+   padding: 0px 2px;
+   bottom: 10px;
+}
+
+#weaponSelectionContainer .weaponSlot {
+   float: left;
+   height: 40px;
+   width: 40px;
+   margin: 5px 4px;
+   position: relative;
+
+   background-color: #444;
+   box-shadow: 0px 0px 0px 2px #666;
+   border-radius: 3px;
+
+   background-repeat: no-repeat;
+   background-position: center center;
+}
+
+#weaponSelectionContainer .weaponSlot.selected {
+   box-shadow: 0px 0px 0px 3px #598A4C;
+   background-color: #385730;
+}
+
+#weaponSelectionContainer .weaponSlot:not(.disabled) .innerShadow {
+   position: absolute;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   border-radius: 3px;
+   box-shadow: inset 0px 0px 19px #333;
+}
+
+#weaponSelectionContainer .weaponSlot.selected .innerShadow {
+   box-shadow: inset 0px 0px 19px #598A4C;
+}
+
+#weaponSelectionContainer .weaponSlot.disabled {
+   background-color: #111;
+   box-shadow: 0px 0px 0px 1px #444;
+   background-color: #333;
+
+   /*
+   -moz-box-shadow: inset 0 0 5px 5px rgba(0,0,0,0.1);
+   -webkit-box-shadow: inset 0 0 5px 5px rgba(0,0,0,0.1);
+   box-shadow: inset 0 0 5px 5px rgba(0,0,0,0.1);
+   */
+}
+
+#weaponSelectionContainer .slotCooldown {
+   /* background-color: rgba(255,255,255,0.5); */
+   background-color: rgba(100,50,50,0.8);
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   border-radius: 3px;
+}
+
+/* TOUCH / KEYBOARD DIFFERENCES
+ * ================================ */
+#interfaceKeyboard #instructionsTouch { display: none; }
+#interfaceTouch #instructionsKeyboard { display: none; }

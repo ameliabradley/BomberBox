@@ -1,0 +1,19 @@
+.hud {
+   background-color: rgba(0,0,0,0.15);
+   color: #EEE;
+   padding: 5px 10px;
+   border-radius: 5px;
+   z-index: 1;
+}
+
+.hud .infoboxClose {
+   position: absolute;
+   top: 0;
+   right: 0;
+   padding: 15px;
+   cursor: pointer;
+   color: rgba(255,255,255,0.5);
+   font-weight: bold;
+   padding: 10px;
+   font-size: 15px;
+}

@@ -16,6 +16,15 @@ Start playing by opening a browser and going to the entered IP address on port *
 
 The game server runs on port **6114**.
 
+Developing
+=========
+
+Checkout the project. Install with `yarn`
+
+Atom is the recommended editor, with the following packages:
+https://atom.io/packages/linter-eslint
+https://atom.io/packages/react
+
 License
 =========
 

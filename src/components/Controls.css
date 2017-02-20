@@ -1,0 +1,17 @@
+.controls {
+   font-weight: bold;
+   margin: 10px;
+   position: absolute;
+   right: 0;
+   bottom: 0;
+}
+
+.controls .infoboxTitle {
+   font-size: 20px;
+   cursor: pointer;
+   padding: 5px 0px;
+}
+
+.dark {
+   color: #999;
+}

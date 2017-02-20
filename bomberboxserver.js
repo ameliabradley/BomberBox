@@ -58,7 +58,6 @@ require('./js/RectDimensions');
 require('./js/PlayerInformation');
 require('./js/PlayerInformationManager');
 
-require('./js/ServerObjectManager');
 require('./js/WorldGenerator');
 require('./js/WorldServer');
 
@@ -187,7 +186,6 @@ CLIENT_DATA = [
   "js/CarpetBombDeployer.js", "js/",
   "js/Charger.js", "js/",
   "js/Client.js", "js/",
-  "js/ClientObjectManager.js", "js/",
   "js/ContextCache.js", "js/",
   "js/CountDown.js", "js/",
   "js/ItemManager.js", "js/",
@@ -198,7 +196,6 @@ CLIENT_DATA = [
   "js/Portal.js", "js/",
   "js/RectDimensions.js", "js/",
   "js/Sentry.js", "js/",
-  "js/ServerObjectManager.js", "js/",
   "js/WorldGenerator.js", "js/",
   "js/WorldServer.js", "js/",
   "js/Tile.js", "js/",
