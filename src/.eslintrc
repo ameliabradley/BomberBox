@@ -1,0 +1,16 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "env": {
+    "shared-node-browser": true,
+  },
+  "rules": {
+    "no-undef": 2,
+    "prefer-arrow-callback": ["error", { "allowUnboundThis": false }]
+  }
+}
