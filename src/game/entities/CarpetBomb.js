@@ -1,6 +1,6 @@
-import BombBase from './BombBase.js';
-import BombFragment from './BombFragment.js';
-import RectDimensions from './RectDimensions.js';
+import BombBase from 'game/entities/partials/BombBase';
+import BombFragment from 'game/entities/BombFragment';
+import RectDimensions from 'game/RectDimensions';
 
 /**
  * Carpet Bomb

@@ -1,5 +1,5 @@
-import Tile from './Tile';
-import { TILE_TRAIT, TILE_STYLE } from './const.js';
+import Tile from 'game/entities/Tile';
+import { TILE_TRAIT, TILE_STYLE } from 'game/const';
 
 /**
  * Little exploding aftermath that bombs tend to leave
@@ -20,11 +20,9 @@ const BombFragment = function(world, x, y, bSuper) {
    world.runEventAtPosition('frag', x, y);
    world.runEventAtPosition('superFrag', x, y);
 
-   world.setTimeout(function() {
+   world.setTimeout(() => {
       m_tile.setStyle(TILE_STYLE.TILE_EXPLOSION_YELLOW);
-      world.setTimeout(function() {
-         m_tile.destroy();
-      }, 100);
+      world.setTimeout(() => m_tile.destroy(), 100);
    }, 100);
 };
 

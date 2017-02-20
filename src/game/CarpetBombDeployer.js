@@ -1,9 +1,9 @@
-import Weapon from './Weapon.js';
-import CarpetBomb from './CarpetBomb.js';
+import Weapon from 'game/interface/Weapon';
+import CarpetBomb from 'game/entities/CarpetBomb';
 import {
   TILE_TRAIT,
   WEAPON_CARPET_BOMB,
-} from './const.js';
+} from 'game/const';
 
 const CarpetBombDeployer = function() {
    var self = this,

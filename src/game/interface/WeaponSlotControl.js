@@ -1,4 +1,4 @@
-import { each } from './util.js';
+import { each } from 'game/util';
 
 const WeaponSlotControl = function() {
    var self = this,
@@ -10,7 +10,7 @@ const WeaponSlotControl = function() {
 
       getFirstEmptySlot = function () {
          var iSlot = null;
-         each(m_aWeaponSlots, function (i, weapon) {
+         each(m_aWeaponSlots, (i, weapon) => {
             if (weapon === null) {
                iSlot = i;
                return false;

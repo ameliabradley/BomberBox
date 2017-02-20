@@ -1,4 +1,4 @@
-import { TILE_TRAIT } from './const.js';
+import { TILE_TRAIT } from 'game/const';
 
 const WanderingEntity = function(world, tile) {
    var self = this,
@@ -12,7 +12,7 @@ const WanderingEntity = function(world, tile) {
       if (!m_aMovements[iPos]) m_aMovements[iPos] = 0;
       m_aMovements[iPos]++;
 
-      world.animMoveTile(m_tile, x, y, speed || 300, function() {
+      world.animMoveTile(m_tile, x, y, speed || 300, () => {
          self.runAgainAnotherDay();
       });
    };

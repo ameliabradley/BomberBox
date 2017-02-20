@@ -1,4 +1,4 @@
-import { each } from './util.js';
+import { each } from 'game/util';
 
 // shim layer with setTimeout fallback
 export let requestAnimFrame = (function(){

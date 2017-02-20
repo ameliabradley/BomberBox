@@ -1,8 +1,8 @@
-import BombBase from './BombBase.js';
-import BombFragment from './BombFragment';
+import BombBase from 'game/entities/partials/BombBase';
+import BombFragment from 'game/entities/BombFragment';
 import {
   TILE_TRAIT,
-} from './const.js';
+} from 'game/const';
 
 /**
  * A bomb. That explodes.

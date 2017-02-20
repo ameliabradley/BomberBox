@@ -2,7 +2,7 @@ import {
   TILE_SETTING,
   TILE_STYLE,
   STYLE_FROM_ID,
-} from './const.js'
+} from 'game/const'
 
 /**
  * Represents the basic building block of the world. Literally.

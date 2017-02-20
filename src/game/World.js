@@ -1,10 +1,10 @@
-import Util from './util.js';
-import { each } from './util.js';
+import Util from 'game/util';
+import { each } from 'game/util';
 
-import ItemManager from './ItemManager.js';
-import Tile from './Tile.js';
-import MoneyBlock from './MoneyBlock.js';
-import Portal from './Portal.js';
+import ItemManager from 'game/interface/ItemManager';
+import Tile from 'game/entities/Tile';
+import MoneyBlock from 'game/entities/MoneyBlock';
+import Portal from 'game/entities/Portal';
 
 import {
   INT_SHIFT,
@@ -12,7 +12,7 @@ import {
   TILE_STYLE,
   TILE_TRAIT,
   TILE_DRAW_SIZE,
-} from './const'
+} from 'game/const'
 
 const World = function () {
    "use strict";

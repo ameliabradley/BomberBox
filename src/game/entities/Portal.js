@@ -1,5 +1,5 @@
-import Tile from './Tile.js';
-import { TILE_STYLE } from './const.js';
+import Tile from 'game/entities/Tile';
+import { TILE_STYLE } from 'game/const';
 
 /**
  * Teleports to another portal
@@ -35,7 +35,7 @@ const Portal = function(world, x, y) {
       state[CHAR_IGNORE] = m_bIgnoreNextFriendly;
    };
 
-   m_tile.setInteract(function(tile) {
+   m_tile.setInteract((tile) => {
       if (m_bIgnoreNextFriendly) {
          m_bIgnoreNextFriendly = false;
          return;

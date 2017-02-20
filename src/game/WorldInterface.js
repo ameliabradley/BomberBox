@@ -1,8 +1,8 @@
-import ContextCache from './ContextCache.js';
-import { ResourceManager } from './util-client.js';
-import Util from './util.js';
-import { each } from './util.js';
-import CountDown from './CountDown.js';
+import ContextCache from 'game/ContextCache';
+import { ResourceManager } from 'game/util-client';
+import Util from 'game/util';
+import { each } from 'game/util';
+import CountDown from 'game/CountDown';
 import {
   TILE_SHADOW_OFFSET,
   TILE_SIZE,
@@ -14,7 +14,7 @@ import {
   TILE_BORDER_TWICE,
   TILE_FONT,
   TILE_FONT_SIZE,
-} from './const.js';
+} from 'game/const';
 
 /* eslint-env browser */
 

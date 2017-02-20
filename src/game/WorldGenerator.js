@@ -1,13 +1,13 @@
-import Tile from './Tile.js';
-import Util from './util.js';
-import { each } from './util.js';
-import Charger from './Charger.js';
-import Sentry from './Sentry.js';
-import Ghost from './Ghost.js';
-import RectDimensions from './RectDimensions.js';
+import Tile from 'game/entities/Tile';
+import Util from 'game/util';
+import { each } from 'game/util';
+import Charger from 'game/mobs/Charger';
+import Sentry from 'game/mobs/Sentry';
+import Ghost from 'game/mobs/Ghost';
+import RectDimensions from 'game/RectDimensions';
 import {
   TILE_STYLE,
-} from './const.js';
+} from 'game/const';
 
 const WorldGenerator = function() {
   //console.log('World Generator created');

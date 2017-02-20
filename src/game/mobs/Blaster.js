@@ -1,14 +1,14 @@
-import Tile from './Tile.js';
-import WanderingEntity from './WanderingEntity.js';
-import CountDown from './CountDown.js';
-import Util from './util.js';
-import BombFragment from './BombFragment.js';
-import MoneyBlock from './MoneyBlock.js';
+import Tile from 'game/entities/Tile';
+import WanderingEntity from 'game/mobs/WanderingEntity';
+import CountDown from 'game/CountDown';
+import Util from 'game/util';
+import BombFragment from 'game/entities/BombFragment';
+import MoneyBlock from 'game/entities/MoneyBlock';
 
 import {
   TILE_STYLE,
   TILE_TRAIT,
-} from './const.js';
+} from 'game/const';
 
 /**
  * Dumb AI that walks around
@@ -26,7 +26,7 @@ const Blaster = function (world, x, y) {
       startTicking = function() {
          m_bTicking = true;
 
-         var countDown = new CountDown(function(i) {
+         var countDown = new CountDown((i) => {
             if (i == m_iTimeout) {
                self.explode();
                return;
@@ -64,9 +64,7 @@ const Blaster = function (world, x, y) {
 
       m_bTicking = false;
 
-      setTimeout(function() {
-         wanderingEntity.runAmok();
-      }, 100);
+      setTimeout(() => wanderingEntity.runAmok(), 100);
    }
 
    self.onExplode = function(x, y, iMaxRadius) {
@@ -87,15 +85,13 @@ const Blaster = function (world, x, y) {
 
    self.tick = function() {
       m_tile.setStyle(TILE_STYLE.TILE_TIMEDMINE_RED);
-      world.setTimeout(function() {
-         m_tile.setStyle(TILE_STYLE.TILE_TIMEDMINE);
-      }, 300);
+      world.setTimeout(() => m_tile.setStyle(TILE_STYLE.TILE_TIMEDMINE), 300);
    }
 
-   m_tile.setOnFrag(function() {
+   m_tile.setOnFrag(() => {
       if (m_bTicking) return;
 
-      world.dropAfterFrag(m_tile, function(x, y) {
+      world.dropAfterFrag(m_tile, (x, y) => {
          Util.chances({
             10 : null,
             1 : function() {
@@ -106,7 +102,7 @@ const Blaster = function (world, x, y) {
       m_tile.destroy();
    });
 
-   m_tile.setInteract(function(tile) {
+   m_tile.setInteract((tile) => {
       if (tile.dieBy) tile.dieBy('Sentry');
    });
 

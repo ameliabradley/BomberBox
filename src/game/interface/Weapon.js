@@ -1,4 +1,4 @@
-import ItemCooldown from './ItemCooldown.js';
+import ItemCooldown from 'game/ItemCooldown';
 
 const Weapon = function() {
    var self = this,

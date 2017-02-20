@@ -1,6 +1,6 @@
-import Weapon from './Weapon.js';
-import Bomb from './Bomb.js';
-import { WEAPON_BOMB, TILE_TRAIT } from './const.js'
+import Weapon from 'game/interface/Weapon';
+import Bomb from 'game/entities/Bomb';
+import { WEAPON_BOMB, TILE_TRAIT } from 'game/const'
 
 const BombDeployer = function() {
    var self = this,

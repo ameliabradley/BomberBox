@@ -1,4 +1,4 @@
-import PlayerInformation from './PlayerInformation.js';
+import PlayerInformation from 'game/PlayerInformation';
 
 const PlayerInformationManager = function () {
    var self = this,

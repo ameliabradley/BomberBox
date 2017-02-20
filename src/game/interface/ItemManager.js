@@ -1,5 +1,5 @@
-import { each } from './util.js';
-import { PLAYER_ITEMS } from './const.js';
+import { each } from 'game/util';
+import { PLAYER_ITEMS } from 'game/const';
 
 const ItemManager = function() {
    "use strict";
@@ -9,14 +9,14 @@ const ItemManager = function() {
       m_oItemById = {},
 
       addAvailableItems = function (alist) {
-         each(alist, function(i, item) {
+         each(alist, (i, item) => {
             var aMods = item.mods,
                iItemId = item.id;
 
             m_oItemById[iItemId] = item;
 
             if (aMods) {
-               each(aMods, function (i, mod) {
+               each(aMods, (i, mod) => {
                   m_oItemById[mod.id] = mod;
                });
             }

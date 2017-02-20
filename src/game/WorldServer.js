@@ -1,8 +1,8 @@
-import World from './World.js';
-import WorldGenerator from './WorldGenerator.js';
-import PlayerInformation from './PlayerInformation.js';
-import Player from './Player.js';
-import { each } from './util.js';
+import World from 'game/World';
+import WorldGenerator from 'game/WorldGenerator';
+import PlayerInformation from 'game/PlayerInformation';
+import Player from 'game/Player';
+import { each } from 'game/util';
 
 import {
   OP_WORLD_RESET,
@@ -30,7 +30,7 @@ import {
   OP_MONEY_UPDATE,
   OP_PLAYER_CONNECT,
   OP_PLAYER_SPAWN,
-} from './const.js';
+} from 'game/const';
 
 class WorldServer {
   constructor (broadcast, log) {

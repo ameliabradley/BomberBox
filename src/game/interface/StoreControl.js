@@ -1,4 +1,4 @@
-import { Util, each } from './util.js';
+import { Util, each } from 'game/util';
 import {
   PRICE_PLAYER_STARTING_ITEM,
   PURCHASE_ERROR_INSUFFICIENT_FUNDS,
@@ -7,7 +7,7 @@ import {
   SELL_SUCCESS,
   PLAYER_ITEMS,
   SELL_ERROR_ITEM_NOT_OWNED,
-} from './const.js';
+} from 'game/const';
 
 const StoreControl = function() {
    "use strict";
@@ -43,7 +43,7 @@ const StoreControl = function() {
       },
 
       addAvailableItems = function (alist) {
-         each(alist, function(i, item) {
+         each(alist, (i, item) => {
             var iItemId = item.id;
 
             m_observer.onAddItem(iItemId, item);

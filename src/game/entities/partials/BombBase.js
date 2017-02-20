@@ -1,6 +1,6 @@
-import Tile from './Tile.js';
-import CountDown from './CountDown.js';
-import { TILE_STYLE, TILE_TRAIT } from './const.js'
+import Tile from 'game/entities/Tile';
+import CountDown from 'game/CountDown';
+import { TILE_STYLE, TILE_TRAIT } from 'game/const'
 
 const BombBase = function(world, x, y, timeout, radius) {
    var self = this,
@@ -10,7 +10,7 @@ const BombBase = function(world, x, y, timeout, radius) {
 
    self.tick = function() {
       m_tile.setStyle(TILE_STYLE.TILE_TIMEDMINE_RED);
-      world.setTimeout(function() {
+      world.setTimeout(() => {
          m_tile.setStyle(TILE_STYLE.TILE_TIMEDMINE);
       }, 300);
    }
@@ -42,7 +42,7 @@ const BombBase = function(world, x, y, timeout, radius) {
       m_tile.setOnFrag(self.explode);
 
       if (timeout) {
-         var countDown = new CountDown(function(i) {
+         var countDown = new CountDown((i) => {
             if (i == timeout) {
                self.explode();
                return;

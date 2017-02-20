@@ -1,5 +1,5 @@
-import Tile from './Tile.js';
-import { TILE_STYLE } from './const.js';
+import Tile from 'game/entities/Tile';
+import { TILE_STYLE } from 'game/const';
 
 /**
  * @param world
@@ -15,7 +15,7 @@ const MoneyBlock = function(world, x, y, iAmount) {
    m_tile.setText(iAmount.toString());
    world.createTile(m_tile);
 
-   m_tile.setInteract(function(e) {
+   m_tile.setInteract((e) => {
       if (e.eatMoney) {
          e.eatMoney(iAmount);
          m_tile.destroy();

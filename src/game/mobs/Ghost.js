@@ -1,12 +1,12 @@
-import WanderingEntity from './WanderingEntity.js';
-import Tile from './Tile.js';
-import MoneyBlock from './MoneyBlock.js';
-import Util from './util.js';
+import WanderingEntity from 'game/mobs/WanderingEntity';
+import Tile from 'game/entities/Tile';
+import MoneyBlock from 'game/entities/MoneyBlock';
+import Util from 'game/util';
 
 import {
   TILE_STYLE,
   TILE_TRAIT,
-} from './const.js';
+} from 'game/const';
 
 const Ghost = function(world, x, y) {
    var self = this,
@@ -19,8 +19,8 @@ const Ghost = function(world, x, y) {
    m_tile.setPosition(x, y),
    world.createTile(m_tile);
 
-   m_tile.setOnFrag(function() {
-      world.dropAfterFrag(m_tile, function(x, y) {
+   m_tile.setOnFrag(() => {
+      world.dropAfterFrag(m_tile, (x, y) => {
          Util.chances({
             1 : function() {
                new MoneyBlock(world, x, y, 4);
@@ -33,7 +33,7 @@ const Ghost = function(world, x, y) {
       m_tile.destroy();
    });
 
-   m_tile.setInteract(function(tile) {
+   m_tile.setInteract((tile) => {
       if (tile.dieBy) tile.dieBy('Ghost');
    });
 

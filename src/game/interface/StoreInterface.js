@@ -1,6 +1,6 @@
 /* global $ */
-import StoreControl from './StoreControl.js';
-import { each } from './util.js';
+import StoreControl from 'game/interface/StoreControl';
+import { each } from 'game/util';
 
 const StoreInterface = function () {
    "use strict";
@@ -37,7 +37,7 @@ const StoreInterface = function () {
             jTotalGold = m_jBuyBottom.find(".totalText"),
             iTotal = 0;
 
-         m_checkListBuy.initialize(function (iPrice) {
+         m_checkListBuy.initialize((iPrice) => {
             var aCheckedItems = m_checkListBuy.getCheckedItems();
 
             iTotal += iPrice;
@@ -57,13 +57,13 @@ const StoreInterface = function () {
             }
          });
 
-         jFinishButton.click(function () {
+         jFinishButton.click(() => {
             if (jFinishButton.hasClass("disabled")) return;
 
             var aCheckedItems = m_checkListBuy.getCheckedItems(),
                aItemIds = [];
 
-            each(aCheckedItems, function (i, checkableItem) {
+            each(aCheckedItems, (i, checkableItem) => {
                var iItemId = checkableItem.getInfo().id;
                aItemIds.push(iItemId);
             });
@@ -84,7 +84,7 @@ const StoreInterface = function () {
             jTotalGold = m_jSellBottom.find(".totalText"),
             iTotal = 0;
 
-         m_checkListSell.initialize(function (iPrice) {
+         m_checkListSell.initialize((iPrice) => {
             var aCheckedItems = m_checkListSell.getCheckedItems();
 
             m_iSellPrice += iPrice;
@@ -100,13 +100,13 @@ const StoreInterface = function () {
             }
          });
 
-         jFinishButton.click(function () {
+         jFinishButton.click(() => {
             if (jFinishButton.hasClass("disabled")) return;
 
             var aCheckedItems = m_checkListSell.getCheckedItems(),
                aItemIds = [];
 
-            each(aCheckedItems, function (i, checkableItem) {
+            each(aCheckedItems, (i, checkableItem) => {
                var iItemId = checkableItem.getInfo().id;
                aItemIds.push(iItemId);
             });
@@ -158,7 +158,7 @@ const StoreInterface = function () {
          };
 
          self.uncheckAll = function () {
-            each(m_oCheckableItemsById, function (id, item) {
+            each(m_oCheckableItemsById, (id, item) => {
                item.uncheck();
             });
          };
@@ -198,7 +198,7 @@ const StoreInterface = function () {
          self.check = function () {
             if (m_bDisabled || m_bChecked) return;
             m_bChecked = true;
-            each(m_aObservers, function (i, observer) {
+            each(m_aObservers, (i, observer) => {
                if (observer.check) observer.check(self);
             });
          };
@@ -206,13 +206,13 @@ const StoreInterface = function () {
          self.uncheck = function () {
             if (m_bDisabled || !m_bChecked) return;
             m_bChecked = false;
-            each(m_aObservers, function (i, observer) {
+            each(m_aObservers, (i, observer) => {
                if (observer.uncheck) observer.uncheck(self);
             });
          };
 
          self.remove = function () {
-            each(m_aObservers, function (i, observer) {
+            each(m_aObservers, (i, observer) => {
                if (observer.remove) observer.remove(self);
             });
          };
@@ -225,7 +225,7 @@ const StoreInterface = function () {
             if (m_bDisabled) return;
             self.uncheck();
             m_bDisabled = true;
-            each(m_aObservers, function (i, observer) {
+            each(m_aObservers, (i, observer) => {
                if (observer.disable) observer.disable(self);
             });
          };
@@ -234,7 +234,7 @@ const StoreInterface = function () {
             if (!m_bVisible) return;
             self.uncheck();
             m_bVisible = false;
-            each(m_aObservers, function (i, observer) {
+            each(m_aObservers, (i, observer) => {
                if (observer.hide) observer.hide(self);
             });
          };
@@ -243,7 +243,7 @@ const StoreInterface = function () {
             if (m_bVisible) return;
             self.uncheck();
             m_bVisible = true;
-            each(m_aObservers, function (i, observer) {
+            each(m_aObservers, (i, observer) => {
                if (observer.show) observer.show(self);
             });
          };
@@ -251,7 +251,7 @@ const StoreInterface = function () {
          self.enable = function () {
             if (!m_bDisabled) return;
             m_bDisabled = false;
-            each(m_aObservers, function (i, observer) {
+            each(m_aObservers, (i, observer) => {
                if (observer.enable) observer.enable(self);
             });
          };
@@ -279,7 +279,7 @@ const StoreInterface = function () {
             aMods = [],
             iVisibleMods = 0;
 
-         $.each(oMods, function (i, oMod) {
+         $.each(oMods, (i, oMod) => {
             var jMod = m_jStoreModTemplate.clone(),
                strTitle = oMod.name,
                jMain = jMod.find(".main"),
@@ -342,7 +342,7 @@ const StoreInterface = function () {
             }
          });
 
-         jBtnMods.click(function (e) {
+         jBtnMods.click((e) => {
             jMods.slideToggle({
                duration: 300
             });
@@ -373,7 +373,7 @@ const StoreInterface = function () {
                checkList.modifyPrice(iPrice);
 
                if (bSell && aMods) {
-                  $.each(aMods, function (i, mod) {
+                  $.each(aMods, (i, mod) => {
                      mod.check();
                   });
                }
@@ -383,7 +383,7 @@ const StoreInterface = function () {
                checkList.modifyPrice(-iPrice);
 
                if (!bSell && aMods) {
-                  $.each(aMods, function (i, mod) {
+                  $.each(aMods, (i, mod) => {
                      mod.uncheck();
                   });
                }
@@ -434,7 +434,7 @@ const StoreInterface = function () {
    };
 
    self.buyItemsSuccess = function (aItemIds) {
-      each(aItemIds, function (i, iItemId) {
+      each(aItemIds, (i, iItemId) => {
          var item = m_itemManager.getItemById(iItemId);
 
          m_checkListSell.getItem(iItemId).show();
@@ -445,7 +445,7 @@ const StoreInterface = function () {
    };
 
    self.sellItemsSuccess = function (aItemIds) {
-      each(aItemIds, function (i, iItemId) {
+      each(aItemIds, (i, iItemId) => {
          var item = m_itemManager.getItemById(iItemId);
          m_checkListBuy.getItem(iItemId).enable();
          m_checkListSell.getItem(iItemId).hide();
@@ -471,7 +471,7 @@ const StoreInterface = function () {
       m_jStoreItemTemplate = jItemTemplate.clone();
       jItemTemplate.remove();
 
-      m_jBuyTab.click(function () {
+      m_jBuyTab.click(() => {
          m_jBuyBody.show();
          m_jSellBody.hide();
          m_jBuyTab.addClass("selected");
@@ -480,7 +480,7 @@ const StoreInterface = function () {
          m_jBuyBottom.show();
       });
 
-      m_jSellTab.click(function () {
+      m_jSellTab.click(() => {
          m_jBuyBody.hide();
          m_jSellBody.show();
          m_jBuyTab.removeClass("selected");

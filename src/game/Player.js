@@ -1,4 +1,4 @@
-import { each } from './util.js';
+import { each } from 'game/util';
 import {
   OP_PLAYER_BLINK,
   WEAPON_BOMB,
@@ -15,14 +15,14 @@ import {
   OP_PLAYER_WEAPON_SET,
   OP_PLAYER_WEAPON_ADD,
   OP_PLAYER_WEAPON_REMOVE,
-} from './const.js'
+} from 'game/const'
 
-import MoneyControl from './MoneyControl.js';
-import Tile from './Tile.js';
-import BombDeployer from './BombDeployer.js';
-import CarpetBombDeployer from './CarpetBombDeployer.js';
-import StoreControl from './StoreControl.js';
-import WeaponSlotControl from './WeaponSlotControl.js';
+import MoneyControl from 'game/interface/MoneyControl';
+import Tile from 'game/entities/Tile';
+import BombDeployer from 'game/BombDeployer';
+import CarpetBombDeployer from 'game/CarpetBombDeployer';
+import StoreControl from 'game/interface/StoreControl';
+import WeaponSlotControl from 'game/interface/WeaponSlotControl';
 
 const Player = function() {
    var self = this,

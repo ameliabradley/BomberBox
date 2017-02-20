@@ -4,8 +4,8 @@ import styles from './App.css';
 import Controls from './Controls.js';
 import Notification from './Notification.js';
 
-import WorldServer from '../game/WorldServer.js';
-import Client from '../game/Client.js';
+import WorldServer from 'game/WorldServer';
+import Client from 'game/Client';
 
 export default class App extends React.Component {
   componentDidMount () {

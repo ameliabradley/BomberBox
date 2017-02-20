@@ -18,6 +18,7 @@ module.exports = {
     './index.js'
     // the entry point of our app
   ],
+
   output: {
     filename: 'bundle.js',
     // the output bundle
@@ -29,6 +30,11 @@ module.exports = {
   },
 
   context: resolve(__dirname, 'src'),
+
+  resolve: {
+    modules: [resolve(__dirname, 'src'), 'node_modules'],
+    extensions: ['.jsx', '.json', '.js']
+  },
 
   devtool: 'inline-source-map',
 

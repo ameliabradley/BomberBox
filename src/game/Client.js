@@ -35,13 +35,13 @@
 
 /*global $, msgpack*/
 /*eslint-env browser*/
-import PlayerInformationManager from './PlayerInformationManager.js';
-import StoreInterface from './StoreInterface.js';
-import MoneyControl from './MoneyControl.js';
-import World from './World.js';
-import WorldInterface from './WorldInterface.js';
-import Tile from './Tile.js';
-import { ResourceManager, requestAnimFrame } from './util-client';
+import PlayerInformationManager from 'game/PlayerInformationManager';
+import StoreInterface from 'game/interface/StoreInterface';
+import MoneyControl from 'game/interface/MoneyControl';
+import World from 'game/World';
+import WorldInterface from 'game/WorldInterface';
+import Tile from 'game/entities/Tile';
+import { ResourceManager, requestAnimFrame } from 'game/util-client';
 
 // TODO: Use Reducer so consts are in their individual files
 import {
@@ -76,7 +76,7 @@ import {
   OP_PLAYER_DISCONNECT,
   OP_PLAYER_SPAWN,
   OP_PLAYER_DIE,
-} from './const.js'
+} from 'game/const'
 
 const Client = function () {
    var self = this,
