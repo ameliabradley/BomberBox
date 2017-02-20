@@ -35,7 +35,7 @@
     "url": "git+https://github.com/leebradley/BomberBox.git"
   },
   "author": "Lee Bradley",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/leebradley/BomberBox/issues"
   },
