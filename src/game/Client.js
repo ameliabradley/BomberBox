@@ -1,6 +1,3 @@
-// blah
-// BACKPACK ICON
-
 //
 //
 // Action Types
@@ -78,7 +75,7 @@ import {
   OP_PLAYER_DIE,
 } from 'game/const'
 
-const Client = function () {
+const Client = function (appComponent) {
    var self = this,
 
       m_ctx,
@@ -414,27 +411,33 @@ const Client = function () {
          break;
 
       case OP_PLAYER_WEAPON_SET:
-         var iWeaponSlot = o;
-         m_weaponSlotControlInterface.setSelected(iWeaponSlot);
+         appComponent.props.setWeapon(o);
          break;
 
-      case OP_PLAYER_WEAPON_ADD:
-         var iWeaponSlot = o[0],
-            iItemId = o[1];
-         m_weaponSlotControlInterface.addWeapon(iWeaponSlot, iItemId);
+      case OP_PLAYER_WEAPON_ADD: {
+         const [ weaponSlot, id ] = o;
+         appComponent.props.addWeapon({
+           id,
+           name: id,
+           weaponSlot,
+         });
          break;
+      }
 
-      case OP_PLAYER_WEAPON_REMOVE:
-         var iWeaponSlot = o[0],
-            iItemId = o[1];
-         m_weaponSlotControlInterface.removeWeapon(iWeaponSlot, iItemId);
+      case OP_PLAYER_WEAPON_REMOVE: {
+         const [ iWeaponSlot, id ] = o;
+         appComponent.props.removeWeapon(iWeaponSlot, id);
          break;
+      }
 
-      case OP_PLAYER_WEAPON_STARTCOOLDOWN:
-         var iCooldownTime = o[0],
-            iSlotIndex = o[1];
-         m_weaponSlotControlInterface.setCooldown(iSlotIndex, iCooldownTime);
-         break;
+      case OP_PLAYER_WEAPON_STARTCOOLDOWN: {
+        const [ cooldown, slotIndex ] = o;
+        appComponent.props.setCooldown({
+          slotIndex,
+          cooldown,
+        });
+        break;
+      }
 
       case OP_PLAYER_CONNECT:
          var iPlayerId = o[0],
@@ -533,6 +536,8 @@ const Client = function () {
 
       self.interpretCommand(iCommandId, oCommandData);
    };
+
+   self.setAppComponent = _appComponent => appComponent = _appComponent;
 };
 
 export default Client;

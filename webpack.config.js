@@ -1,79 +1,78 @@
-const { resolve } = require('path');
-const webpack = require('webpack');
+const { resolve } = require("path");
+const webpack = require("webpack");
 
 module.exports = {
   entry: [
-    'react-hot-loader/patch',
+    "react-hot-loader/patch",
     // activate HMR for React
 
-    'webpack-dev-server/client?http://localhost:8080',
+    "webpack-dev-server/client?http://localhost:8080",
     // bundle the client for webpack-dev-server
     // and connect to the provided endpoint
 
-    'webpack/hot/only-dev-server',
+    "webpack/hot/only-dev-server",
     // bundle the client for hot reloading
     // only- means to only hot reload for successful updates
 
-
-    './index.js'
+    "./index.tsx"
     // the entry point of our app
   ],
 
   output: {
-    filename: 'bundle.js',
+    filename: "bundle.js",
     // the output bundle
 
-    path: resolve(__dirname, 'dist'),
+    path: resolve(__dirname, "dist"),
 
-    publicPath: '/'
+    publicPath: "/"
     // necessary for HMR to know where to load the hot update chunks
   },
 
-  context: resolve(__dirname, 'src'),
+  context: resolve(__dirname, "src"),
 
   resolve: {
-    modules: [resolve(__dirname, 'src'), 'node_modules'],
-    extensions: ['.jsx', '.json', '.js']
+    modules: [resolve(__dirname, "src"), "node_modules"],
+    extensions: [".jsx", ".json", ".js", ".tsx", ".ts"]
   },
 
-  devtool: 'inline-source-map',
+  devtool: "inline-source-map",
 
   devServer: {
     hot: true,
     // enable HMR on the server
 
-    contentBase: resolve(__dirname, 'dist'),
+    contentBase: resolve(__dirname, "dist"),
     // match the output path
 
-    publicPath: '/'
+    publicPath: "/"
     // match the output `publicPath`
   },
 
   module: {
     rules: [
       {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/
+      },
+      {
         test: /\.js$/,
-        use: [
-          'babel-loader',
-        ],
+        use: ["babel-loader"],
         exclude: /node_modules/
       },
       {
         test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader?modules',
-          'postcss-loader',
-        ],
-      },
-    ],
+        use: ["style-loader", "css-loader?modules"]
+        // use: ["style-loader", "css-loader?modules", "postcss-loader"]
+      }
+    ]
   },
 
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     // enable HMR globally
 
-    new webpack.NamedModulesPlugin(),
+    new webpack.NamedModulesPlugin()
     // prints more readable module names in the browser console on HMR updates
-  ],
+  ]
 };
