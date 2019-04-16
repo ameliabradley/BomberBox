@@ -2,7 +2,7 @@ import * as React from "react";
 import classNames from "classnames";
 const styles = require("./WeaponSlot.css");
 
-import { PLAYER_ITEMS } from "../game/const";
+import { PLAYER_ITEMS } from "../../game/const";
 
 const renderWeapon = weapon => {
   const item = PLAYER_ITEMS.filter(item => item.id === weapon.id)[0];

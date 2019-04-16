@@ -1,8 +1,8 @@
 import * as React from "react";
 
-import Controls from "./Controls";
-import Notification from "./Notification";
-import WeaponSlot from "./WeaponSlot";
+import Controls from "../Controls/Controls";
+import Notification from "../Notification/Notification";
+import WeaponSlot from "../WeaponSlot/WeaponSlot";
 
 import WorldServer from "game/WorldServer";
 import Client from "game/Client";
